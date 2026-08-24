@@ -17,9 +17,9 @@ export const seite = {
    * automatisch das andere mitzieht.
    */
   meta: {
-    title: "Youssef Tayachi: Website-Neubau für Betriebe, die einen zweiten Blick verdienen",
+    title: "Youssef Tayachi: Website-Neubau für Bau, Elektro und Dach",
     description:
-      "Zwei Fassungen derselben Beispielseite, nebeneinander: die alte Bauweise und die neue. Website-Neubau für Handwerk, Gastronomie und Kanzleien, gebaut von einer Person.",
+      "Zwei Fassungen derselben Beispielseite, nebeneinander: die alte Bauweise und die neue. Website-Neubau für Bauunternehmen, Elektriker und Dachdecker, gebaut von einer Person.",
     ogTitle: "Alt und neu, nebeneinander: Website-Neubau von Youssef Tayachi",
     ogDescription:
       "Der Befund stand in der Mail. Hier steht die Korrektur: eine Beispielseite in zwei Fassungen, zum Selbstprüfen.",
@@ -39,9 +39,12 @@ export const seite = {
   },
 
   hero: {
-    kicker: "Ein Entwickler, keine Agentur",
-    headline: "Der Befund aus der Mail, hier eingelöst.",
-    unterzeile: "Zwei Fassungen derselben Seite, direkt darunter: die alte Bauweise und die neue.",
+    // Kicker macht die Zielgruppe zur ersten Zeile, die jemand liest (siehe
+    // Auftrag: "das bin ja ich" beim ersten Bildschirm). Das Vertrauenssignal
+    // "ein Entwickler, keine Agentur" steht dafuer jetzt in ueber.absaetze.
+    kicker: "Für Bauunternehmen, Elektriker, Dachdecker",
+    headline: "Deine Arbeit ist gut. Deine Website soll das zeigen.",
+    unterzeile: "Direkt darunter: eine Beispielseite, einmal wie viele sie bauen, einmal neu.",
     primaerCta: { label: "Fassungen vergleichen", href: "#showcase" },
     sekundaerCta: { label: "Kontakt aufnehmen", href: "#kontakt" },
     // Die Messleiste im "Messlauf" (components/sections/hero.tsx) zeigt genau
@@ -54,24 +57,36 @@ export const seite = {
 
   befund: {
     eyebrow: "Der Befund",
-    headline: "Vier Befunde, die sich wiederholen",
-    intro: "Vier Fehler tauchen bei alten Websites immer wieder auf, alle stecken in der Beispielseite weiter unten.",
+    // Vorher: "Vier Befunde, die sich wiederholen" (neutrale Pruefberichtssprache).
+    // Jetzt aus Sicht des suchenden Kunden: nicht was am Betrieb falsch ist,
+    // sondern was der Kunde erlebt, bevor er weiterzieht (siehe Regel 1 des
+    // Auftrags: der Schmerz gehoert dem Kunden, nie dem Betrieb).
+    headline: "Was der Kunde erlebt, bevor er weiterzieht",
+    intro: "Vier Gründe, warum ein Kunde wieder geht, ohne dass du es merkst.",
     items: [
       {
-        label: "Tempo ungeprüft",
-        text: "Unverkleinerte Bilder kosten Zeit, bevor der erste Satz zu lesen ist.",
+        // Neu gegenueber der alten Fassung ("Tempo ungeprueft"): der fehlende
+        // Beleg der eigenen Arbeit ist fuer Bau, Elektro und Dach der staerkere
+        // Aufhaenger als ungeprueftes Ladetempo. Tafel 01 in befund.tsx zeigt
+        // bisher einen Bilder-Wasserfall ueber einem Maszstab; das Thema hat
+        // gewechselt und muss neu gezeichnet werden (siehe Bericht).
+        label: "Kein Beweis der Arbeit",
+        text: "Ohne ein Bild von der Baustelle sucht der Kunde beim nächsten weiter.",
       },
       {
         label: "Unlesbar am Handy",
-        text: "Was sich auf dem Handy nicht lesen lässt, wird dort auch nicht gelesen.",
+        text: "Der Kunde sucht dich am Handy, die Seite lässt sich dort kaum bedienen.",
       },
       {
         label: "Design ohne Datum",
-        text: "Schrift, Farben und Aufbau verraten das Baujahr, bevor ein Satz gelesen ist.",
+        text: "Der Kunde hält den Betrieb für geschlossen, nur weil die Seite alt aussieht.",
       },
       {
-        label: "Kein nächster Schritt",
-        text: "Ein Kontaktweg, der erst gesucht werden muss, wird selten gefunden.",
+        // Gleiches Thema wie zuvor ("Kein naechster Schritt"), nur zugespitzt:
+        // fuer die neue Zielgruppe ist der fehlende naechste Schritt fast immer
+        // der fehlende Anruf im Notfall, nicht ein abstraktes Formular.
+        label: "Kein Weg zum Anruf",
+        text: "Beim Sturmschaden zählt nur ein Klick zum Anruf, den die Seite nicht bietet.",
       },
     ],
   },
@@ -84,7 +99,7 @@ export const seite = {
   showcase: {
     eyebrow: "Der Vergleich",
     headline: "Alt und neu, im selben Fenster",
-    intro: "Drei fiktive Betriebe, je zwei Fassungen: wie es heute oft aussieht, und wie es aussehen könnte.",
+    intro: "Drei fiktive Betriebe aus Bau, Elektro und Dach, je zwei Fassungen: wie es oft aussieht, wie es sein könnte.",
     bedienhinweis: "Regler ziehen oder mit den Pfeiltasten zwischen alter und neuer Fassung wechseln.",
     vorherLabel: "Alte Fassung",
     nachherLabel: "Neue Fassung",
@@ -113,23 +128,29 @@ export const seite = {
   leistungen: {
     eyebrow: "Leistungen",
     headline: "Was ich baue",
-    intro: "Vier Bausteine für eine Website, die tatsächlich genutzt wird.",
+    intro: "Vier Bausteine für eine Website, die Aufträge bringt statt nur zu stehen.",
     items: [
       {
         titel: "Website-Neubau",
-        text: "Neu von Grund auf, für Handwerk, Gastronomie, Kanzleien und Praxen: auf dem Handy so bedienbar wie am Schreibtisch.",
+        text: "Neu gebaut für Bau, Elektro und Dach, am Handy so leicht wie am Tisch.",
       },
       {
-        titel: "Inhalt und Struktur",
-        text: "Erst die Struktur, dann der Code: weniger Text, aber der, der zählt.",
+        // Neu gegenueber der alten Fassung ("Inhalt und Struktur", Thema:
+        // viel Text auf wenig verdichten). Fuer Bau, Elektro und Dach zaehlt
+        // staerker der fehlende Beleg der eigenen Arbeit (siehe befund.items[0]
+        // und PLAN.md-Auftrag: "kein sichtbarer Beweis"). Abbildung 02 in
+        // leistungen.tsx zeigt bisher verdichteten Flieszstext; das Thema hat
+        // gewechselt und braucht eine neue Zeichnung (siehe Bericht).
+        titel: "Beweis deiner Arbeit",
+        text: "Fotos von der Baustelle, sichtbar statt versteckt im Aktenordner.",
       },
       {
         titel: "Tempo und Technik",
-        text: "Bilder in der richtigen Größe, Schrift ohne fremde Server, sauberer Code darunter: das macht die Seite schnell.",
+        text: "Bilder in Ladegröße, schlanker Code: die Seite steht, bevor er weiterzieht.",
       },
       {
         titel: "Übergabe und Pflege",
-        text: "Nach dem Livegang verstehst du deine Website, oder ich betreue sie weiter: deine Entscheidung.",
+        text: "Nach dem Start verstehst du die Seite selbst, oder ich pflege sie weiter.",
       },
     ],
   },
@@ -142,22 +163,22 @@ export const seite = {
       {
         nummer: "01",
         titel: "Erstgespräch",
-        text: "Klärt, was deine Website leisten soll und wo die jetzige das nicht tut.",
+        text: "Ich kläre, was deine Seite können muss und was heute fehlt.",
       },
       {
         nummer: "02",
         titel: "Entwurf",
-        text: "Struktur und Ton, bevor Technik dazukommt: du siehst, wohin es geht.",
+        text: "Du siehst Aufbau und Text, bevor die Technik beginnt.",
       },
       {
         nummer: "03",
         titel: "Umsetzung",
-        text: "Die Website entsteht mit regelmäßigen Zwischenständen, keine Überraschung am Ende.",
+        text: "Du siehst Zwischenstände, keine Überraschung am Ende.",
       },
       {
         nummer: "04",
         titel: "Übergabe",
-        text: "Die Website geht live, mit Zugriff und Erklärung: keine Blackbox.",
+        text: "Die Seite geht live, mit Zugriff und einer Erklärung dazu.",
       },
     ],
   },
@@ -172,10 +193,13 @@ export const seite = {
   ueber: {
     eyebrow: "Über",
     headline: "Warum ausgerechnet ich",
+    // Von drei auf zwei Absaetze gekuerzt (Auftrag: "radikal weniger"). Das
+    // dritte Argument von vorher ("ich sage lieber, was nicht funktioniert")
+    // steckt jetzt in der Haltung des zweiten Satzes statt in einem eigenen
+    // Absatz.
     absaetze: [
-      "Ich baue Websites und die Werkzeuge, mit denen ich sie an die richtigen Betriebe bringe. Die Mail kam aus Frostbreaker, meinem eigenen Kaltakquise-Programm.",
-      "Ich arbeite allein: wer mir schreibt, bekommt Antwort von der Person, die auch baut.",
-      "Ich sage lieber, was nicht funktioniert, als was gut aussieht, wie schon in der Mail und in jeder Fallstudie hier.",
+      "Die Mail kam aus Frostbreaker, meinem eigenen Kaltakquise-Programm. Websites und Werkzeuge baue ich selbst.",
+      "Ich arbeite allein: Wer schreibt, bekommt Antwort von der Person, die auch baut, und ehrliche Worte dazu.",
     ],
   },
 
@@ -189,7 +213,7 @@ export const seite = {
   kontakt: {
     eyebrow: "Kontakt",
     headline: "Der nächste Schritt",
-    intro: "Schreib mir, was an deiner Website nicht funktioniert, ich sage dir ehrlich, ob ich helfen kann.",
+    intro: "Schreib mir, was an deiner Seite nicht funktioniert, ich sage dir ehrlich, ob ich helfen kann.",
     emailLabel: "E-Mail schreiben",
     emailAdresse: "youtaybusiness@gmail.com",
     mailtoBetreff: "Anfrage: Website-Neubau",
@@ -198,7 +222,7 @@ export const seite = {
 
   fuss: {
     marke: "Youssef Tayachi",
-    tagline: "Websites für Betriebe, die einen zweiten Blick verdient haben.",
+    tagline: "Websites für Bau, Elektro und Dach, die einen zweiten Blick verdienen.",
     rechtLinks: [
       { label: "Impressum", href: "/impressum" },
       { label: "Datenschutz", href: "/datenschutz" },

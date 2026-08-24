@@ -15,8 +15,8 @@ import { useReveal } from "@/lib/reveal";
  * Abbildungen. Jede haengt an einer Grundlinie, die ueber die ganze Zelle
  * laeuft, traegt darunter ihre Nummer ("ABB. 01", aus dem Index erzeugt, kein
  * neuer Schluessel in content/seite.ts) und zeigt die beschriebene Arbeit,
- * statt sie zu bebildern: das vermessene Blatt, die Verdichtung von viel Text
- * auf wenig, das Messgeraet, die Gabelung nach dem Livegang.
+ * statt sie zu bebildern: das vermessene Blatt, die Bautafel mit den drei
+ * Referenzen, das Messgeraet, die Gabelung nach dem Livegang.
  * Zum Vergleich: die Tafeln in befund.tsx sind vier gleiche 64-Pixel-Felder,
  * weil sie eine Serie in einer Liste sind. Hier haben die Abbildungen
  * unterschiedliche Breiten bei gleicher Hoehe, weil sie Tafeln auf einem
@@ -30,6 +30,13 @@ import { useReveal } from "@/lib/reveal";
  * Bogen mit Rhythmus statt vier gleicher Kacheln, und es folgt dem Inhalt:
  * die beiden langen Texte (Neubau, Uebergabe) bekommen die breiten Felder.
  * Darunter faellt es auf zwei Spalten und schliesslich auf eine zurueck.
+ *
+ * DIE ZWEISPALTIGE STUFE BEGINNT ERST AB md (2026-08-24). Sie begann frueher
+ * ab sm, also ab 640 Pixeln. Mit dem Fliesstext auf 19 Pixeln (globals.css
+ * Abschnitt 1) blieben dort rund 30 Zeichen je Zeile stehen, und eine Spalte
+ * mit 30 Zeichen ist keine Spalte, sondern eine Kolumne. Ab 768 Pixeln sind es
+ * rund 34, und das traegt. Der Preis ist eine laengere Bahn auf dem Tablet,
+ * und den zahlt diese Seite gern: sie will gelesen werden, nicht gefuellt.
  *
  * WARUM CLIENT COMPONENT. Hier stand vorher, eine Datei nur fuer ein
  * sanfteres Erscheinen zur Client Component zu machen sei ein schlechter
@@ -89,17 +96,47 @@ const PLATTEN: readonly Platte[] = [
     ],
   },
 
-  // ABB. 02 Inhalt und Struktur. Links acht dicht gestapelte Zeilen, rechts
-  // drei mit Luft. Der Akzent ist die mittlere der drei: die eine, die bleibt.
+  // ABB. 02 Beweis deiner Arbeit.
+  //
+  // NEU GEZEICHNET (2026-08-24). Hier stand "Inhalt und Struktur": links acht
+  // dicht gestapelte Zeilen, rechts drei mit Luft, also die Verdichtung von
+  // viel Text auf wenig. Das Thema hat gewechselt (content/seite.ts,
+  // leistungen.items[1]), also musste die Zeichnung mit.
+  //
+  // Eine Bautafel auf zwei Pfosten, darauf eine Kopfzeile und drei Bildfelder
+  // nebeneinander. Links davor der Akzent: ein kurzer Anlauf, der in einem
+  // Strich endet und auf die Tafel zeigt, ohne sie zu beruehren. Dieselbe
+  // Bauform wie .mess-lauf und .mess-zeiger im Hero und wie die Zeigerlinie in
+  // kontakt.tsx, und dieselbe Bedeutung: hier sieht jemand hin.
+  //
+  // Warum der Akzent NICHT eines der Bildfelder ist, obwohl das naheliegt: in
+  // allen vier Abbildungen dieses Bogens ist der Akzent ein Instrument (Mass,
+  // Zeiger, Gabelungspunkt) und nie ein Teil des gezeigten Dings. Ein rotes
+  // Bildfeld neben zwei schwarzen hiesse ausserdem "dieses eine zaehlt", und
+  // gemeint ist das Gegenteil: dass ueberhaupt etwas zu sehen ist.
+  //
+  // Die Pfosten laufen bis y=88 und stossen damit auf die Grundlinie der Zelle
+  // (border-b weiter unten). Die Bautafel steht also im Boden, statt ueber ihm
+  // zu schweben. Sie sind in RASTER und nicht in FORM: sie tragen, sie zeigen
+  // nicht.
+  //
+  // Die Koordinaten liegen auf halben Werten, die drei anderen Abbildungen
+  // dieses Bogens auf ganzen. Der Grund steht in befund.tsx: ein Strich von
+  // einem Pixel auf einer ganzen Koordinate verteilt sich auf zwei
+  // Geraetepixel und wird grau. Die drei anderen sind bewusst NICHT
+  // mitgezogen worden: sie zu verschieben, ohne sie im Browser danebenlegen zu
+  // koennen, waere ein Eingriff ins Funktionierende (siehe Bericht).
   {
     breite: 136,
     zuege: [
+      { d: "M48.5 58 V88 M113.5 58 V88", k: RASTER },
+      { d: "M30.5 6.5 H131.5 V57.5 H30.5 Z", k: FORM },
+      { d: "M38.5 15.5 H80.5", k: FORM },
       {
-        d: "M4 10 H58 M4 20 H58 M4 30 H52 M4 40 H58 M4 50 H58 M4 60 H46 M4 70 H58 M4 80 H50",
+        d: "M38.5 23.5 H63.5 V49.5 H38.5 Z M68.5 23.5 H93.5 V49.5 H68.5 Z M98.5 23.5 H123.5 V49.5 H98.5 Z",
         k: FORM,
       },
-      { d: "M84 30 H132 M84 62 H124", k: FORM },
-      { d: "M84 46 H132", k: ZEIGER },
+      { d: "M4.5 31.5 H20.5 M20.5 24.5 V38.5", k: ZEIGER },
     ],
   },
 
@@ -150,6 +187,24 @@ const PLAETZE: readonly string[] = [
 ];
 
 /**
+ * Vergroesserung der Abbildungen gegenueber ihrem Zeichenmass.
+ *
+ * Gezeichnet sind sie in 88 Einheiten Hoehe, dargestellt werden sie in 132.
+ * Der Grund ist die Zielgruppe: die Abbildung ist auf dieser Seite das, was
+ * jemand ansieht, der nicht liest, und bei 136 Pixeln Breite in einer 350
+ * Pixel breiten Handyspalte war sie eher Vignette als Abbildung.
+ *
+ * Warum das den viewBox NICHT anfasst: strokeWidth 1 plus
+ * vectorEffect="non-scaling-stroke" heisst, dass die Strichstaerke NACH der
+ * Skalierung gemessen wird. Die Haarlinie bleibt also ein Pixel, egal wie
+ * gross das Feld gezogen wird; gedehnt wird nur die Geometrie. Ohne
+ * non-scaling-stroke waeren die Linien hier 1,5 Pixel stark und der ganze
+ * Bogen eine Spur fetter als der Rest der Seite.
+ * Im Browser gegengesehen (2026-08-24, 390 und 1440 Pixel, hell und dunkel).
+ */
+const VERGROESSERUNG = 1.5;
+
+/**
  * Eine Abbildung. Ausgeloest wird sie von .is-in am <li> darueber
  * (globals.css Abschnitt 6.4). Feste Abmessung, fester viewBox, kein
  * Layout-Sprung: die Zelle ist auch vor dem Zeichnen genau so hoch.
@@ -161,11 +216,15 @@ function Abbildung({ index }: { index: number }): ReactElement | null {
   return (
     <svg
       viewBox={`0 0 ${platte.breite} 88`}
-      width={platte.breite}
-      height={88}
+      width={platte.breite * VERGROESSERUNG}
+      height={88 * VERGROESSERUNG}
       aria-hidden="true"
       focusable="false"
-      className="block"
+      // max-w-full: die breiteste Platte ist 252 Pixel, in einem 320 Pixel
+      // schmalen Fenster bleibt davon nach dem Seitenrand weniger uebrig. Ein
+      // SVG mit width-Attribut waere sonst der eine Kasten, der die Seite
+      // waagerecht aufschiebt.
+      className="block h-auto max-w-full"
     >
       {platte.zuege.map((zug) => (
         <path
@@ -217,7 +276,7 @@ export default function Leistungen(): ReactElement {
 
       <ul
         ref={bogenRef}
-        className="mt-block grid gap-x-8 gap-y-block sm:grid-cols-2 lg:grid-cols-12"
+        className="mt-block grid gap-x-8 gap-y-14 md:grid-cols-2 lg:grid-cols-12 lg:gap-y-20"
       >
         {items.map((item, index) => (
           <li
@@ -248,15 +307,16 @@ export default function Leistungen(): ReactElement {
                 traegt die Ueberschrift direkt darunter, und zweimal dasselbe
                 waere Doppelung. text-faint und nicht text-mute, weil auch eine
                 Nummer gelesen werden koennen muss (4,80:1 statt 2,63:1). */}
-            <p className="mono-label-xs mt-4 text-faint">ABB. {String(index + 1).padStart(2, "0")}</p>
+            <p className="mono-label-xs mt-5 text-faint">ABB. {String(index + 1).padStart(2, "0")}</p>
 
-            <h3 className="mt-2 text-title text-ink">{item.titel}</h3>
+            <h3 className="mt-3 text-title text-ink">{item.titel}</h3>
 
-            {/* Gedeckelt auf 32 rem: das breite Feld im Zwoelfspalter ist rund
-                560 Pixel, das waeren bei 17 Pixel Fliesstext ueber 65 Zeichen
-                je Zeile. Der Ueberschuss geht in den Weissraum rechts, wo er
-                dem Bogen guttut. */}
-            <p className="mt-3 max-w-[32rem] text-soft">{item.text}</p>
+            {/* Gedeckelt auf 30 rem: das breite Feld im Zwoelfspalter ist rund
+                560 Pixel, das waeren bei 19 Pixel Fliesstext ueber 58 Zeichen
+                je Zeile. 30 rem sind rund 50 Zeichen, also zwei ruhige Zeilen
+                fuer diese kurzen Saetze. Der Ueberschuss geht in den Weissraum
+                rechts, wo er dem Bogen guttut. */}
+            <p className="mt-3 max-w-[30rem] text-soft">{item.text}</p>
           </li>
         ))}
       </ul>

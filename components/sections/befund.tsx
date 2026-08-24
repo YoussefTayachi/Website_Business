@@ -20,12 +20,25 @@ import { useReveal } from "@/lib/reveal";
  * Kaesten mit Icons hinstellt, schreibt Werbung." Der Satz gilt weiter, und
  * die Tafeln widersprechen ihm nicht: sie sind keine Piktogramme neben einer
  * Ueberschrift, sondern Zeichnungen, die den benannten Mangel VORFUEHREN.
- * Der Balken fuer unverkleinerte Bilder laeuft aus dem Feld heraus, die
- * Textzeilen laufen aus dem Geraet heraus, der Weg endet vor einem leeren
- * Knopf. Wer eine dieser Tafeln durch ein Symbol ersetzt, das nur "Tempo"
- * bedeutet, hat aus dem Bericht wieder Werbung gemacht.
- * Vier gleich grosse Felder (64 Pixel), eine Strichstaerke, eine Grundlinie
+ * Das reservierte Feld bleibt leer, die Textzeilen laufen aus dem Geraet
+ * heraus, der Weg endet vor einem leeren Knopf. Wer eine dieser Tafeln durch
+ * ein Symbol ersetzt, das nur "Beweis" bedeutet, hat aus dem Bericht wieder
+ * Werbung gemacht.
+ * Vier gleich grosse Felder (96 Pixel), eine Strichstaerke, eine Grundlinie
  * auf derselben Hoehe: das macht sie zur Tafelserie und nicht zum Iconset.
+ *
+ * DIE TAFEL FUEHRT JETZT DIE ZEILE AN (2026-08-24, neue Zielgruppe). Bis
+ * hierher standen die Tafeln im breiten Fenster ganz rechts als
+ * Randabbildungen und im schmalen ganz unten, also NACH dem Satz, den sie
+ * zeigen. Fuer einen Leser, der jedes Wort liest, ist das die richtige
+ * Reihenfolge. Bau, Elektro und Dach lesen nicht, sie scrollen: die Zeichnung
+ * steht deshalb am Anfang der Zeile und ist von 64 auf 96 Pixel gewachsen.
+ * Wer die Sektion ohne ein Wort durchscrollt, sieht vier Zeichnungen
+ * untereinander und hat den Befund verstanden.
+ * Aus vier Rasterspalten sind dabei zwei Bloecke geworden (Tafel, Text). Vier
+ * Fluchten fuer vier Bauteile waren im schmalen Fenster ohnehin nur drei
+ * Zeilen uebereinander, und jede Flucht weniger ist eine Linie weniger, die
+ * das Auge halten muss.
  *
  * Bewusst dieselbe Bauform wie die BefundListe in
  * components/showcase/befund-marker.tsx (Nummer in Akzentfarbe, Schild in
@@ -89,11 +102,21 @@ type Strichzug = { d: string; k: string };
 
 /** Dieselbe Grundlinie in allen vier Tafeln, auf derselben Hoehe. Das eine
  *  Bauteil, das aus vier Zeichnungen eine Serie macht. */
-const GRUNDLINIE: Strichzug = { d: "M0 55.5 H64", k: RASTER };
+const GRUNDLINIE: Strichzug = { d: "M0 83.5 H96", k: RASTER };
 
 /**
  * Die vier Tafeln, in der Reihenfolge von seite.befund.items.
- * Feld 64 mal 64, Grundlinie bei 55,5 (halber Pixel = scharfe Haarlinie).
+ * Feld 96 mal 96, Grundlinie bei 83,5.
+ *
+ * WARUM ALLE KOORDINATEN AUF HALBEN WERTEN LIEGEN. Ein Strich von einem Pixel
+ * wird auf seiner Mittellinie gezeichnet. Liegt die auf einer ganzen
+ * Koordinate, verteilt der Browser den Strich auf zwei Geraetepixel und die
+ * Haarlinie wird grau statt scharf; auf einer halben Koordinate trifft sie
+ * genau einen. Das Feld war frueher 64 Pixel gross und hatte diese Regel nur
+ * fuer die Grundlinie; beim Vergroessern auf 96 (Faktor 1,5) sind alle
+ * Strecken mitgezogen und ausdruecklich auf halbe Werte gelegt worden.
+ * Wer hier etwas ergaenzt, haelt sich daran, sonst faellt eine Linie der Serie
+ * gegenueber den anderen ab.
  *
  * Mehrere Teilstrecken in einem d-Attribut sind Absicht: stroke-dasharray
  * laeuft in SVG ueber Teilstrecken hinweg weiter, ein Strichzug aus vier
@@ -101,15 +124,33 @@ const GRUNDLINIE: Strichzug = { d: "M0 55.5 H64", k: RASTER };
  * ohne dass es dafuer vier Pfade und vier Verzoegerungen braucht.
  */
 const TAFELN: readonly (readonly Strichzug[])[] = [
-  // 01 Tempo ungeprueft. Ein Wasserfall aus drei Posten ueber einem Maszstab.
-  // Die ersten beiden enden auf einem Endstrich, der dritte (die Bilder) hat
-  // keinen: er laeuft aus dem Feld und damit aus dem Maszstab heraus.
+  // 01 Kein Beweis der Arbeit.
+  //
+  // NEU GEZEICHNET (2026-08-24). Hier stand "Tempo ungeprueft": ein
+  // Bilder-Wasserfall ueber einem Maszstab. Das Thema hat gewechselt
+  // (content/seite.ts, befund.items[0]), also musste die Zeichnung mit.
+  //
+  // Ein Blatt aus Textzeilen, und mitten darin ein Feld, das mit Eckwinkeln
+  // markiert und leer ist. Die Eckwinkel sind das eigene Vokabular dieser
+  // Seite (globals.css Abschnitt 5, .ticks: die Klammer, mit der ein
+  // Messgeraet seinen Anzeigebereich markiert). Genau darin liegt die Aussage:
+  // der Platz fuer den Beweis ist reserviert, benannt und leer. Der Betrieb
+  // schreibt ueber seine Arbeit, er zeigt sie nicht.
+  //
+  // Warum kein voller Rahmen und schon gar kein Fotoapparat: ein Rahmen waere
+  // ein Bildfeld und damit dasselbe Bauteil, das in Leistungen ABB. 02 die
+  // Gegenfigur bildet (dort stehen drei davon auf einer Bautafel). Zwei
+  // gleiche Rechtecke mit entgegengesetzter Bedeutung waeren eine Verwechslung
+  // mit Ansage. Eckwinkel sagen "hier waere Platz", ein Rahmen sagt "hier ist
+  // etwas".
   [
     GRUNDLINIE,
-    { d: "M8 51 V55.5 M24 51 V55.5 M40 51 V55.5 M56 51 V55.5", k: RASTER },
-    { d: "M8 18 H26 M26 15 V21", k: FORM },
-    { d: "M8 30 H36 M36 27 V33", k: FORM },
-    { d: "M8 42 H64", k: MANGEL },
+    { d: "M12.5 12.5 H83.5 M12.5 20.5 H68.5", k: FORM },
+    {
+      d: "M12.5 30.5 H24.5 M12.5 30.5 V42.5 M71.5 30.5 H83.5 M83.5 30.5 V42.5 M12.5 50.5 V62.5 M12.5 62.5 H24.5 M83.5 50.5 V62.5 M71.5 62.5 H83.5",
+      k: MANGEL,
+    },
+    { d: "M12.5 70.5 H83.5 M12.5 77.5 H56.5", k: FORM },
   ],
 
   // 02 Unlesbar am Handy. Ein Geraeteumriss, aus dem drei Textzeilen rechts
@@ -117,10 +158,10 @@ const TAFELN: readonly (readonly Strichzug[])[] = [
   // traegt deshalb den Akzent.
   [
     GRUNDLINIE,
-    { d: "M4 6 H30 V50 H4 Z", k: FORM },
-    { d: "M13 11 H21 M13 46 H21", k: FORM },
-    { d: "M9 22 H44 M9 38 H52", k: FORM },
-    { d: "M9 30 H64", k: MANGEL },
+    { d: "M6.5 9.5 H45.5 V75.5 H6.5 Z", k: FORM },
+    { d: "M19.5 16.5 H31.5 M19.5 68.5 H31.5", k: FORM },
+    { d: "M13.5 33.5 H66 M13.5 57.5 H78", k: FORM },
+    { d: "M13.5 45.5 H96", k: MANGEL },
   ],
 
   // 03 Design ohne Datum. Seitenkopf alter Bauart: Balken mit drei
@@ -130,28 +171,34 @@ const TAFELN: readonly (readonly Strichzug[])[] = [
   // Baujahr, sondern die Symmetrie.
   [
     GRUNDLINIE,
-    { d: "M4 8 H60 V16 H4 Z M22 8 V16 M40 8 V16", k: FORM },
-    { d: "M18 26 H46 M22 32 H42 M24 38 H40", k: FORM },
-    { d: "M26 45 H38 M26 48 H38", k: FORM },
-    { d: "M32 21 V52", k: MANGEL },
+    { d: "M6.5 12.5 H89.5 V23.5 H6.5 Z M33.5 12.5 V23.5 M60.5 12.5 V23.5", k: FORM },
+    { d: "M28 39.5 H69 M34 48.5 H63 M37 57.5 H60", k: FORM },
+    { d: "M40 67.5 H57 M40 72.5 H57", k: FORM },
+    { d: "M48.5 31.5 V78", k: MANGEL },
   ],
 
-  // 04 Kein naechster Schritt. Ein Weg aus zwei Stufen, der acht Pixel vor
-  // einem leeren Knopfumriss aufhoert. Der Umriss ist der Akzent und er ist
-  // leer: der naechste Schritt ist als Flaeche da und als Ziel nicht.
+  // 04 Kein Weg zum Anruf. Ein Weg aus zwei Stufen, der zwoelf Pixel vor einem
+  // leeren Knopfumriss aufhoert. Der Umriss ist der Akzent und er ist leer:
+  // der naechste Schritt ist als Flaeche da und als Ziel nicht.
+  // Die Zeichnung ist unveraendert geblieben, obwohl die Ueberschrift jetzt
+  // "Kein Weg zum Anruf" heisst statt "Kein naechster Schritt": das Thema ist
+  // dasselbe, nur zugespitzt (so steht es auch in content/seite.ts). Ein
+  // Telefonhoerer im Knopf waere ein Piktogramm und ausserdem eine Behauptung
+  // ueber ein Bedienelement, das es auf der gezeigten Seite gar nicht gibt.
   [
     GRUNDLINIE,
-    { d: "M4 42 V50", k: RASTER },
-    { d: "M4 46 H16 V32 H30", k: FORM },
-    { d: "M38 24 H60 V40 H38 Z", k: MANGEL },
+    { d: "M6.5 63.5 V75.5", k: RASTER },
+    { d: "M6.5 69.5 H24.5 V48.5 H45", k: FORM },
+    { d: "M57.5 36.5 H89.5 V59.5 H57.5 Z", k: MANGEL },
   ],
 ];
 
 /**
  * Eine Tafel. Ausgeloest wird sie nicht von sich aus, sondern von .is-in am
  * <li> darueber (globals.css Abschnitt 6.4). Feste Abmessung und fester
- * viewBox: die Spalte ist 4 rem breit, es gibt also keinen Layout-Sprung,
- * wenn die Zeichnung erscheint.
+ * viewBox in derselben Einheit (96 zu 96): der Massstab ist damit exakt 1, die
+ * halben Koordinaten liegen auf halben Geraetepixeln, und es gibt keinen
+ * Layout-Sprung, wenn die Zeichnung erscheint.
  */
 function Tafel({ index }: { index: number }): ReactElement | null {
   const zuege = TAFELN[index];
@@ -159,16 +206,15 @@ function Tafel({ index }: { index: number }): ReactElement | null {
 
   return (
     <svg
-      viewBox="0 0 64 64"
-      width={64}
-      height={64}
+      viewBox="0 0 96 96"
+      width={96}
+      height={96}
       aria-hidden="true"
       focusable="false"
-      // self-start ist Pflicht, nicht Geschmack: die Zeile richtet sich an der
-      // Schriftlinie aus (items-baseline), und die Grundlinie eines SVG ist
-      // seine Unterkante. Ohne self-start wuerde die Tafel um ihre eigene
-      // Hoehe nach unten geschoben, um dort anzudocken.
-      className="col-start-2 row-start-3 block self-start md:col-start-4 md:row-start-1"
+      // mt-3 haelt die Nummer auf Abstand, ohne sie zur Bildunterschrift zu
+      // machen: sie steht ueber der Tafel, damit sie im breiten Fenster auf
+      // derselben Hoehe beginnt wie die Befund-Ueberschrift daneben.
+      className="mt-3 block"
     >
       {zuege.map((zug) => (
         <path
@@ -219,7 +265,7 @@ export default function Befund(): ReactElement {
           dann Linie, dann Rahmen, und ein Rahmen ist hier nicht noetig. */}
       <ol
         ref={listeRef}
-        className="ticks mt-block max-w-[56rem] divide-y divide-line"
+        className="ticks mt-block max-w-[58rem] divide-y divide-line"
         style={KLAMMER}
       >
         {befund.items.map((item, index) => (
@@ -231,15 +277,15 @@ export default function Befund(): ReactElement {
             // bewegte Element und der gemeinsame Vorfahr seiner Tafel.
             className={[
               revealed ? "reveal is-in" : "reveal",
-              // Schmal: zwei Spalten, drei Zeilen (Schild, Satz, Tafel). Die
-              // Tafel darf sich hier NICHT neben den Satz stellen: bei 390
-              // Pixeln blieben der Spalte danach 226 Pixel, also rund 26
-              // Zeichen je Zeile, und das ist keine Lesespalte mehr.
-              "grid grid-cols-[2.25rem_minmax(0,1fr)] items-baseline gap-x-3 gap-y-3 py-6",
-              // Breit: vier Spalten, eine Zeile. Die Tafeln stehen dann
-              // untereinander am rechten Rand des Berichts und lesen sich als
-              // Serie, wie Randabbildungen in einer Publikation.
-              "md:grid-cols-[2.25rem_minmax(0,12rem)_minmax(0,1fr)_4rem] md:gap-x-6 md:py-7",
+              // Schmal: die Tafel steht ueber dem Text, nicht daneben. Sie
+              // darf sich hier NICHT neben den Satz stellen: bei 390 Pixeln
+              // blieben der Spalte danach rund 220 Pixel, also 23 Zeichen je
+              // Zeile, und das ist keine Lesespalte mehr.
+              "flex flex-col gap-5 py-9",
+              // Breit: Tafel links, Text rechts, beide oben buendig. Die vier
+              // Tafeln stehen damit untereinander an der linken Flucht des
+              // Berichts und lesen sich als Serie.
+              "md:flex-row md:items-start md:gap-10 md:py-12",
             ].join(" ")}
             style={
               {
@@ -248,17 +294,30 @@ export default function Befund(): ReactElement {
               } as CSSProperties
             }
           >
-            <span className="mono-label-xs col-start-1 row-start-1 text-accent">
-              {String(index + 1).padStart(2, "0")}
-            </span>
+            {/* Die Tafel mit ihrer laufenden Nummer. Die Nummer steht
+                text-faint und nicht mehr im Akzent: seit die Tafel neben ihr
+                steht, laegen sonst zwei Siegellackmarken eine Handbreit
+                auseinander, und der Akzent bedeutet auf dieser Seite genau
+                einmal je Tafel "hier zeigt jemand drauf". Das darf die
+                Zeichnung sagen, nicht die Zaehlung.
+                4,80:1 im Hellen wie im Dunklen, also auch als Kleintext
+                lesbar. Dieselbe Bauform wie "ABB. 01" in leistungen.tsx. */}
+            <div className="flex-none">
+              <p className="mono-label-xs text-faint">
+                {String(index + 1).padStart(2, "0")}
+              </p>
+              <Tafel index={index} />
+            </div>
 
-            <h3 className="mono-label col-start-2 row-start-1 text-ink">{item.label}</h3>
+            {/* min-w-0 ist Pflicht in einem Flex-Element mit langen deutschen
+                Komposita: ohne das ist die Mindestbreite der Spalte die des
+                laengsten Wortes, und die Zeile schiebt im schmalen Fenster
+                waagerecht auf. */}
+            <div className="min-w-0">
+              <h3 className="mono-label text-ink">{item.label}</h3>
 
-            <p className="col-start-2 row-start-2 max-w-text text-body text-soft md:col-start-3 md:row-start-1">
-              {item.text}
-            </p>
-
-            <Tafel index={index} />
+              <p className="mt-4 max-w-text text-body text-soft">{item.text}</p>
+            </div>
           </li>
         ))}
       </ol>

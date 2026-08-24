@@ -215,29 +215,50 @@
 
   /* Typo-Skala. Jede Stufe bringt Zeilenhoehe und Laufweite mit, damit sie
      niemand an der Aufrufstelle neu erfindet. Die clamp-Werte sind linear
-     zwischen 375 und 1440 Pixel Fensterbreite gerechnet, nicht geraten. */
+     zwischen 375 und 1440 Pixel Fensterbreite gerechnet, nicht geraten.
 
-  /* Hero. 44 Pixel auf dem Handy, 104 auf dem Schreibtisch. */
+     WER HIER LIEST (Stand 2026-08-24, neue Zielgruppe): Bauunternehmen,
+     Elektriker, Dachdecker. Ein Dachdecker mit 55 Jahren liest das auf dem
+     Handy in der Mittagspause, im Hellen, mit Handschuh am Daumen. Die erste
+     Fassung dieser Skala war auf eine editoriale Publikation ausgelegt
+     (Fliesstext 17, Kleintext 15, Bildunterschrift 13, Messschild 11 und 10
+     Pixel). Das ist elegant und fuer diese Leser zu leise, und eine Seite, die
+     mit Lesbarkeit argumentiert und dabei selbst klein setzt, widerlegt sich.
+     Deshalb ist jede Lesestufe um rund zwei Pixel angehoben.
+
+     WAS BEWUSST NICHT MITGEWACHSEN IST: die OBEREN Enden der Displaystufen.
+     Sie wachsen nur am schmalen Fenster, wo gelesen wird; am breiten bleiben
+     sie, wo sie waren. Der Hero ist und bleibt der eine laute Punkt der Seite,
+     und das Verhaeltnis zwischen Hero und Sektionsueberschrift ist Teil der
+     Rangfolge, nicht Geschmack. */
+
+  /* Hero. 44 Pixel auf dem Handy, 104 auf dem Schreibtisch.
+     UNVERAENDERT. 44 Pixel sind auch fuer diese Zielgruppe reichlich, und die
+     Hoehe des Hero haengt an dieser Stufe: der Messlauf (Abschnitt 6.6) haelt
+     das Blatt genau einen Bildschirm lang fest, und was hier waechst, kann
+     waehrend des Pins unter die Fensterkante rutschen. */
   --text-display-1: clamp(2.75rem, 1.43rem + 5.63vw, 6.5rem);
   --text-display-1--line-height: 1.02;
   --text-display-1--letter-spacing: -0.024em;
   --text-display-1--font-weight: 500;
 
-  /* Sektionsueberschrift. 32 bis 64 Pixel. */
-  --text-display-2: clamp(2rem, 1.3rem + 3vw, 4rem);
+  /* Sektionsueberschrift. 34 bis 64 Pixel (vorher 32 bis 64). */
+  --text-display-2: clamp(2.125rem, 1.465rem + 2.82vw, 4rem);
   --text-display-2--line-height: 1.06;
   --text-display-2--letter-spacing: -0.02em;
   --text-display-2--font-weight: 500;
 
-  /* Zwischentitel, Fallstudie. 26 bis 40 Pixel. */
-  --text-display-3: clamp(1.625rem, 1.32rem + 1.31vw, 2.5rem);
+  /* Zwischentitel, Fallstudie. 28 bis 40 Pixel (vorher 26 bis 40). */
+  --text-display-3: clamp(1.75rem, 1.486rem + 1.13vw, 2.5rem);
   --text-display-3--line-height: 1.14;
   --text-display-3--letter-spacing: -0.015em;
   --text-display-3--font-weight: 500;
 
   /* Kartentitel. Grotesk, nicht Serif: ab hier ist es Beschriftung und keine
-     Publikation mehr. */
-  --text-title: 1.375rem;
+     Publikation mehr. 24 statt 22 Pixel: das ist die Zeile, an der jemand im
+     Vorbeiscrollen haengen bleibt (Leistung, Prozessschritt), also die
+     wichtigste Stufe nach der Ueberschrift. */
+  --text-title: 1.5rem;
   --text-title--line-height: 1.25;
   --text-title--letter-spacing: -0.011em;
   --text-title--font-weight: 500;
@@ -259,55 +280,104 @@
   --text-demo-1--letter-spacing: -0.018em;
   --text-demo-1--font-weight: 500;
 
-  --text-demo-2: clamp(1.0625rem, 0.99rem + 0.38cqi, 1.25rem); /* 17 bis 20 px */
+  /* 19 bis 22 Pixel (vorher 17 bis 20). Die Anhebung ist genau so gross wie
+     die des Fliesstextes und aus einem einzigen Grund noetig, nicht aus
+     Geschmack: .nf-cta (Abschnitt 9) steht in --text-body, .nf-cta--gross in
+     dieser Stufe. Bliebe sie bei 17, waere der GROSSE Knopf der neuen Fassung
+     in einem schmalen Panel kleiner beschriftet als der normale. Die Steigung
+     (0,38cqi) ist unveraendert, nur der Anfangswert wandert mit.
+     --text-demo-1 bleibt dagegen unangetastet: die Ueberschrift einer
+     gezeigten Website hoert weiter bei 44 Pixeln auf, waehrend die
+     Sektionsueberschrift des Portfolios bei 64 liegt. Genau dieser Abstand
+     ist es, der die Demo als Werk und nicht als Teil der Seite lesbar macht. */
+  --text-demo-2: clamp(1.1875rem, 1.115rem + 0.38cqi, 1.375rem); /* 19 bis 22 px */
   --text-demo-2--line-height: 1.45;
   --text-demo-2--letter-spacing: -0.006em;
 
-  /* Vorspann unter der Ueberschrift. 18 bis 21 Pixel. */
-  --text-lead: clamp(1.125rem, 1.06rem + 0.28vw, 1.3125rem);
+  /* Vorspann unter der Ueberschrift. 20 bis 24 Pixel (vorher 18 bis 21). */
+  --text-lead: clamp(1.25rem, 1.162rem + 0.376vw, 1.5rem);
   --text-lead--line-height: 1.5;
   --text-lead--letter-spacing: -0.006em;
 
-  /* Fliesstext. 17 statt 16 Pixel: die Seite ist zum Lesen da und nicht zum
-     Bedienen, und Inter traegt bei 17 Pixel die editorialen Zeilenlaengen
-     besser. */
-  --text-body: 1.0625rem;
+  /* Fliesstext. 19 statt 17 Pixel. Die frueher hier stehende Begruendung
+     ("17 traegt die editorialen Zeilenlaengen besser") galt fuer einen Leser,
+     der sich Zeit nimmt. Der Leser dieser Seite nimmt sie sich nicht: er
+     ueberfliegt am Handy und entscheidet in Sekunden, ob das hier nach einem
+     Betrieb aussieht, der ihn versteht. 19 Pixel sind die Groesse, bei der ein
+     Satz auf dem Handy noch aus der Huefte gelesen wird.
+     Die Zeilenhoehe bleibt bei 1,65: bei alternden Augen kostet ein enger
+     Zeilenabstand mehr Lesbarkeit als zwei Pixel Schriftgroesse bringen. */
+  --text-body: 1.1875rem;
   --text-body--line-height: 1.65;
 
-  --text-small: 0.9375rem;
-  --text-small--line-height: 1.55;
+  /* 17 statt 15 Pixel. Diese Stufe traegt Prozesstexte, Hinweise und die
+     Fusszeile, also lauter Saetze, die jemand tatsaechlich liest. Sie ist
+     Kleintext im Rang, nicht in der Lesbarkeit. */
+  --text-small: 1.0625rem;
+  --text-small--line-height: 1.6;
 
-  --text-caption: 0.8125rem;
-  --text-caption--line-height: 1.45;
+  /* 15 statt 13 Pixel. Untergrenze fuer alles, was aus ganzen Saetzen
+     besteht: Bedienhinweis, Bildunterschrift, Erklaerung am Messschild. */
+  --text-caption: 0.9375rem;
+  --text-caption--line-height: 1.5;
 
-  /* Messschild. Der Befund steht in dieser Groesse, also ist er Inhalt und
-     nicht Zierde. Deshalb 11 und nicht 10 Pixel: bei 10 Pixel Versalien mit
-     weiter Sperrung faellt eine Zahlenreihe wie "2,1:1" auf einem
-     mittelmaessigen Monitor auseinander. */
-  --text-label: 0.6875rem;
-  --text-label--line-height: 1.2;
-  --text-label--letter-spacing: 0.13em;
+  /* Messschild. 13 statt 11 Pixel.
+     DIE ABWAEGUNG, und sie ist echt: das gesperrte Versal-Mono ist die
+     Signatur dieser Seite (Abschnitt 5, .mono-label) und zugleich ihr
+     groesstes Lesbarkeitsproblem fuer diese Zielgruppe. In dieser Stufe steht
+     nicht nur Zierde, sondern Inhalt: der Kicker im Hero, die vier
+     Befund-Ueberschriften, die Messwerte, jede Abschnittsmarke. Bei 11 Pixel
+     Versalien liest ein 55-jaehriger Dachdecker das am Handy nicht, er
+     erkennt es hoechstens.
+     13 Pixel ist die Grenze nach oben: ab etwa 15 kippt gesperrtes Versal-Mono
+     vom Instrumentenschild zur Ueberschrift, und dann konkurriert es mit der
+     Serifenzeile darueber, statt sie zu beschriften.
+     Die Sperrung geht im Gegenzug von 0,13em auf 0,115em zurueck. Das ist
+     kein Nachgeben, sondern eine Umrechnung: 11 x 0,13 = 1,43 Pixel Abstand
+     zwischen zwei Buchstaben, 13 x 0,115 = 1,50 Pixel. Der LUFTRAUM zwischen
+     den Zeichen bleibt also praktisch derselbe, waehrend die Zeichen selbst um
+     18 Prozent wachsen. Genau das ist der Ertrag: mehr Buchstabe bei gleichem
+     Schild. */
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.25;
+  --text-label--letter-spacing: 0.115em;
   --text-label--font-weight: 500;
 
-  /* 10 Pixel bleiben fuer Beschriftung ohne eigenen Inhalt: Abschnittsmarken,
-     Nummern, Wiederholungen dessen, was daneben ohnehin steht. */
-  --text-label-xs: 0.625rem;
-  --text-label-xs--line-height: 1.2;
+  /* 11 statt 10 Pixel. Diese Stufe traegt Beschriftung OHNE eigenen Inhalt:
+     Abschnittsmarken, laufende Nummern, "ABB. 02", das Demo-Kennzeichen. Sie
+     wird nur um einen Pixel angehoben und behaelt ihre weite Sperrung: sie
+     soll nicht gelesen, sondern wiedererkannt werden, und der Abstand zur
+     Stufe darueber (13) ist es, der beide unterscheidbar haelt. */
+  --text-label-xs: 0.6875rem;
+  --text-label-xs--line-height: 1.25;
   --text-label-xs--letter-spacing: 0.16em;
   --text-label-xs--font-weight: 500;
 
   --leading-display: 1.02;
   --tracking-display: -0.024em;
-  --tracking-label: 0.13em;
+  /* Muss mit --text-label--letter-spacing uebereinstimmen: .mono-label
+     (Abschnitt 5) setzt seine Groesse aus --text-label und seine Sperrung aus
+     diesem Wert. Zwei Zahlen fuer dieselbe Sache, deshalb steht die
+     Begruendung nur einmal, oben bei --text-label. */
+  --tracking-label: 0.115em;
 
   /* Abstaende. Die 4-Pixel-Leiter von Tailwind bleibt, dazu drei Masse, die
-     die Seite gliedern und deshalb ueberall gleich sein muessen. */
+     die Seite gliedern und deshalb ueberall gleich sein muessen.
+     Die beiden Untergrenzen sind mit der Schrift mitgewachsen (2 auf 2,25 rem,
+     4,5 auf 5 rem): groessere Schrift in gleichem Abstand liest sich enger als
+     vorher. Die OBERGRENZEN sind bewusst stehen geblieben, weil an ihnen die
+     Hoehe des Hero haengt (Abschnitt 6.6: waehrend des Pins ist genau ein
+     Bildschirm da, was darueber hinauswaechst, ist unerreichbar). */
   --spacing-gutter: clamp(1.25rem, 4vw, 3rem); /* Seitenrand */
-  --spacing-block: clamp(2rem, 4vw, 3.5rem); /* Abstand innerhalb einer Sektion */
-  --spacing-section: clamp(4.5rem, 9vw, 9rem); /* Abstand zwischen Sektionen */
+  --spacing-block: clamp(2.25rem, 4vw, 3.5rem); /* Abstand innerhalb einer Sektion */
+  --spacing-section: clamp(5rem, 9vw, 9rem); /* Abstand zwischen Sektionen */
 
-  /* Breiten. max-w-text ist die Lesespalte: bei 17 Pixel sind das rund 68
-     Zeichen, die Spanne, in der Fliesstext ohne Ruecksprung gelesen wird. */
+  /* Breiten. max-w-text ist die Lesespalte: bei 19 Pixel sind das rund 64
+     Zeichen, die Spanne, in der Fliesstext ohne Ruecksprung gelesen wird.
+     Das Mass bleibt bei 38 rem, obwohl die Schrift gewachsen ist: mitwachsen
+     zu lassen hiesse, die Zeile bei gleicher Zeichenzahl breiter zu machen,
+     und der Ruecksprung ans Zeilenende wird mit der Zeilenlaenge schwerer,
+     nicht mit der Schriftgroesse. 64 Zeichen sind besser als 68. */
   --container-text: 38rem;
   --container-page: 78rem;
   /* Die Satzbreite der gezeigten Websites. Schmaler als die Portfolio-Seite,
@@ -491,11 +561,14 @@ h3 {
 }
 
 /* Messschild. Der Unterschied zwischen einer Ueberschrift und einem
-   Instrumentenschild. Fuer Befunde, Abschnittsmarken und Nummern. */
+   Instrumentenschild. Fuer Befunde, Abschnittsmarken und Nummern.
+   Zeilenhoehe 1,25 statt 1,2: bei 13 Pixel Versalien laufen zwei Zeilen sonst
+   ineinander, und diese Stufe traegt seit der neuen Zielgruppe Ueberschriften
+   (die vier Befunde), die auf dem Handy umbrechen duerfen. */
 .mono-label {
   font-family: var(--font-mono);
   font-size: var(--text-label);
-  line-height: 1.2;
+  line-height: 1.25;
   letter-spacing: var(--tracking-label);
   font-weight: 500;
   text-transform: uppercase;
@@ -504,7 +577,7 @@ h3 {
 .mono-label-xs {
   font-family: var(--font-mono);
   font-size: var(--text-label-xs);
-  line-height: 1.2;
+  line-height: 1.25;
   letter-spacing: 0.16em;
   font-weight: 500;
   text-transform: uppercase;
@@ -1008,11 +1081,24 @@ h3 {
    Fundstueck-Look den Befund ein, der ihn benennt.
 
    ALLE FARBWERTE UNTEN SIND GERECHNET (WCAG 2.1, relative Luminanz):
-     #979797 auf #ffffff  = 2,92:1  -> gerundet 2,9:1 (Befund elektro)
-     #ffffff auf #929292  = 3,11:1  -> gerundet 3,1:1 (Befund gasthof)
-     #ffffff auf #9a9a9a  = 2,81:1  (helles Ende desselben Verlaufs)
+     #979797 auf #ffffff  =  2,92:1 -> gerundet 2,9:1 (Befund elektro)
+     #808080 auf #f0efe8  =  3,43:1 -> gerundet 3,4:1 (Befund bau)
      #333333 auf #ffffff  = 12,63:1 (Grundschrift der Insel)
+     #3a3a37 auf #f0efe8  =  9,90:1 (Grundschrift der Bau-Vorlage)
+     #d9d9d9 auf #4a4c4f  =  6,11:1 (Fusszeilenbalken der Bau-Vorlage)
+     #6d5a52 auf #f7f1ee  =  5,90:1 (Oeffnungszeiten der Dach-Vorlage)
      #0000ee auf #ffffff  =  9,40:1 (Browser-Standardlink)
+     #0000ee auf #f0efe8  =  8,15:1 (derselbe Link auf Betonweiss)
+
+   Die Rechnung fuer den Bau-Befund, ausgeschrieben, weil sie der einzige
+   Wert der Insel ist, der nicht auf reinem Weiss steht:
+     #808080 -> Kanal 128/255 = 0,50196 -> linear 0,21586, alle drei gleich,
+                also relative Luminanz L1 = 0,21586
+     #f0efe8 -> 240/255 -> 0,87137 | 239/255 -> 0,86316 | 232/255 -> 0,80695
+                L2 = 0,2126*0,87137 + 0,7152*0,86316 + 0,0722*0,80695 = 0,86084
+     Verhaeltnis = (0,86084 + 0,05) / (0,21586 + 0,05) = 3,4262 -> 3,43:1
+   Wer eine der beiden Farben aendert, macht den Befundtext in
+   content/projekte.ts falsch. Dann gehoert dort dieselbe Zahl mitgeaendert.
    ========================================================================= */
 @layer components {
   /* Die Huelle. Sie gehoert der Mechanik: components/showcase/vorher-nachher.tsx
@@ -1040,9 +1126,10 @@ h3 {
     /* Eigener Stapelkontext, damit die Messschilder sauber darueber liegen. */
     isolation: isolate;
 
-    /* DIE ABDICHTUNG. Die Seite darin ist 900 Pixel breit und fest. Genau
-       das soll sie sein, und genau das laeuft in einem schmalen Fenster
-       seitlich ueber. Ueberlaufen darf es aber nur HIER, nie die
+    /* DIE ABDICHTUNG. Die Seite darin ist fest: 900 Pixel breit, in der
+       Bau-Vorlage 980 (deren Befund nennt diese Zahl). Genau das soll sie
+       sein, und genau das laeuft in einem schmalen Fenster seitlich ueber.
+       Ueberlaufen darf es aber nur HIER, nie die
        Portfolio-Seite: max-width kappt die Insel auf ihren Platz, overflow-x
        macht aus dem Rest einen eigenen Bildlauf. overscroll-behavior
        verhindert, dass ein Wisch am Ende der Insel die Seite dahinter
@@ -1102,7 +1189,10 @@ h3 {
   }
 
   /* Die feste Seite. Der eigentliche Befund "Layout von 2012": eine
-     Pixelbreite, die nie jemand fuer ein Handy angefasst hat. */
+     Pixelbreite, die nie jemand fuer ein Handy angefasst hat.
+     900 ist der Regelfall. Die Bau-Vorlage ueberschreibt ihn weiter unten
+     auf 980, weil ihr Befund diese Zahl nennt. Wer hier etwas aendert,
+     aendert sie fuer alle Vorlagen mit. */
   .alt-fassung .alt-seite {
     width: 900px;
     flex: none;
@@ -1172,7 +1262,8 @@ h3 {
     gap: 16px;
     padding: 14px 16px 12px;
   }
-  /* Die "seriöse" Vorlage stellte den Kopf mittig, ohne zweite Spalte. */
+  /* Manche Vorlagen stellten den Kopf mittig, ohne zweite Spalte. Die
+     Dach-Vorlage ist eine davon. */
   .alt-fassung .alt-kopf--mittig {
     justify-content: center;
     text-align: center;
@@ -1283,11 +1374,6 @@ h3 {
     gap: 20px;
     padding: 14px 16px 4px;
   }
-  /* Eine Zeile ueber die volle Breite der festen Seite, fuer das
-     Handschlag-Klischee der Kanzlei. */
-  .alt-fassung .alt-spalten--breit > * {
-    width: 100%;
-  }
   .alt-fassung .alt-inhalt {
     flex: 1 1 auto;
     min-width: 0;
@@ -1296,8 +1382,10 @@ h3 {
     flex: none;
     width: 210px;
   }
-  /* Die linke Spalte der Kanzlei-Vorlage. Schmaler, und die Linkliste sitzt
-     ohne Vorlauf oben, weil dort kein Bild darueber steht. */
+  /* Die linke Spalte. Schmaler als die rechte, und die Linkliste sitzt ohne
+     Vorlauf oben, weil dort kein Bild darueber steht. Traegt in der
+     Dach-Vorlage die senkrechte Navigation, die Oeffnungszeiten und das
+     Bildchen. */
   .alt-fassung .alt-sidebar--links {
     width: 168px;
   }
@@ -1325,14 +1413,11 @@ h3 {
     text-align: justify;
     word-spacing: normal;
   }
-  /* BEFUND "Kontrast 2,9:1": #979797 auf #ffffff = 2,92:1. */
+  /* BEFUND "Kontrast": der schwache Grauton der jeweiligen Vorlage auf ihrem
+     eigenen Grund. elektro #979797 auf #ffffff = 2,92:1, bau #808080 auf
+     #f0efe8 = 3,43:1. Beide Werte stehen oben im Kopf des Abschnitts. */
   .alt-fassung .alt-fliess--weak {
     color: var(--alt-weak);
-  }
-  /* BEFUND "Schrift 11 Pixel": 11 Pixel Serifenschrift. */
-  .alt-fassung .alt-fliess--11 {
-    font-size: 11px;
-    line-height: 1.3;
   }
 
   /* Der Verlaufsknopf. Kein Kontrastproblem, nur beliebig: er sieht aus wie
@@ -1364,55 +1449,6 @@ h3 {
   .alt-fassung .alt-bildplatz > svg {
     display: block;
   }
-  /* Das grosse Kopfbild der Kanzlei-Vorlage. Der Verlauf ist kraeftiger als
-     beim kleinen Bildplatz, damit die mittig stehende Grafik nicht auf einer
-     fast weissen Flaeche schwimmt. */
-  .alt-fassung .alt-bildplatz--gross {
-    background: linear-gradient(#e4e4e4, #c2c2c2);
-  }
-  .alt-fassung .alt-bildunterschrift {
-    margin: 4px 0 10px;
-    font-size: 11px;
-    color: var(--alt-small);
-  }
-  /* BEFUND "Startbild 4 Megabyte": ein Bildplatz, der noch laedt. Der Balken
-     steht still bei 31 Prozent. Bewusst ohne Zeitangabe: eine Ladezeit waere
-     eine erfundene Messung. */
-  .alt-fassung .alt-ladebalken {
-    height: 12px;
-    border: 1px solid #9a9a9a;
-    background: #efefef;
-    padding: 1px;
-  }
-  .alt-fassung .alt-ladebalken > i {
-    display: block;
-    height: 100%;
-    width: 31%;
-    background: repeating-linear-gradient(45deg, #7f9fc0 0 6px, #6d8cad 6px 12px);
-  }
-
-  /* BEFUND "Kontrast 3,1:1": weisse Schrift auf hellem Verlauf.
-     #ffffff auf #929292 = 3,11:1 am dunkelsten Punkt, auf #9a9a9a = 2,81:1
-     am hellsten. Der Befund nennt den besten Wert, den die Schrift hier
-     ueberhaupt erreicht. */
-  .alt-fassung .alt-hellband {
-    background: linear-gradient(#929292, #9a9a9a);
-    color: #ffffff;
-    padding: 18px 16px;
-    text-shadow: none;
-  }
-  .alt-fassung .alt-hellband h1,
-  .alt-fassung .alt-hellband p {
-    color: #ffffff;
-  }
-  /* Als Startbild braucht die Flaeche Hoehe, sonst liest sie sich als
-     Farbbalken und nicht als Foto, auf das jemand Text gelegt hat. */
-  .alt-fassung .alt-bildplatz > .alt-hellband {
-    min-height: 156px;
-  }
-  .alt-fassung .alt-bildplatz > .alt-ladebalken {
-    margin: 8px;
-  }
 
   /* Der Lauftext. Die einzige Dauerschleife im ganzen Projekt, und sie ist
      Teil des Fundstuecks, nicht des Designs. Bei prefers-reduced-motion
@@ -1430,19 +1466,6 @@ h3 {
     display: inline-block;
     padding-left: 100%;
     animation: altLauf 22s linear infinite;
-  }
-
-  /* PDF-Link. Fuehrt nirgendwohin (href="#", onClick verhindert die
-     Navigation) und ist damit genau das, was der Befund beschreibt. */
-  .alt-fassung .alt-pdf {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-  }
-  .alt-fassung .alt-pdf svg {
-    display: block;
-    flex: none;
   }
 
   /* Fusszeile: mittig, klein, mit Zaehler. */
@@ -1481,31 +1504,199 @@ h3 {
   }
 
   /* ── Die drei Baukasten-Anmutungen ──────────────────────────────────────
-     Drei Betriebe, drei Vorlagen, ein Baukasten. Nur Farbe und Schrift
-     unterscheiden sie, genau wie damals. */
+     Drei Betriebe, drei Vorlagen, EIN Baukasten. Der gemeinsame Teil oben
+     ist der Baukasten, hier unten steht, was der Kunde damals auswaehlen
+     durfte: Farbleiter, Schriftfamilie, ein paar Zutaten.
+
+     Die drei muessen sich unterscheiden, sonst liest sich die Showcase-
+     Sektion als dreimal dieselbe Seite und der Besucher glaubt keiner davon.
+     Sie duerfen sich aber nicht karikieren: die Fassung ueberzeugt, wenn ein
+     Handwerker sie ansieht und denkt "so eine habe ich".
+
+       elektro  Blau, Arial, Kopf mit Grafiknummer, rechte Bildspalte
+       bau      Graphit mit Signalstreifen, Arial Black in Versalien auf
+                Tahoma, Leistungskasten rechts, dunkler Fussbalken
+       dach     Ziegelrot, Trebuchet auf Verdana, mittiger Kopf, Lauftext,
+                linke Spalte, Zaehler im Fuss
+
+     Was demoeigen ist, steht unter dem jeweiligen data-demo und nirgendwo
+     sonst. Eine dieser Regeln in den gemeinsamen Teil zu heben faerbt sofort
+     die beiden anderen Vorlagen ein. */
   .alt-fassung .alt-blatt[data-demo="elektro"] {
     --alt-bar-a: #4a6b8a;
     --alt-bar-b: #35506b;
     --alt-font: Arial, Helvetica, sans-serif;
     --alt-font-head: Arial, Helvetica, sans-serif;
   }
-  .alt-fassung .alt-blatt[data-demo="gasthof"] {
-    --alt-bar-a: #6b5a3a;
-    --alt-bar-b: #4c3f28;
-    --alt-body-a: #ded7c6;
-    --alt-body-b: #f3efe6;
-    --alt-text: #444444;
-    --alt-font: Georgia, "Times New Roman", serif;
-    --alt-font-head: Georgia, "Times New Roman", serif;
+
+  /* ── Baubetrieb Mustergrund ────────────────────────────────────────────
+     Die "Business"-Vorlage: schwere Graubalken, alles Wichtige in
+     Versalien, dazu der eine Signalstreifen, den jede Bau-Vorlage hatte.
+     Der Seitengrund ist nicht Weiss, sondern Betonweiss, und genau darauf
+     beruht der Kontrastbefund. */
+  .alt-fassung .alt-blatt[data-demo="bau"] {
+    --alt-page: #f0efe8; /* Betonweiss, Bezugsflaeche des Befunds */
+    --alt-body-a: #d8d6cd;
+    --alt-body-b: #efeee7;
+    --alt-text: #3a3a37; /* 9,90:1 auf #f0efe8 */
+    --alt-weak: #808080; /* BEFUND "Kontrast 3,4:1": 3,43:1 auf #f0efe8 */
+    --alt-small: #5e5e5a;
+    --alt-rule: #d3d1c7;
+    --alt-frame: #b3b0a5;
+    --alt-bar-a: #74767a;
+    --alt-bar-b: #4a4c4f;
+    --alt-font: Tahoma, Geneva, Verdana, sans-serif;
+    --alt-font-head: "Arial Black", "Arial Bold", Gadget, sans-serif;
   }
-  .alt-fassung .alt-blatt[data-demo="kanzlei"] {
-    --alt-bar-a: #243b5e;
-    --alt-bar-b: #1b2c47;
-    --alt-body-a: #d5d5d5;
-    --alt-body-b: #ededed;
-    --alt-text: #3a3a3a;
-    --alt-font: "Times New Roman", Times, serif;
-    --alt-font-head: "Times New Roman", Times, serif;
+
+  /* BEFUND "Feste Breite 980 Pixel": gebaut, nicht behauptet. Der
+     gemeinsame Teil setzt 900, diese eine Vorlage 980. Nur hier, nur unter
+     [data-demo="bau"]: global gesetzt wuerde derselbe Wert die
+     Elektro-Fassung mitverschieben und deren Befunde entwerten.
+     Wer nachmisst, bekommt in den Entwicklerwerkzeugen 980 Pixel
+     Elementbreite (box-sizing: border-box, die beiden Rahmen der Seite
+     liegen also drin). Die Insel scrollt dann seitlich, die Portfolio-Seite
+     nicht: das regelt .alt-fassung weiter oben. */
+  .alt-fassung .alt-blatt[data-demo="bau"] .alt-seite {
+    width: 980px;
+  }
+
+  /* Versalien, wo die Vorlage laut war: Ueberschriften und Navigation. */
+  .alt-fassung .alt-blatt[data-demo="bau"] h1,
+  .alt-fassung .alt-blatt[data-demo="bau"] h2 {
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .alt-fassung .alt-blatt[data-demo="bau"] .alt-nav a {
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Der Werbespruch im Kopf, rechts neben dem Namen. Kursiv und klein, wie
+     ihn der Baukasten in das zweite Kopffeld setzte. */
+  .alt-fassung .alt-blatt[data-demo="bau"] .alt-slogan {
+    max-width: 340px;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--alt-small);
+    text-align: right;
+  }
+
+  /* Das Kopfband mit dem Signalstreifen. Drei Verlaufsebenen, kein Bild:
+     unten die Bake, darueber der Lichtstreif, darunter der Graphitverlauf.
+     Es wird nichts geladen. */
+  .alt-fassung .alt-blatt[data-demo="bau"] .alt-banner {
+    height: 118px;
+    border-bottom: 1px solid var(--alt-frame);
+    background:
+      repeating-linear-gradient(45deg, #e2b400 0 10px, #2f3134 10px 20px) bottom / 100% 8px
+        no-repeat,
+      linear-gradient(160deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 45%),
+      linear-gradient(#7c7e82, #4a4c4f);
+  }
+
+  /* Der Kasten in der rechten Spalte. Er traegt den Befund "Keine Referenz
+     sichtbar": vier Leistungswoerter, ein Rahmen, sonst nichts. Kein Bild,
+     kein Ort, kein Bauvorhaben. */
+  .alt-fassung .alt-blatt[data-demo="bau"] .alt-kasten {
+    border: 1px solid var(--alt-frame);
+    background: linear-gradient(#ffffff, #e7e5dc);
+    padding: 8px 10px 10px;
+  }
+  .alt-fassung .alt-blatt[data-demo="bau"] .alt-kasten h2 {
+    margin: 0 0 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--alt-rule);
+    font-size: 12px;
+  }
+  .alt-fassung .alt-blatt[data-demo="bau"] .alt-kasten ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 12px;
+  }
+
+  /* Der dunkle Fussbalken. #d9d9d9 auf #4a4c4f = 6,11:1: die Fusszeile ist
+     der einzige Ort dieser Vorlage, an dem der Kontrast stimmt, und das ist
+     Absicht. Nur die vier Befunde sind Befunde, alles andere darf schlicht
+     altmodisch sein. */
+  .alt-fassung .alt-blatt[data-demo="bau"] .alt-fuss {
+    margin-top: 14px;
+    border-top: 0;
+    background: var(--alt-bar-b);
+    color: #d9d9d9;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Dachdecker Musterhoehe ────────────────────────────────────────────
+     Die "rustikale" Handwerkervorlage: Ziegelrot, Trebuchet ueber Verdana,
+     mittiger Kopf, gelber Lauftext, linke Spalte, Zaehler im Fuss.
+
+     BEFUND "Schrift 12 Pixel": die Insel steht auf 13, diese Vorlage auf
+     12. Der Wert steht am Blatt und nicht an einer einzelnen Klasse, weil
+     der Befund vom Fliesstext DIESER FASSUNG spricht, nicht von einem
+     Absatz darin. Wer irgendeinen Absatz anklickt, misst 12 Pixel.
+     Ueberschriften, Navigation und Fusszeile tragen eigene Pixelwerte und
+     bleiben davon unberuehrt, genau wie damals. */
+  .alt-fassung .alt-blatt[data-demo="dach"] {
+    --alt-page: #ffffff;
+    --alt-body-a: #e3d3cb;
+    --alt-body-b: #f6f1ee;
+    --alt-text: #333333;
+    --alt-small: #6d5a52;
+    --alt-rule: #e0d3cd;
+    --alt-frame: #bfada6;
+    --alt-bar-a: #a33f2c;
+    --alt-bar-b: #7a2617;
+    --alt-font: Verdana, Geneva, sans-serif;
+    --alt-font-head: "Trebuchet MS", Tahoma, Geneva, sans-serif;
+
+    font-size: 12px;
+  }
+
+  /* Das Anruf-Feld sitzt am rechten Ende der Navigationsleiste. */
+  .alt-fassung .alt-blatt[data-demo="dach"] .alt-nav-anruf {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+  }
+
+  /* BEFUND "Tap-Ziel 30 Pixel": gebaut, nicht behauptet. Exakt 30 mal 30,
+     Rahmen eingerechnet (box-sizing: border-box gilt seit Tailwinds
+     Preflight ueberall). Kein Innenabstand, keine unsichtbare
+     Vergroesserung: waere die Trefferflaeche groesser als das Bild, waere
+     der Befund falsch.
+     Nicht 26 (das ist der Wert der Elektro-Fassung) und nicht 32. */
+  .alt-fassung .alt-blatt[data-demo="dach"] .alt-anruf {
+    display: block;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    padding: 0;
+    border: 1px solid #5d1a0e;
+    background: linear-gradient(#c25a44, #8d2d1c);
+    line-height: 0;
+  }
+  .alt-fassung .alt-blatt[data-demo="dach"] .alt-anruf svg {
+    display: block;
+    /* 30 minus zwei Rahmen sind 28 innen, das Zeichen misst 18: bleiben
+       fuenf Pixel je Seite. Von Hand gerechnet, damit die Flaeche exakt
+       bleibt und nicht ueber einen Innenabstand waechst. */
+    margin: 5px auto;
+  }
+
+  /* Die Oeffnungszeiten in der linken Spalte. Sie tragen den Befund "Kein
+     Notdienst sichtbar": Montag bis Freitag, 8 bis 17 Uhr, und kein Wort
+     darueber hinaus. #6d5a52 auf #f7f1ee = 5,90:1, hier ist der Kontrast
+     also in Ordnung. Der Mangel ist der fehlende Satz, nicht die Farbe. */
+  .alt-fassung .alt-blatt[data-demo="dach"] .alt-zeiten {
+    margin: 10px 0 0;
+    border: 1px solid var(--alt-rule);
+    background: #f7f1ee;
+    padding: 6px 8px;
+    color: var(--alt-small);
   }
 }
 
@@ -1535,9 +1726,15 @@ h3 {
 
    Die drei Fassungen teilen Knopf, Navigationsziel, Haarlinie und
    Messschild. Was sie unterscheidet, ist nicht Farbe (es gibt genau einen
-   Akzent, auch hier), sondern Aufbau: Handwerk asymmetrisch mit
-   Leitungsschema, Gasthof mittig wie ein Aushang, Kanzlei streng links mit
-   Paragraphenspalte. Gleiche Hand, drei Haltungen. */
+   Akzent, auch hier), sondern Aufbau: Elektro asymmetrisch mit
+   Leitungsschema, Bau als Bautafel mit drei gezeichneten Referenzen, Dach
+   mit einem Notrufband ueber allem. Gleiche Hand, drei Haltungen.
+
+   Die Zielgruppe entscheidet den Ton: Bauunternehmen, Elektriker,
+   Dachdecker. Diese Fassungen sind das, was ein Dachdecker sich wuenschen
+   soll, also muessen sie ohne Lesen verstaendlich sein. Grosse Schrift, viel
+   Luft, EIN offensichtlicher naechster Schritt. Wo elegant und
+   unmissverstaendlich auseinanderlaufen, gewinnt unmissverstaendlich. */
 @layer components {
   .neu-fassung {
     container-type: inline-size;
@@ -1603,6 +1800,31 @@ h3 {
      containing block liegen bleibt (siehe Warnung in Abschnitt 6). */
   .nf-cta:active {
     transform: scale(0.98);
+  }
+
+  /* Der grosse Knopf. Fuer die eine Fassung, in der der Anruf nicht ein Weg
+     unter mehreren ist, sondern DER Weg: beim Dachdecker steht er fuer den
+     Sturmschaden um drei Uhr nachts. 56 Pixel Hoehe und die Textstufe
+     --text-demo-2 darueber, damit er auch aus dem Augenwinkel als Knopf und
+     nicht als Zeile gelesen wird. Keine eigene Schriftgroesse: die Stufe
+     gibt es bereits, sie gehoert der Demo-Zone. */
+  .nf-cta--gross {
+    min-height: 56px;
+    padding-inline: 1.5rem;
+    font-size: var(--text-demo-2);
+  }
+
+  /* Das Band ueber der Seite. Es traegt den einen Satz, der in der alten
+     Fassung fehlt, und daneben den Knopf dazu.
+     Warum kein position: sticky, obwohl "jederzeit erreichbar" danach
+     ruft: die neue Fassung liegt im Schieber unter einem clip-path, und
+     ein klebendes Kind waere dort an die freigeschnittene Flaeche geheftet
+     statt ans Fenster. Es steht deshalb schlicht als erstes Element der
+     Seite, ueber der Kopfzeile, und wiederholt sich im Textfluss weiter
+     unten. Zwei feste Plaetze schlagen einen wandernden. */
+  .nf-band {
+    background: var(--c-accent-wash);
+    border-bottom: 1px solid var(--c-accent-line);
   }
 
   /* Navigationsziel. 44 mal 44 Pixel, der Wert, den der Befund der alten

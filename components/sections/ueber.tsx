@@ -32,12 +32,14 @@ import { useReveal } from "@/lib/reveal";
  * nirgends benutzt: sie zeigten nichts, sie schmueckten.
  *
  * WAS STATTDESSEN STEHT. Die Lesespalte bekommt links eine Haarlinie, die
- * sich beim Eintritt nach unten zeichnet, mit einem Teilstrich an jedem der
- * drei Absaetze und einem Fuss, der sie unter dem letzten schliesst. Das ist
- * dasselbe Instrument wie die Skala im Prozess, nur in den Rand gedreht:
- * drei Eintraege, dann ist der Eintrag zu Ende. Es zeigt etwas (dass es genau
- * drei Aussagen sind, und dass sie abgeschlossen sind), ohne ein Wort zu
- * erfinden.
+ * sich beim Eintritt nach unten zeichnet, mit einem Teilstrich an jedem Absatz
+ * und einem Fuss, der sie unter dem letzten schliesst. Das ist dasselbe
+ * Instrument wie die Skala im Prozess, nur in den Rand gedreht: so viele
+ * Eintraege, dann ist der Eintrag zu Ende. Es zeigt etwas (dass es genau diese
+ * Aussagen sind, und dass sie abgeschlossen sind), ohne ein Wort zu erfinden.
+ * Die Zahl der Teilstriche kommt aus content/seite.ts und ist nicht fest
+ * verdrahtet; sie ist dort inzwischen von drei auf zwei gefallen, und die
+ * Figur traegt das, weil sie zaehlt statt zu behaupten.
  *
  * KEIN AKZENT IN DIESER SEKTION. Der Akzent bedeutet auf dieser Seite ueberall
  * "hier zeigt jemand mit dem Finger drauf" (globals.css Abschnitt 2). Hier
@@ -55,7 +57,7 @@ import { useReveal } from "@/lib/reveal";
  * quer und sind deshalb CSS-Kanten, keine Pfade.
  */
 
-/** Abstand zwischen zwei Absaetzen. Drei Stufen, 90 ms, Budget sind vier. */
+/** Abstand zwischen zwei Absaetzen. 90 ms je Stufe, Budget sind vier Stufen. */
 const STAFFEL_MS = 90;
 
 /**
@@ -92,10 +94,14 @@ export default function Ueber() {
         </h2>
 
         {/* Die Lesespalte rueckt um den Rand ein, in dem die Linie steht.
+            Auf dem Handy um 24 statt 32 Pixel: bei 390 Pixel Fensterbreite
+            gehen fuer den Seitenrand schon 40 Pixel weg, und jeder weitere
+            Einzug kostet direkt Zeichen je Zeile. Ab sm ist Platz genug, dort
+            steht der ganze Rand.
             --d-draw von 700 auf --d-slow: die Strecke ist eine einzige gerade
-            Linie ueber drei Absaetze, und 700 ms lesen sich dabei zaeh. */}
+            Linie ueber alle Absaetze, und 700 ms lesen sich dabei zaeh. */}
         <div
-          className="relative mt-block pl-8"
+          className="relative mt-block pl-6 sm:pl-8"
           style={{ ["--d-draw" as string]: "var(--d-slow)" } as CSSProperties}
         >
           {/* h-full und NICHT top-0/bottom-0: ein <svg> ohne height-Attribut
@@ -124,14 +130,16 @@ export default function Ueber() {
           </svg>
 
           {/* Der Fuss, der den Eintrag schliesst. In line3 und nicht im Akzent:
-              siehe Begruendung im Dateikopf. */}
+              siehe Begruendung im Dateikopf. Laenger als ein Teilstrich (16
+              statt 12 Pixel), weil das auf jeder Skala der Unterschied
+              zwischen einer Teilung und dem Ende ist. */}
           <span
             aria-hidden="true"
-            className="marker-in absolute bottom-0 left-0 h-px w-2.5 bg-line3"
+            className="marker-in absolute bottom-0 left-0 h-px w-4 bg-line3"
             style={{ ["--draw-delay" as string]: `${FUSS_AB_MS}ms` } as CSSProperties}
           />
 
-          <div className="space-y-6">
+          <div className="space-y-8">
             {absaetze.map((absatz, index) => (
               <div
                 key={absatz}
@@ -144,13 +152,15 @@ export default function Ueber() {
                   {/* Der Teilstrich am Absatz. Er steht IM Absatz und nicht in
                       der Huelle darum, damit sich sein em an dessen
                       Schriftgroesse misst: der erste Absatz steht in text-lead,
-                      die beiden anderen in text-body, und der Strich soll bei
-                      beiden in der ersten Zeile liegen und nicht darueber.
+                      die uebrigen in text-body, und der Strich soll bei allen
+                      in der ersten Zeile liegen und nicht darueber.
                       0,75em ist die optische Mitte einer Zeile bei
-                      line-height 1,5 bis 1,65. */}
+                      line-height 1,5 bis 1,65.
+                      Der seitliche Versatz folgt dem Einzug der Spalte und
+                      muss mit ihm zusammen geaendert werden. */}
                   <span
                     aria-hidden="true"
-                    className="absolute top-[0.75em] -left-8 block h-px w-2 bg-line3"
+                    className="absolute top-[0.75em] -left-6 block h-px w-3 bg-line3 sm:-left-8"
                   />
                   {absatz}
                 </p>

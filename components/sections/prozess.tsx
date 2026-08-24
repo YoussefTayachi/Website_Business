@@ -92,10 +92,10 @@ const TEXT_VORLAUF_MS = STAFFEL_MS;
 
 /**
  * Der senkrechte Lauf muss die Luecke zum naechsten Schritt mit ueberbruecken,
- * sonst zerfaellt die Skala in vier Striche. Der Wert ist gap-y-8 aus dem
+ * sonst zerfaellt die Skala in vier Striche. Der Wert ist gap-y-12 aus dem
  * Raster unten und muss mit ihm zusammen geaendert werden.
  */
-const LUECKE = "2rem";
+const LUECKE = "3rem";
 
 /**
  * Vorlauf des Abschlusses am Ende der Skala. .marker-in rechnet --draw-delay
@@ -144,7 +144,7 @@ export default function Prozess() {
           und die Skala braeuchte sonst fast drei Sekunden. Kein neuer Wert,
           sondern der naechstkleinere aus derselben Leiter in globals.css. */}
       <ol
-        className="mt-block grid gap-y-8 lg:grid-cols-4 lg:gap-y-0"
+        className="mt-block grid gap-y-12 lg:grid-cols-4 lg:gap-y-0"
         style={{ ["--d-draw" as string]: "var(--d-quick)" } as CSSProperties}
       >
         {schritte.map((schritt, index) => {
@@ -152,7 +152,7 @@ export default function Prozess() {
           const laufAb = index * STAFFEL_MS;
 
           return (
-            <li key={schritt.nummer} className="relative pt-5 pl-8 lg:pl-0 lg:pr-10">
+            <li key={schritt.nummer} className="relative pt-6 pl-8 lg:pl-0 lg:pr-8">
               {/* ── Der Lauf, waagerecht (ab lg) ────────────────────────────
                   Volle Spaltenbreite ohne Luecke zum Nachbarn, dadurch stossen
                   die vier Abschnitte stumpf aneinander und lesen sich als eine
@@ -208,14 +208,18 @@ export default function Prozess() {
 
               {/* Die Teilstriche. Quer zur Linie, deshalb CSS und nicht SVG
                   (Begruendung im Dateikopf). Sie stehen von Anfang an da: die
-                  Skala ist eingraviert, gelaufen wird darauf. */}
+                  Skala ist eingraviert, gelaufen wird darauf.
+                  12 statt 8 Pixel lang: mit der groesseren Schrift daneben
+                  waren sie das kleinste Bauteil der Seite und verschwanden
+                  gegen die Zeile, die sie eroeffnen. Die Teilung eines
+                  Messgeraets muss man aus zwei Metern erkennen. */}
               <span
                 aria-hidden="true"
-                className="absolute top-0 left-0 hidden h-2 w-px bg-line3 lg:block"
+                className="absolute top-0 left-0 hidden h-3 w-px bg-line3 lg:block"
               />
               <span
                 aria-hidden="true"
-                className="absolute top-0 left-0 h-px w-2 bg-line3 lg:hidden"
+                className="absolute top-0 left-0 h-px w-3 bg-line3 lg:hidden"
               />
 
               {/* DER ABSCHLUSS, und der einzige Akzent dieser Figur. Er sitzt
@@ -274,9 +278,20 @@ export default function Prozess() {
                   } as CSSProperties
                 }
               >
-                <p className="mono-label text-ink">{schritt.nummer}</p>
+                {/* Die Nummer steht text-faint und nicht mehr in voller
+                    Tinte. Sie und der Titel waren beide text-ink, also gleich
+                    laut, und dann fuehrt keiner von beiden. Was jemand beim
+                    Vorbeiscrollen lesen soll, ist "Erstgespraech", nicht "01".
+                    Die Nummer ist die Marke an der Skala, mehr nicht: 4,80:1,
+                    also lesbar, aber eine Stufe zurueck. */}
+                <p className="mono-label text-faint">{schritt.nummer}</p>
                 <h3 className="mt-3 text-title text-ink">{schritt.titel}</h3>
-                <p className="mt-2 text-small text-soft">{schritt.text}</p>
+                {/* Bleibt text-small (17 Pixel) und wird NICHT auf Fliesstext
+                    gehoben: die Spalte ist im breiten Fenster rund 250 Pixel
+                    breit, bei 19 Pixel stuenden darin 26 Zeichen je Zeile.
+                    Eine Stufe kleiner ist hier lesbarer als eine Stufe
+                    groesser, weil die Zeile sonst zerfaellt. */}
+                <p className="mt-3 text-small text-soft">{schritt.text}</p>
               </div>
             </li>
           );

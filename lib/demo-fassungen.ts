@@ -30,10 +30,10 @@ import type { ProjektSlug } from "@/content/projekte";
 
 import ElektroAlt from "@/components/showcase/demos/elektro-musterhaus-alt";
 import ElektroNeu from "@/components/showcase/demos/elektro-musterhaus-neu";
-import GasthofAlt from "@/components/showcase/demos/gasthof-mustertal-alt";
-import GasthofNeu from "@/components/showcase/demos/gasthof-mustertal-neu";
-import KanzleiAlt from "@/components/showcase/demos/kanzlei-musterberg-alt";
-import KanzleiNeu from "@/components/showcase/demos/kanzlei-musterberg-neu";
+import BauAlt from "@/components/showcase/demos/bau-mustergrund-alt";
+import BauNeu from "@/components/showcase/demos/bau-mustergrund-neu";
+import DachAlt from "@/components/showcase/demos/dach-musterhoehe-alt";
+import DachNeu from "@/components/showcase/demos/dach-musterhoehe-neu";
 
 export type DemoFassungen = {
   alt: ComponentType | null;
@@ -42,8 +42,8 @@ export type DemoFassungen = {
 
 export const demoFassungen: Record<ProjektSlug, DemoFassungen> = {
   "elektro-musterhaus": { alt: ElektroAlt, neu: ElektroNeu },
-  "gasthof-mustertal": { alt: GasthofAlt, neu: GasthofNeu },
-  "kanzlei-musterberg": { alt: KanzleiAlt, neu: KanzleiNeu },
+  "bau-mustergrund": { alt: BauAlt, neu: BauNeu },
+  "dach-musterhoehe": { alt: DachAlt, neu: DachNeu },
 };
 
 /** true, wenn beide Fassungen eines Projekts gebaut sind. */

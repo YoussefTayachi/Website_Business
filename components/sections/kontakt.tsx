@@ -137,7 +137,7 @@ export default function Kontakt() {
     >
       <div
         className={cn(
-          "ticks max-w-4xl rounded-md bg-sheet px-6 py-10 shadow-lift sm:px-10 sm:py-12 lg:px-14 lg:py-14",
+          "ticks max-w-4xl rounded-md bg-sheet px-6 py-12 shadow-lift sm:px-10 sm:py-14 lg:px-16 lg:py-16",
           "reveal",
           revealed && "is-in",
         )}
@@ -225,12 +225,19 @@ export default function Kontakt() {
             {/* 48 Pixel Mindesthoehe, also ueber den 44 aus WCAG 2.5.5. Dieselben
                 Masse wie .nf-cta in globals.css, damit der Knopf der Seite und
                 der Knopf in den gezeigten Fassungen dieselbe Hand haben.
+                DIESE 48 SIND EINE ZUSAGE: hero.messwerte in content/seite.ts
+                nennt "Tap-Ziel 48 Pixel" als Messwert ueber diese Seite. Die
+                Zahl darf nach unten nie unterschritten und nach oben nicht
+                beilaeufig veraendert werden, sonst steht im Hero eine falsche
+                Angabe. Der Seitenabstand ist auf px-6 gewachsen, weil die
+                Beschriftung jetzt 19 statt 17 Pixel misst und der Knopf sonst
+                enger wirkt als der im Hero, der dieselbe Aufgabe hat.
                 Der Fokusring kommt global aus :focus-visible.
                 hover: kompiliert Tailwind v4 unter (hover: hover), der Zustand
                 bleibt auf dem Handy also nicht nach dem Tippen stehen. */}
             <a
               href={mailtoHref}
-              className="inline-flex min-h-12 items-center justify-center rounded-sm bg-accent px-5 font-medium text-accent-contrast transition hover:bg-accent-strong active:scale-[0.98]"
+              className="inline-flex min-h-12 items-center justify-center rounded-sm bg-accent px-6 font-medium text-accent-contrast transition hover:bg-accent-strong active:scale-[0.98]"
             >
               {emailLabel}
             </a>
