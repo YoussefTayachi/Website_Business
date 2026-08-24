@@ -746,6 +746,157 @@ h3 {
   pointer-events: none;
 }
 
+/* 6.6 DER MESSLAUF: der eine scrollgesteuerte Moment der Seite.
+   ─────────────────────────────────────────────────────────────────────────
+   Im Hero haelt das Blatt stehen (position: sticky) und wird waehrenddessen
+   vermessen: der Maszstab unter den Wegen laeuft mit dem Scrollen von links
+   nach rechts, der Zeiger in Akzentfarbe steht auf dem Fortschritt, und wo
+   der Lauf vorbeikommt, tauchen zwei Messwerte auf. Gleichzeitig verlaengern
+   sich die Eckwinkel um das Feld. Ein Moment, ein Geraet.
+
+   WARUM UEBERHAUPT GEPINNT. Ein einmaliger Reveal (Abschnitt 6.3) kann das
+   nicht: dort loest der Beobachter aus, und der Ablauf gehoert danach der
+   Uhr. Hier gehoert er der Hand. Die Messung dauert genau so lange, wie der
+   Besucher sie dauern laesst, und sie laeuft rueckwaerts, wenn er
+   zurueckscrollt. Genau das ist die Aussage der Seite: er prueft selbst.
+
+   WARUM CSS UND KEIN JAVASCRIPT. Der Fortschritt kommt aus einer
+   Scroll-Timeline (view()), nicht aus einem Scroll-Listener. Der Wert wird
+   im Compositor gefuehrt, also ohne Layout-Lesen pro Bild, ohne
+   requestAnimationFrame, ohne Aufraeumen und ohne eine einzige Zeile
+   Client-JavaScript. Die Vorlage dafuer (scrollcraft) macht dasselbe mit
+   einem rAF-Loop und veroeffentlicht --sc-p auf dem Abschnitt; uebernommen
+   ist der Vertrag (EIN Fortschrittswert 0 bis 1, alles andere rechnet daraus
+   mit calc), nicht der Motor. Hier heiszt der Wert --mess-p.
+
+   DER RUECKFALL IST DER ENDZUSTAND. --mess-p startet mit 1. Wo es keine
+   Scroll-Timeline gibt (Safari vor 26, Firefox vor 144), greift der
+   @supports-Block nicht: kein Pin, keine zusaetzliche Scrollstrecke, und das
+   Blatt steht fertig vermessen da. Dasselbe bei reduzierter Bewegung, siehe
+   Abschnitt 7, und dasselbe unterhalb der Fenstergrenzen weiter unten.
+
+   DIE FENSTERGRENZEN SIND KEINE VORSICHT, SIE SIND EIN BEFUND. Die Buehne
+   ist genau ein Bildschirm hoch. Passt der Hero-Inhalt nicht hinein, waere
+   sein unteres Ende waehrend des Pins unerreichbar, also Inhalt, den ein
+   Geraet verschluckt. Unter 64 rem Breite (der Satz wird hoeher) und unter
+   45 rem Hoehe (der Bildschirm wird niedriger) kann das eintreten, deshalb
+   laeuft der Moment dort nicht. Auf dem Handy kostet ein festgehaltener Hero
+   auszerdem am meisten und traegt am wenigsten: die Messwerte stehen dort
+   ohnehin, nur ohne den Weg dorthin. */
+@property --mess-p {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@keyframes messLauf {
+  from {
+    --mess-p: 0;
+  }
+  to {
+    --mess-p: 1;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 64rem) and (min-height: 45rem) {
+    /* Der Akt. Seine Hoehe IST die Laenge des Moments: 1,75 Bildschirme,
+       davon einer die Buehne. Es bleiben 0,75 Bildschirme Messstrecke, also
+       ein knapper Wisch. Mehr waere Wartezeit vor dem Beweis, weniger liesze
+       den Lauf springen statt laufen.
+       Kein overflow: hidden hier, sondern clip an der Aufrufstelle: ein
+       Scrollbereich als Vorfahr nimmt der Buehne ihr sticky UND der
+       Zeitachse ihren Bezug, und beides scheitert lautlos. */
+    .mess-akt {
+      height: calc(var(--mess-span, 1.75) * 100svh);
+      view-timeline-name: --mess-achse;
+    }
+
+    /* Die Buehne haengt sich unter die Kopfleiste, nicht an den
+       Fensterrand: --header-h ist die zugesagte Hoehe der Leiste
+       (components/chrome/kopfleiste.tsx), und so schiebt sich waehrend des
+       Pins nie Text unter die deckende Flaeche, die die Leiste ab 24 Pixel
+       Scroll bekommt. */
+    .mess-buehne {
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100svh - var(--header-h));
+    }
+
+    /* Der Fortschritt liegt auf dem Feld und nicht auf dem Akt, damit die
+       Neuberechnung je Bild auf den Inhalt begrenzt bleibt, der ihn
+       tatsaechlich liest.
+       animation-range: contain ist die Strecke, auf der der Akt den
+       Bildschirm vollstaendig ausfuellt, also genau die Strecke, auf der die
+       Buehne klebt. Ohne diese Angabe liefe der Wert schon, waehrend der
+       Hero erst einfaehrt. */
+    .mess-feld {
+      animation: messLauf linear both;
+      animation-timeline: --mess-achse;
+      animation-range: contain;
+    }
+  }
+}
+
+/* Der Maszstab. Die Teilung ist 2,75 rem, also genau die halbe Rasterweite
+   des Blattes (Abschnitt 5): das Geraet misst in der Teilung des Papiers,
+   auf dem es liegt. Striche unten, Grundlinie darunter, mehr ist es nicht. */
+.mess-skala {
+  position: relative;
+  display: block;
+  height: 0.75rem;
+  border-bottom: 1px solid var(--c-line2);
+  background-image: repeating-linear-gradient(to right, var(--c-line2) 0 1px, transparent 1px 2.75rem);
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 100% 0.375rem;
+}
+
+/* Die gelaufene Strecke. Tinte auf der Grundlinie, keine Akzentfarbe: ein
+   waagerechter Balken in Siegellack ueber die halbe Hero-Breite waere lauter
+   als der CTA daneben, und dann gaebe es zwei laute Dinge. */
+.mess-lauf {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  width: calc(var(--mess-p) * 100%);
+  background: var(--c-ink);
+}
+
+/* Der Zeiger. Der einzige Akzent im Geraet, und er hat genau die Bedeutung,
+   die der Akzent auf dieser Seite ueberall hat: hier zeigt jemand hin.
+   margin-left holt die eigene Strichbreite zurueck, damit er am Ende buendig
+   auf der letzten Teilung steht statt einen Pixel daneben. */
+.mess-zeiger {
+  position: absolute;
+  bottom: 0;
+  left: calc(var(--mess-p) * 100%);
+  margin-left: -1px;
+  width: 1px;
+  height: 100%;
+  background: var(--c-accent);
+}
+
+/* Ein Messwert. Er taucht auf, wenn der Lauf seine Marke passiert; wann das
+   ist, setzt die Aufrufstelle mit --mess-ab. 0,16 ist die Blende: kuerzer
+   schaltet der Wert hart um, laenger steht er die halbe Strecke halb da.
+   Der Strich davor ist derselbe Zeiger in klein. */
+.mess-schild {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: clamp(0, calc((var(--mess-p) - var(--mess-ab, 0.5)) / 0.16), 1);
+}
+.mess-schild::before {
+  content: "";
+  display: block;
+  flex: none;
+  width: 1px;
+  height: 0.75rem;
+  background: var(--c-accent);
+}
+
 /* ── 7. REDUZIERTE BEWEGUNG ───────────────────────────────────────────────
    Kein dezenteres Fallback, sondern der fertige Zustand. Wer das eingestellt
    hat, sieht dieselbe Seite, nur ohne den Weg dorthin. */
@@ -792,6 +943,14 @@ h3 {
   .split-eased .split-seam {
     transition: none;
   }
+
+  /* Der Messlauf (Abschnitt 6.6) braucht hier bewusst keine Regel. Sein
+     ganzer Block haengt an (prefers-reduced-motion: no-preference), es gibt
+     also weder Pin noch Zeitachse noch zusaetzliche Scrollstrecke, und
+     --mess-p behaelt seinen Anfangswert 1. Damit steht das Blatt fertig
+     vermessen da: Lauf voll, Zeiger am Ende, beide Messwerte sichtbar,
+     Eckwinkel ausgefahren. Wer hier eine Regel ergaenzt, ueberschreibt
+     genau diesen Endzustand. */
 
   /* Der Lauftext in der alten Fassung (Abschnitt 8). Die Regel oben kuerzt
      jede Animation auf 0,01 ms, und genau das waere hier falsch: der Endwert

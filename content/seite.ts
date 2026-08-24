@@ -40,22 +40,26 @@ export const seite = {
 
   hero: {
     kicker: "Ein Entwickler, keine Agentur",
-    headline: "Der Befund stand in der Mail. Die Korrektur steht hier.",
-    unterzeile:
-      "Darunter liegen zwei Fassungen derselben Beispielseite: die alte Bauweise, wie sie noch auf vielen echten Betriebsseiten steht, und die neue daneben.",
+    headline: "Der Befund aus der Mail, hier eingelöst.",
+    unterzeile: "Zwei Fassungen derselben Seite, direkt darunter: die alte Bauweise und die neue.",
     primaerCta: { label: "Fassungen vergleichen", href: "#showcase" },
     sekundaerCta: { label: "Kontakt aufnehmen", href: "#kontakt" },
+    // Die Messleiste im "Messlauf" (components/sections/hero.tsx) zeigt genau
+    // diese zwei Werte, gerechnet und nachgerechnet, in der Form der
+    // Befund-tag-Zeilen aus content/projekte.ts. Wer Farben oder die Hoehe des
+    // primaeren Knopfes aendert, muss diese zwei Zeilen mitziehen (Rechenweg
+    // steht im Dateikopf von hero.tsx).
+    messwerte: ["Kontrast über 15:1", "Tap-Ziel 48 Pixel"] as const,
   },
 
   befund: {
     eyebrow: "Der Befund",
     headline: "Vier Befunde, die sich wiederholen",
-    intro:
-      "Nicht jede veraltete Website hat denselben Fehler. Diese vier tauchen trotzdem immer wieder auf, und in der Beispielseite weiter unten stecken sie alle.",
+    intro: "Vier Fehler tauchen bei alten Websites immer wieder auf, alle stecken in der Beispielseite weiter unten.",
     items: [
       {
         label: "Tempo ungeprüft",
-        text: "Bilder, die niemand verkleinert hat, kosten Zeit, bevor der erste Satz zu lesen ist.",
+        text: "Unverkleinerte Bilder kosten Zeit, bevor der erste Satz zu lesen ist.",
       },
       {
         label: "Unlesbar am Handy",
@@ -80,8 +84,7 @@ export const seite = {
   showcase: {
     eyebrow: "Der Vergleich",
     headline: "Alt und neu, im selben Fenster",
-    intro:
-      "Drei fiktive Betriebe, jeweils in zwei Fassungen: wie ihre Website heute oft aussieht, und wie sie aussehen könnte. Jede Karte ist ein Beispiel, kein echter Kunde.",
+    intro: "Drei fiktive Betriebe, je zwei Fassungen: wie es heute oft aussieht, und wie es aussehen könnte.",
     bedienhinweis: "Regler ziehen oder mit den Pfeiltasten zwischen alter und neuer Fassung wechseln.",
     vorherLabel: "Alte Fassung",
     nachherLabel: "Neue Fassung",
@@ -110,23 +113,23 @@ export const seite = {
   leistungen: {
     eyebrow: "Leistungen",
     headline: "Was ich baue",
-    intro: "Vier Bausteine, die zusammen eine Website ergeben, die jemand tatsächlich nutzt.",
+    intro: "Vier Bausteine für eine Website, die tatsächlich genutzt wird.",
     items: [
       {
         titel: "Website-Neubau",
-        text: "Eine neue Website von Grund auf, für Handwerk, Gastronomie, Kanzleien und Praxen: verständlich aufgebaut, auf dem Handy genauso bedienbar wie am Schreibtisch.",
+        text: "Neu von Grund auf, für Handwerk, Gastronomie, Kanzleien und Praxen: auf dem Handy so bedienbar wie am Schreibtisch.",
       },
       {
         titel: "Inhalt und Struktur",
-        text: "Bevor eine Zeile Code entsteht, steht fest, was auf die Seite gehört und in welcher Reihenfolge. Weniger Text, aber der, der zählt.",
+        text: "Erst die Struktur, dann der Code: weniger Text, aber der, der zählt.",
       },
       {
         titel: "Tempo und Technik",
-        text: "Bilder in der richtigen Größe, Schrift ohne Umweg über fremde Server, sauberer Code darunter. Das macht den Unterschied zwischen einer schnellen und einer langsamen Seite aus.",
+        text: "Bilder in der richtigen Größe, Schrift ohne fremde Server, sauberer Code darunter: das macht die Seite schnell.",
       },
       {
         titel: "Übergabe und Pflege",
-        text: "Nach dem Livegang bekommst du eine Website, die du verstehst, oder die Möglichkeit, dass ich sie weiter betreue. Deine Entscheidung.",
+        text: "Nach dem Livegang verstehst du deine Website, oder ich betreue sie weiter: deine Entscheidung.",
       },
     ],
   },
@@ -139,22 +142,22 @@ export const seite = {
       {
         nummer: "01",
         titel: "Erstgespräch",
-        text: "Ein kurzes Gespräch, in dem klar wird, was deine Website leisten soll und wo die jetzige das nicht tut.",
+        text: "Klärt, was deine Website leisten soll und wo die jetzige das nicht tut.",
       },
       {
         nummer: "02",
         titel: "Entwurf",
-        text: "Ein erster Entwurf mit Struktur und Ton, bevor Technik dazukommt. Du siehst, wohin es geht, bevor etwas gebaut ist.",
+        text: "Struktur und Ton, bevor Technik dazukommt: du siehst, wohin es geht.",
       },
       {
         nummer: "03",
         titel: "Umsetzung",
-        text: "Die Website entsteht, mit regelmäßigen Zwischenständen statt einer einzigen großen Überraschung am Ende.",
+        text: "Die Website entsteht mit regelmäßigen Zwischenständen, keine Überraschung am Ende.",
       },
       {
         nummer: "04",
         titel: "Übergabe",
-        text: "Die neue Website geht live. Du bekommst Zugriff und eine Erklärung, keine Blackbox.",
+        text: "Die Website geht live, mit Zugriff und Erklärung: keine Blackbox.",
       },
     ],
   },
@@ -170,9 +173,9 @@ export const seite = {
     eyebrow: "Über",
     headline: "Warum ausgerechnet ich",
     absaetze: [
-      "Ich baue Websites und die Werkzeuge, mit denen ich sie an die richtigen Betriebe bringe. Die Mail, die dich hierhergeführt hat, kam aus Frostbreaker, einem Programm für Kaltakquise, das ich selbst geschrieben habe.",
-      "Ich arbeite allein, ohne Zwischenstationen. Wer mit mir schreibt, bekommt eine Antwort von der Person, die auch baut.",
-      "Ich sage lieber, was an einer Website nicht funktioniert, als was daran gut aussieht. Das stand schon in der Mail, und das steht auch in jeder Fallstudie hier.",
+      "Ich baue Websites und die Werkzeuge, mit denen ich sie an die richtigen Betriebe bringe. Die Mail kam aus Frostbreaker, meinem eigenen Kaltakquise-Programm.",
+      "Ich arbeite allein: wer mir schreibt, bekommt Antwort von der Person, die auch baut.",
+      "Ich sage lieber, was nicht funktioniert, als was gut aussieht, wie schon in der Mail und in jeder Fallstudie hier.",
     ],
   },
 
@@ -186,11 +189,11 @@ export const seite = {
   kontakt: {
     eyebrow: "Kontakt",
     headline: "Der nächste Schritt",
-    intro: "Ein Weg genügt: schreib mir, was an deiner Website nicht funktioniert, und ich sage dir ehrlich, ob und wie ich helfen kann.",
+    intro: "Schreib mir, was an deiner Website nicht funktioniert, ich sage dir ehrlich, ob ich helfen kann.",
     emailLabel: "E-Mail schreiben",
     emailAdresse: "youtaybusiness@gmail.com",
     mailtoBetreff: "Anfrage: Website-Neubau",
-    terminlinkHinweis: "Ein Terminlink folgt. Bis dahin genügt eine E-Mail.",
+    terminlinkHinweis: "Ein Terminlink folgt, bis dahin genügt eine E-Mail.",
   },
 
   fuss: {
@@ -212,7 +215,7 @@ export const seite = {
     },
     demoKennzeichen: {
       label: "Demo, fiktives Beispiel",
-      beschreibung: "Kein realer Kunde. Diese Fassung ist eigens für diese Seite gebaut, um Vorher und Nachher zu zeigen.",
+      beschreibung: "Kein realer Kunde, eigens gebaut, um Vorher und Nachher zu zeigen.",
     },
     platzhalterWarnung:
       "Platzhalter: Diese Angaben sind unvollständig und werden vor dem Livegang durch echte Daten ersetzt.",

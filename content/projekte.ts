@@ -19,7 +19,7 @@ export const projekte = {
     firma: "Elektro Musterhaus",
     branche: "Elektrohandwerk",
     kurzbeschreibung:
-      "Ein Elektrobetrieb mit Baukasten-Auftritt aus den frühen 2010er-Jahren: Telefonnummer als Bild, kein Kontaktformular, auf dem Handy kaum zu bedienen.",
+      "Baukasten-Website aus den frühen 2010ern: Telefonnummer als Bild, kein Formular, kaum bedienbar am Handy.",
     findings: [
       {
         tag: "Telefonnummer als Grafik",
@@ -40,11 +40,11 @@ export const projekte = {
     ],
     fallstudie: {
       ausgangslage:
-        "Elektro Musterhaus ist ein fiktiver Betrieb mit fünf Mitarbeitenden. Die bestehende Website (alte Fassung im Vergleich oben) stammt aus einem Baukasten von 2012: Telefonnummer als Bild, kein Kontaktformular, auf dem Handy kaum zu bedienen.",
+        "Elektro Musterhaus, fiktiver Betrieb mit fünf Mitarbeitenden: Die Website stammt aus einem Baukasten von 2012, kaum bedienbar am Handy.",
       entscheidungen: [
         {
           titel: "Ein Kontaktweg statt drei Sackgassen",
-          text: "Anruf, E-Mail und ein kurzes Formular führen alle zum selben Ziel, direkt unter der ersten Bildschirmhöhe.",
+          text: "Anruf, E-Mail und Formular führen alle zum selben Ziel, direkt sichtbar.",
         },
         {
           titel: "Telefonnummer als Text, nicht als Bild",
@@ -52,11 +52,10 @@ export const projekte = {
         },
         {
           titel: "Tap-Ziele nach WCAG-Maß",
-          text: "Menüpunkte und Buttons messen mindestens 44 mal 44 Pixel, auch auf dem kleinsten getesteten Bildschirm.",
+          text: "Menüpunkte und Buttons messen mindestens 44 mal 44 Pixel.",
         },
       ],
-      ergebnis:
-        "Aus einer Website, die zuerst gelesen und dann irgendwo angerufen werden musste, wird eine, die auf dem Handy in einem Tap zum Anruf führt.",
+      ergebnis: "Aus einer Website zum Suchen wird eine, die am Handy in einem Tap zum Anruf führt.",
     },
     alteFassung: {
       navigation: [
@@ -105,7 +104,7 @@ export const projekte = {
     firma: "Gasthof Mustertal",
     branche: "Gastronomie",
     kurzbeschreibung:
-      "Ein Landgasthof mit Website aus dem Baukasten: Speisekarte nur als PDF, ein Startbild mit 4 Megabyte, aktuelle Öffnungszeiten nur auf Facebook.",
+      "Baukasten-Website: Speisekarte als PDF, Startbild mit 4 Megabyte, aktuelle Zeiten nur auf Facebook.",
     findings: [
       {
         tag: "Speisekarte als PDF",
@@ -126,7 +125,7 @@ export const projekte = {
     ],
     fallstudie: {
       ausgangslage:
-        "Gasthof Mustertal ist ein fiktiver Landgasthof. Die bestehende Website zeigt die Karte nur als PDF-Download, das Startbild lädt mit 4 Megabyte vor allem anderen, und aktuelle Öffnungszeiten stehen nur auf Facebook.",
+        "Gasthof Mustertal, fiktiver Landgasthof: Karte nur als PDF, Startbild mit 4 Megabyte, aktuelle Zeiten nur auf Facebook.",
       entscheidungen: [
         {
           titel: "Speisekarte als Text, nicht als Datei",
@@ -134,15 +133,14 @@ export const projekte = {
         },
         {
           titel: "Ein Bild in Ladegröße",
-          text: "Das Startbild ist auf die tatsächliche Anzeigegröße zugeschnitten, statt in Originalauflösung eingebunden.",
+          text: "Das Startbild ist auf Anzeigegröße zugeschnitten, nicht in Originalauflösung.",
         },
         {
           titel: "Öffnungszeiten an einer Stelle",
-          text: "Die Zeiten stehen auf der Website selbst und müssen nur dort gepflegt werden, nicht zusätzlich auf einer zweiten Plattform.",
+          text: "Die Zeiten stehen auf der Website selbst und werden nur dort gepflegt.",
         },
       ],
-      ergebnis:
-        "Aus einer Website, die zum Nachschlagen der Öffnungszeiten auf eine andere Plattform verwies, wird eine, die die Antwort selbst gibt.",
+      ergebnis: "Aus einer Website, die auf Facebook verwies, wird eine, die selbst antwortet.",
     },
     alteFassung: {
       navigation: [
@@ -187,7 +185,7 @@ export const projekte = {
     firma: "Kanzlei Musterberg",
     branche: "Rechtsberatung",
     kurzbeschreibung:
-      "Eine Kanzlei-Website als reine Textwüste: 11 Pixel Serifenschrift, kein Terminweg, eine generische Handschlag-Grafik auf der Startseite.",
+      "Reine Textwüste: 11 Pixel Serifenschrift, kein Terminweg, Handschlag-Grafik von der Stange.",
     findings: [
       {
         tag: "Textwüste ohne Absätze",
@@ -208,7 +206,7 @@ export const projekte = {
     ],
     fallstudie: {
       ausgangslage:
-        "Kanzlei Musterberg ist eine fiktive Zwei-Personen-Kanzlei. Die bestehende Website ist eine einzige Textwüste in 11 Pixel Serifenschrift, ohne Zwischenüberschriften, ohne Terminweg, mit einer generischen Handschlag-Grafik auf der Startseite.",
+        "Kanzlei Musterberg, fiktive Zwei-Personen-Kanzlei: Die Website ist eine Textwüste in 11 Pixel Serifenschrift, ohne Terminweg.",
       entscheidungen: [
         {
           titel: "Struktur statt Fließtext",
@@ -216,15 +214,14 @@ export const projekte = {
         },
         {
           titel: "Ein sichtbarer Terminweg",
-          text: "Ein einzelner, gut sichtbarer Weg zur Kontaktaufnahme ersetzt die im Text versteckte Telefonnummer.",
+          text: "Ein sichtbarer Weg zur Kontaktaufnahme ersetzt die versteckte Telefonnummer.",
         },
         {
           titel: "Eine Startseite ohne Stockfoto-Klischee",
-          text: "Statt einer austauschbaren Handschlag-Grafik zeigt die Startseite, welche Rechtsgebiete die Kanzlei tatsächlich bearbeitet.",
+          text: "Statt der Handschlag-Grafik zeigt die Startseite die tatsächlichen Rechtsgebiete.",
         },
       ],
-      ergebnis:
-        "Aus einer Seite, die erst gelesen werden musste, um überhaupt einen Kontaktweg zu finden, wird eine, die diesen Weg von Anfang an zeigt.",
+      ergebnis: "Aus einer Seite zum Durchlesen wird eine, die den Kontaktweg sofort zeigt.",
     },
     alteFassung: {
       navigation: [
