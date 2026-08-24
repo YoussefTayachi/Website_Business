@@ -674,10 +674,23 @@ h3 {
    lang; ohne das wirkt die kurze abgehackt und die lange traege.
    Ausgeloest wird ueber .is-in am gemeinsamen Vorfahren, damit ein einziger
    Beobachter eine ganze Befundgruppe startet. Gestaffelt wird je Marker mit
-   --draw-delay. */
-.draw-line {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
+   --draw-delay.
+
+   Der Startzustand steht in (scripting: enabled), aus demselben Grund wie bei
+   .reveal in Abschnitt 6.3: stroke-dashoffset: 1 versteckt die Linie, sichtbar
+   macht sie erst die Klasse is-in, und die setzt JavaScript. Ohne diese
+   Schranke fehlte jede gezeichnete Linie dauerhaft, sobald JavaScript aus ist
+   oder die Hydration scheitert. Das war bis 2026-08-24 der Fall und fiel erst
+   auf, als ausser den Messschildern (components/showcase/befund-marker.tsx)
+   auch Prozess, Ueber und Kontakt gezeichnete Linien bekamen: ein Marker auf
+   der alten Fassung ist Zugabe, eine fehlende Prozesslinie ist ein Loch mitten
+   in der Seite. Die Animationsregel darf offen stehen bleiben, sie wartet
+   ohnehin auf is-in. */
+@media (scripting: enabled) {
+  .draw-line {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
 }
 .is-in .draw-line,
 .draw-line.is-in {
@@ -691,9 +704,14 @@ h3 {
 
 /* Das Schild am Ende der Linie. Es kommt nach der Linie an, sonst steht die
    Beschriftung vor ihrem eigenen Zeiger da. Der Vorlauf steckt in
-   --draw-delay plus 70 Prozent der Zeichendauer. */
-.marker-in {
-  opacity: 0;
+   --draw-delay plus 70 Prozent der Zeichendauer.
+   Startzustand in (scripting: enabled), Begruendung wie eine Regel weiter
+   oben: opacity: 0 ohne die Klasse, die es zuruecknimmt, waere ohne
+   JavaScript ein dauerhaft unsichtbares Schild. */
+@media (scripting: enabled) {
+  .marker-in {
+    opacity: 0;
+  }
 }
 .is-in .marker-in,
 .marker-in.is-in {
