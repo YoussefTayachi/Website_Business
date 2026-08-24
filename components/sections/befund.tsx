@@ -41,10 +41,14 @@ import { useReveal } from "@/lib/reveal";
  * das Auge halten muss.
  *
  * Bewusst dieselbe Bauform wie die BefundListe in
- * components/showcase/befund-marker.tsx (Nummer in Akzentfarbe, Schild in
+ * components/showcase/befund-marker.tsx (laufende Nummer, Schild in
  * Versalien, Satz darunter): was hier als Behauptung steht, taucht ein
  * Bildschirm weiter unten als Messschild auf der alten Fassung wieder auf.
  * Zwei Bauformen fuer dieselbe Sache waeren zwei Sprachen.
+ * Ein Unterschied ist geblieben und er ist gewollt: dort steht die Nummer in
+ * Akzentfarbe, hier nicht. Dort ist sie der einzige Akzent der Zeile, hier
+ * traegt ihn die Zeichnung daneben, und zwei Siegellackmarken eine Handbreit
+ * auseinander machen beide leiser.
  *
  * WARUM JETZT DOCH BEWEGUNG. Hier stand vorher: "KEINE BEWEGUNG", mit dem
  * Motion-Budget aus PLAN.md Abschnitt 4 als Begruendung. Das Budget bleibt,

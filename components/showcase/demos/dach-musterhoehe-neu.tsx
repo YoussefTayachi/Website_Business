@@ -40,7 +40,7 @@ import { projekte } from "@/content/projekte";
  *                                  Mal am Ende des Textes. Kein Bildlauf
  *                                  noetig, in keiner Fensterbreite
  *   [1] Schrift 12 Pixel        -> die Absaetze dieser Fassung laufen in
- *                                  --text-demo-2 (17 bis 20 Pixel) statt in
+ *                                  --text-demo-2 (19 bis 22 Pixel) statt in
  *                                  --text-body, der Bandsatz ebenso. Die
  *                                  einzige der drei neuen Fassungen mit
  *                                  vergroessertem Fliesstext, und zwar genau

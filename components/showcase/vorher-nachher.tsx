@@ -189,6 +189,11 @@ export default function VorherNachher({
   // nichts, also verschwinden sie. Die Regel dafuer steht in app/layout.tsx,
   // in einem <noscript> und damit nur dort wirksam, wo sie gebraucht wird.
   // Den Vergleich liefert in diesem Fall der <noscript>-Block weiter unten.
+  //
+  // min-h-12 (48px): der Hero behauptet "Tap-Ziel 48 Pixel" ueber die Seite
+  // selbst, und die Demos nennen 26/30 Pixel als Mangel. Ein kleineres
+  // Trefferziel hier waere derselbe Fehler, an genau der Stelle, an der man
+  // ihn zuerst nachmisst.
   const umschalter = (
     <div className="nur-mit-js flex flex-wrap items-center gap-2">
       <button
@@ -196,7 +201,7 @@ export default function VorherNachher({
         aria-pressed={aktiveFassung === "alt"}
         onClick={() => umschalten("alt")}
         className={cn(
-          "mono-label-xs cursor-pointer rounded-sm border px-3 py-2 transition-colors",
+          "mono-label-xs inline-flex min-h-12 cursor-pointer items-center rounded-sm border px-4 transition-colors",
           aktiveFassung === "alt"
             ? "border-accent bg-accent text-accent-contrast"
             : "border-line2 text-soft hover:border-line3 hover:text-ink",
@@ -209,7 +214,7 @@ export default function VorherNachher({
         aria-pressed={aktiveFassung === "neu"}
         onClick={() => umschalten("neu")}
         className={cn(
-          "mono-label-xs cursor-pointer rounded-sm border px-3 py-2 transition-colors",
+          "mono-label-xs inline-flex min-h-12 cursor-pointer items-center rounded-sm border px-4 transition-colors",
           aktiveFassung === "neu"
             ? "border-accent bg-accent text-accent-contrast"
             : "border-line2 text-soft hover:border-line3 hover:text-ink",
