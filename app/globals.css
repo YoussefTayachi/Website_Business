@@ -1,0 +1,1474 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================================
+   DESIGNSYSTEM
+   ============================================================================
+
+   Die Seite ist der Beweis. Wer aus einer Kaltakquise-Mail kommt, prueft in
+   den ersten Sekunden nicht den Text, sondern das Handwerk: Setzt die Schrift?
+   Stehen die Linien? Ist der Kontrast da, wo er hingehoert?
+
+   Richtung: editorial und messtechnisch. Eine hochwertige Publikation, in der
+   jemand mit dem Lineal Befunde eintraegt. Warmes Papier im Hellen, tiefe
+   Tinte im Dunklen, Haarlinien statt Kaesten, Eckwinkel statt Rahmen, genau
+   ein Akzent.
+
+   Aufbau dieser Datei:
+     1. Primitive Werte (die reinen Farbleitern, nur dort stehen Hex-Werte)
+     2. Semantische Tokens auf :root und .dark
+     3. Bindung an Tailwind v4
+     4. Grundlagen (body, Fokus, Auswahl, Bildlaufleiste)
+     5. Deko (Haarlinienraster, Eckwinkel, Messschild)
+     6. Bewegung (Einstieg, Reveal, Zeichnen, Umschlag)
+     7. Reduzierte Bewegung
+     8. Die Insel .alt-fassung
+
+   Regel fuer alle, die darauf aufbauen: keine Hex-Werte in Komponenten, keine
+   eigenen Schriftgroessen, keine erfundenen cubic-bezier-Werte. Fehlt etwas,
+   kommt es hier dazu und gilt dann ueberall.
+
+   VORAUSSETZUNG, die nicht in dieser Datei stehen kann: drei Schriftpakete.
+   Installiert ist bisher nur Inter.
+       npm i @fontsource-variable/newsreader @fontsource-variable/jetbrains-mono
+   und in app/layout.tsx dazu:
+       import "@fontsource-variable/newsreader/opsz.css";
+       import "@fontsource-variable/jetbrains-mono";
+   Ohne die Pakete faellt die Seite auf Georgia und Consolas zurueck. Sie
+   bleibt benutzbar, sieht aber nicht nach dieser Entscheidung aus.
+   ========================================================================= */
+
+/* ── 1. PRIMITIVE ─────────────────────────────────────────────────────────
+   Die Rohwerte, in Leitern sortiert. Keine Komponente greift hier zu, sie
+   nimmt die semantische Ebene darunter.
+
+   Papier: warm, aber nicht cremig. Der naheliegende Weg waere Pergament
+   (Richtung #f4f1ea, Saettigung um 19 Prozent). Das liest sich als Vintage,
+   und die Zielkunden sollen nicht an ein Cafe denken, sondern an einen
+   Pruefbericht. Deshalb Werkdruckpapier: gleicher Farbton, halbe Saettigung.
+
+   Tinte: im Dunklen mit einem Hauch Blau, weil ein warmes Schwarz auf dem
+   Bildschirm schlammig wird. Die Schrift darauf bleibt warm. Das ist der
+   Umschlag von Papier zu Tinte und keine Invertierung. */
+:root {
+  /* Papierleiter, hell */
+  --p-paper-0: #fbfaf7; /* das aufgelegte Blatt */
+  --p-paper-1: #f4f2ee; /* der Tisch, Seitengrund */
+  --p-paper-2: #ebe8e1; /* vertiefte Flaeche */
+  --p-paper-3: #e2ded4; /* Haarlinie */
+  --p-paper-4: #cfc9bc; /* kraeftige Kante */
+  --p-paper-5: #8a8478; /* Kante an Bedienelementen, 3,32:1 auf Papier */
+
+  /* Tintenleiter, hell */
+  --p-ink-0: #1b1a17; /* 15,56:1 auf Papier */
+  --p-ink-1: #55514a; /*  7,06:1 */
+  --p-ink-2: #6f6a61; /*  4,80:1, die Untergrenze fuer Fliesstext */
+  --p-ink-3: #9c968b; /*  2,63:1, nur Zierde und Platzhalter */
+
+  /* Tintenleiter, dunkel */
+  --p-night-0: #131418; /* Seitengrund */
+  --p-night-1: #191a1f; /* das Blatt */
+  --p-night-2: #202128; /* vertiefte Flaeche */
+  --p-night-3: #26282e; /* Haarlinie */
+  --p-night-4: #34363d; /* kraeftige Kante */
+  --p-night-5: #6e717a; /* Kante an Bedienelementen, 3,77:1 auf Grund */
+  --p-day-0: #edebe6; /* Schrift auf Nacht, 15,45:1 */
+  --p-day-1: #a6a29a; /*  7,24:1 */
+  --p-day-2: #85817a; /*  4,75:1 */
+  --p-day-3: #575450; /*  2,44:1, nur Zierde */
+
+  /* Akzentleiter. Ein Farbton (352 Grad), zwei Helligkeiten je Thema. */
+  --p-seal-deep: #8c1226;
+  --p-seal: #a81b2e;
+  --p-seal-lift: #e9566c;
+  --p-seal-lift-hi: #f2707f;
+  --p-seal-wash: #f7eae9;
+  --p-seal-wash-dark: #2a1a1e;
+  --p-seal-line: #e3b9be;
+  --p-seal-line-dark: #5a2731;
+}
+
+/* ── 2. SEMANTISCHE TOKENS ────────────────────────────────────────────────
+   Nur diese Namen tauchen in Komponenten auf. Alle Kontrastwerte sind
+   gerechnet (WCAG 2.1, relative Luminanz), nicht geschaetzt. */
+:root {
+  --c-paper: var(--p-paper-1); /* Seitengrund */
+  --c-sheet: var(--p-paper-0); /* Karten, Fallstudien, alles Aufgelegte */
+  --c-wash: var(--p-paper-2); /* Zitat, Einzug, vertiefte Flaeche */
+  --c-line: var(--p-paper-3); /* die Haarlinie, 1,20:1 zum Grund */
+  --c-line2: var(--p-paper-4); /* wo eine Linie tragen soll, 1,47:1 */
+  --c-line3: var(--p-paper-5); /* Kante an Bedienelementen, 3,32:1 (WCAG 1.4.11) */
+  --c-ink: var(--p-ink-0); /* Fliesstext und Ueberschriften, 15,56:1 */
+  --c-soft: var(--p-ink-1); /* Vorspann, Bildunterschrift, 7,06:1 */
+  --c-faint: var(--p-ink-2); /* Kleintext, 4,80:1, tiefer geht Schrift nicht */
+  --c-mute: var(--p-ink-3); /* Zierde und deaktiviert, NIE Inhalt, 2,63:1 */
+
+  /* Der eine Akzent. Er traegt zwei Aufgaben: den CTA und den Befund-Marker.
+     Beide meinen dasselbe, naemlich "hier zeigt jemand mit dem Finger drauf".
+
+     Warum Siegellack und nicht Blau: Blau ist in einem Portfolio die
+     Nullentscheidung und steht bei dieser Zielgruppe fuer Behoerdenformular.
+     Warum nicht Terrakotta oder Bernstein: auf warmem Papier wird beides
+     Schlamm und der Marker verliert seine Schaerfe. Rot ist die Farbe, in der
+     seit jeher korrigiert und gesiegelt wird, also genau die Bedeutung, die
+     diese Seite ohnehin transportiert. Blaustichiges Karmin und nicht
+     Zinnober, damit es nach Siegellack aussieht und nicht nach Alarm.
+
+     6,56:1 auf Papier, also auch als Fliesstext zulaessig. Schrift auf der
+     Akzentflaeche liegt bei 7,03:1. Ein Wert fuer Flaeche und Schrift, ein
+     zweiter ist nicht noetig. */
+  --c-accent: var(--p-seal);
+  --c-accent-strong: var(--p-seal-deep); /* Hover und aktiv, 8,42:1 */
+  --c-accent-contrast: var(--p-paper-0); /* Schrift auf der Akzentflaeche */
+  --c-accent-wash: var(--p-seal-wash); /* Akzentflaeche, Tinte darauf 14,83:1 */
+  --c-accent-line: var(--p-seal-line); /* Haarlinie im Akzentton */
+
+  /* Das Haarlinienraster. Als rgba und nicht als Volltonfarbe, weil es unter
+     Flaechen durchscheinen soll. 0,055 ist abgestimmt: darueber liest es sich
+     als Karopapier, darunter ist es auf mittelmaessigen Monitoren weg. */
+  --c-grid: rgba(27, 26, 23, 0.055);
+
+  /* Genau ein Schatten in der ganzen Seite, und der ist fast nicht da. Er
+     hebt das Blatt vom Tisch, mehr nicht. */
+  --sh-lift: 0 1px 2px rgba(27, 26, 23, 0.05), 0 10px 28px -18px rgba(27, 26, 23, 0.28);
+
+  color-scheme: light;
+}
+
+.dark {
+  --c-paper: var(--p-night-0);
+  --c-sheet: var(--p-night-1);
+  --c-wash: var(--p-night-2);
+  --c-line: var(--p-night-3); /* 1,25:1 */
+  --c-line2: var(--p-night-4); /* 1,53:1 */
+  --c-line3: var(--p-night-5); /* 3,77:1 */
+  --c-ink: var(--p-day-0); /* 15,45:1 */
+  --c-soft: var(--p-day-1); /*  7,24:1 */
+  --c-faint: var(--p-day-2); /*  4,75:1 */
+  --c-mute: var(--p-day-3); /*  2,44:1 */
+
+  /* Derselbe Farbton, angehoben. #a81b2e laege auf dem Nachtgrund bei 2,4:1
+     und waere als Schrift unlesbar und als Marker unsichtbar. #e9566c liegt
+     bei 5,27:1 auf dem Grund und 4,97:1 auf dem Blatt, und die Schrift auf
+     der Akzentflaeche ist hier dunkel statt hell. */
+  --c-accent: var(--p-seal-lift);
+  --c-accent-strong: var(--p-seal-lift-hi); /* im Dunklen geht Hover nach oben */
+  --c-accent-contrast: var(--p-night-0); /* 5,27:1 auf dem Akzent */
+  --c-accent-wash: var(--p-seal-wash-dark); /* Tinte darauf 13,93:1 */
+  --c-accent-line: var(--p-seal-line-dark);
+
+  --c-grid: rgba(237, 235, 230, 0.05);
+
+  /* Im Dunklen sieht niemand einen Schatten. Statt einen zu simulieren, den
+     man nicht wahrnimmt, uebernimmt eine Haarlinie die Aufgabe: das Blatt
+     hebt sich hier durch seine Kante ab, nicht durch Licht. */
+  --sh-lift: 0 0 0 1px var(--p-night-3);
+
+  color-scheme: dark;
+}
+
+/* ── 3. BINDUNG AN TAILWIND ───────────────────────────────────────────────
+   Farben mit @theme inline: die erzeugte Utility referenziert dann var(--c-*)
+   statt den Wert einzusetzen, und nur so folgt bg-paper dem Nachtmodus. */
+@theme inline {
+  --color-paper: var(--c-paper);
+  --color-sheet: var(--c-sheet);
+  --color-wash: var(--c-wash);
+  --color-line: var(--c-line);
+  --color-line2: var(--c-line2);
+  --color-line3: var(--c-line3);
+  --color-ink: var(--c-ink);
+  --color-soft: var(--c-soft);
+  --color-faint: var(--c-faint);
+  --color-mute: var(--c-mute);
+  --color-accent: var(--c-accent);
+  --color-accent-strong: var(--c-accent-strong);
+  --color-accent-contrast: var(--c-accent-contrast);
+  --color-accent-wash: var(--c-accent-wash);
+  --color-accent-line: var(--c-accent-line);
+
+  --shadow-lift: var(--sh-lift);
+}
+
+/* Alles Uebrige ohne inline, damit die Variablen im erzeugten :root landen
+   und auch in eigenen Regeln benutzbar sind (var(--font-mono) weiter unten). */
+@theme {
+  /* Schriften. Alle drei kommen als @fontsource-variable-Paket, damit die
+     Seite ohne fremde Anfrage laedt.
+       @fontsource-variable/newsreader      -> "Newsreader Variable"
+       @fontsource-variable/inter           -> "Inter Variable"
+       @fontsource-variable/jetbrains-mono  -> "JetBrains Mono Variable"
+
+     Newsreader statt Playfair: Playfair ist die Serif, die jeder Generator
+     vorschlaegt, und ihre extremen Haarstriche brechen im Nachtmodus weg.
+     Newsreader ist von Production Type fuer Bildschirmtext gezeichnet, hat
+     eine opsz-Achse und wirkt bei 100 Pixel selbstbewusst, ohne zu posieren.
+
+     Wird die Datei opsz.css des Pakets eingebunden statt der Standard-CSS,
+     greift font-optical-sizing weiter unten und die Ueberschriften bekommen
+     feinere Serifen und engeren Satz. Ohne diese Datei passiert schlicht
+     nichts, kaputt geht dabei auch nichts. */
+  --font-display: "Newsreader Variable", ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: "Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Typo-Skala. Jede Stufe bringt Zeilenhoehe und Laufweite mit, damit sie
+     niemand an der Aufrufstelle neu erfindet. Die clamp-Werte sind linear
+     zwischen 375 und 1440 Pixel Fensterbreite gerechnet, nicht geraten. */
+
+  /* Hero. 44 Pixel auf dem Handy, 104 auf dem Schreibtisch. */
+  --text-display-1: clamp(2.75rem, 1.43rem + 5.63vw, 6.5rem);
+  --text-display-1--line-height: 1.02;
+  --text-display-1--letter-spacing: -0.024em;
+  --text-display-1--font-weight: 500;
+
+  /* Sektionsueberschrift. 32 bis 64 Pixel. */
+  --text-display-2: clamp(2rem, 1.3rem + 3vw, 4rem);
+  --text-display-2--line-height: 1.06;
+  --text-display-2--letter-spacing: -0.02em;
+  --text-display-2--font-weight: 500;
+
+  /* Zwischentitel, Fallstudie. 26 bis 40 Pixel. */
+  --text-display-3: clamp(1.625rem, 1.32rem + 1.31vw, 2.5rem);
+  --text-display-3--line-height: 1.14;
+  --text-display-3--letter-spacing: -0.015em;
+  --text-display-3--font-weight: 500;
+
+  /* Kartentitel. Grotesk, nicht Serif: ab hier ist es Beschriftung und keine
+     Publikation mehr. */
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.25;
+  --text-title--letter-spacing: -0.011em;
+  --text-title--font-weight: 500;
+
+  /* Zwei gedeckelte Stufen fuer die neuen Demo-Fassungen. Sie sind eine
+     eigene Stufe und keine Wiederverwendung von display-2, weil eine Demo
+     eine Website IN dieser Seite ist: ihre Ueberschrift darf nie so laut
+     werden wie eine Sektionsueberschrift des Portfolios, sonst liest sich
+     die Flaeche als Teil der Seite statt als gezeigtes Werk.
+
+     Gemessen wird in cqi und nicht in vw: die Demo steht in einem Panel von
+     vielleicht 900 Pixeln mitten auf einem 1600-Pixel-Bildschirm. An der
+     Fensterbreite skaliert, waere sie im Panel viel zu gross. Traeger ist
+     .neu-fassung, die dafuer container-type: inline-size setzt.
+     Ohne Container-Vorfahr faellt cqi auf die kleine Ansichtsflaeche
+     zurueck; die Stufe bleibt dann in ihren clamp-Grenzen und damit heil. */
+  --text-demo-1: clamp(1.75rem, 1.29rem + 2.3cqi, 2.75rem); /* 28 bis 44 px */
+  --text-demo-1--line-height: 1.1;
+  --text-demo-1--letter-spacing: -0.018em;
+  --text-demo-1--font-weight: 500;
+
+  --text-demo-2: clamp(1.0625rem, 0.99rem + 0.38cqi, 1.25rem); /* 17 bis 20 px */
+  --text-demo-2--line-height: 1.45;
+  --text-demo-2--letter-spacing: -0.006em;
+
+  /* Vorspann unter der Ueberschrift. 18 bis 21 Pixel. */
+  --text-lead: clamp(1.125rem, 1.06rem + 0.28vw, 1.3125rem);
+  --text-lead--line-height: 1.5;
+  --text-lead--letter-spacing: -0.006em;
+
+  /* Fliesstext. 17 statt 16 Pixel: die Seite ist zum Lesen da und nicht zum
+     Bedienen, und Inter traegt bei 17 Pixel die editorialen Zeilenlaengen
+     besser. */
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.65;
+
+  --text-small: 0.9375rem;
+  --text-small--line-height: 1.55;
+
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.45;
+
+  /* Messschild. Der Befund steht in dieser Groesse, also ist er Inhalt und
+     nicht Zierde. Deshalb 11 und nicht 10 Pixel: bei 10 Pixel Versalien mit
+     weiter Sperrung faellt eine Zahlenreihe wie "2,1:1" auf einem
+     mittelmaessigen Monitor auseinander. */
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.2;
+  --text-label--letter-spacing: 0.13em;
+  --text-label--font-weight: 500;
+
+  /* 10 Pixel bleiben fuer Beschriftung ohne eigenen Inhalt: Abschnittsmarken,
+     Nummern, Wiederholungen dessen, was daneben ohnehin steht. */
+  --text-label-xs: 0.625rem;
+  --text-label-xs--line-height: 1.2;
+  --text-label-xs--letter-spacing: 0.16em;
+  --text-label-xs--font-weight: 500;
+
+  --leading-display: 1.02;
+  --tracking-display: -0.024em;
+  --tracking-label: 0.13em;
+
+  /* Abstaende. Die 4-Pixel-Leiter von Tailwind bleibt, dazu drei Masse, die
+     die Seite gliedern und deshalb ueberall gleich sein muessen. */
+  --spacing-gutter: clamp(1.25rem, 4vw, 3rem); /* Seitenrand */
+  --spacing-block: clamp(2rem, 4vw, 3.5rem); /* Abstand innerhalb einer Sektion */
+  --spacing-section: clamp(4.5rem, 9vw, 9rem); /* Abstand zwischen Sektionen */
+
+  /* Breiten. max-w-text ist die Lesespalte: bei 17 Pixel sind das rund 68
+     Zeichen, die Spanne, in der Fliesstext ohne Ruecksprung gelesen wird. */
+  --container-text: 38rem;
+  --container-page: 78rem;
+  /* Die Satzbreite der gezeigten Websites. Schmaler als die Portfolio-Seite,
+     weil eine Demo in einem Panel steht und nicht im Fenster: bei
+     --container-page waere sie im Panel randlos und liesse sich nicht mehr
+     als eigene Seite lesen. */
+  --container-demo: 46rem;
+
+  /* Radien. Editorial heisst hier: fast nichts. Die drei Tailwind-Werte
+     werden bewusst ueberschrieben, damit auch ein beilaeufiges rounded-sm im
+     ganzen Projekt dieselbe Kante bedeutet. */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+
+  /* Bewegung. Ein Standard-Easing fuer alles, was ankommt oder sich setzt,
+     ein schnelleres fuers Verschwinden (Weggehen darf nie so lange dauern wie
+     Ankommen), ein symmetrisches fuers Zeichnen von Linien. */
+  --ease-standard: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-draw: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Damit schon ein blankes transition-Utility richtig laeuft. */
+  --default-transition-duration: 180ms;
+  --default-transition-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* Dauern. Bewusst schlichte Variablen und nicht im @theme: Tailwind v4 hat
+   fuer Dauern keinen eigenen Namensraum. Verwendung entweder in eigenem CSS
+   oder als duration-[var(--d-mid)]. */
+:root {
+  --d-quick: 120ms; /* Farbwechsel, Hover */
+  --d-fast: 180ms; /* Unterstreichung, kleine Zustaende */
+  --d-mid: 280ms; /* Reveal */
+  --d-slow: 420ms; /* Umschlag Vorher/Nachher */
+  --d-set: 560ms; /* eine Ueberschriftenzeile setzt sich */
+  --d-draw: 700ms; /* eine Linie zeichnet sich */
+  --d-grid: 820ms; /* das Raster zeichnet sich, Obergrenze 900 ms */
+
+  /* Hoehe der Kopfleiste. Steht hier, weil zwei Dinge sie brauchen: die
+     Leiste selbst und das Scroll-Ziel bei Ankerspruengen. */
+  --header-h: 4.5rem;
+}
+
+/* ── 4. GRUNDLAGEN ──────────────────────────────────────────────────────── */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /* Ohne das springt ein Ankerlink unter die Kopfleiste. */
+  scroll-padding-top: calc(var(--header-h) + 1.5rem);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  background: var(--c-paper);
+  color: var(--c-ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  /* cv11 sind die einstoeckigen a und g von Inter, ss01 die offenen Ziffern.
+     Zusammen nimmt das Inter den Software-Ton und rueckt es Richtung
+     Zeitungsgrotesk. Genau das muss es neben Newsreader auch sein. */
+  font-feature-settings: "cv11", "ss01";
+  /* Deutsche Komposita sind das haeufigste Layoutproblem in schmalen
+     Fenstern: "Elektroinstallationsbetrieb" schiebt sonst die ganze Seite
+     waagerecht auf. Umbrechen statt ueberlaufen. */
+  overflow-wrap: break-word;
+  /* Der Wechsel zwischen den Themen soll ein Umschlag sein, kein Blitz. */
+  transition: background-color var(--d-mid) var(--ease-standard), color var(--d-mid) var(--ease-standard);
+}
+
+/* Ueberschriften sind Satz, nicht Beschriftung. hyphens wirkt, weil <html>
+   lang="de" traegt, und rettet die Displaystufen in schmalen Fenstern. */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  hyphens: auto;
+}
+
+/* Fokus. Sichtbar, in Akzentfarbe, mit Abstand zur Kante, damit er als Ring
+   gelesen wird und nicht als Rahmen. 6,56:1 hell und 5,27:1 dunkel gegen den
+   Grund, also deutlich ueber den 3:1 aus WCAG 2.4.11. */
+:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+/* Nur fuer den Zeiger unterdruecken, nicht generell: bei Tastaturbedienung
+   bleibt der Ring ueberall. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+::selection {
+  background: var(--c-accent-wash);
+  color: var(--c-ink);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--c-line2);
+  border-radius: 999px;
+  /* Rand in Papierfarbe statt schmalerer Leiste: so bleibt der Griff schmal,
+     die Trefferflaeche aber gross genug zum Ziehen. */
+  border: 3px solid var(--c-paper);
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ── 5. DEKO ──────────────────────────────────────────────────────────────
+   Haarlinien statt Kaesten. Was hier steht, ist Flaeche und Rahmen der
+   ganzen Seite. Alles Weitere kommt als Utility an der Aufrufstelle. */
+
+/* Das Raster. Zwei Haarlinienscharen wie auf Millimeterpapier, nur weiter.
+   5,5 rem, weil ein engeres Raster bei dieser Papierfarbe als Karopapier
+   liest und ein weiteres nicht mehr als Raster erkennbar ist.
+   .rule-grid-h und .rule-grid-v sind dieselbe Flaeche, aufgeteilt in zwei
+   Ebenen: nur so kann sich das Raster beim Einstieg in zwei Richtungen
+   zeichnen (waagerecht nach unten, senkrecht nach rechts). */
+.rule-grid,
+.rule-grid-h,
+.rule-grid-v {
+  background-repeat: repeat;
+  background-size: var(--grid-size, 5.5rem) var(--grid-size, 5.5rem);
+}
+.rule-grid {
+  background-image:
+    linear-gradient(var(--c-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--c-grid) 1px, transparent 1px);
+}
+.rule-grid-h {
+  background-image: linear-gradient(var(--c-grid) 1px, transparent 1px);
+}
+.rule-grid-v {
+  background-image: linear-gradient(90deg, var(--c-grid) 1px, transparent 1px);
+}
+
+/* Eckwinkel. Die Klammer, mit der ein Messgeraet seinen Anzeigebereich
+   markiert, und auf dieser Seite der Ersatz fuer jeden vollen Rahmen.
+   Acht Striche aus einem einzigen Pseudoelement: vier Ecken mal waagerecht
+   und senkrecht. Das Elternelement braucht position: relative, deshalb steht
+   es gleich mit in der Regel.
+   Einstellbar je Aufrufstelle: --tick-len, --tick-color, --tick-inset. */
+.ticks {
+  position: relative;
+}
+.ticks::before {
+  --tc: var(--tick-color, var(--c-line3));
+  content: "";
+  position: absolute;
+  inset: calc(var(--tick-inset, 0px) * -1);
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--tc), var(--tc)), linear-gradient(var(--tc), var(--tc)),
+    linear-gradient(var(--tc), var(--tc)), linear-gradient(var(--tc), var(--tc)),
+    linear-gradient(var(--tc), var(--tc)), linear-gradient(var(--tc), var(--tc)),
+    linear-gradient(var(--tc), var(--tc)), linear-gradient(var(--tc), var(--tc));
+  background-size:
+    var(--tick-len, 14px) 1px, 1px var(--tick-len, 14px),
+    var(--tick-len, 14px) 1px, 1px var(--tick-len, 14px),
+    var(--tick-len, 14px) 1px, 1px var(--tick-len, 14px),
+    var(--tick-len, 14px) 1px, 1px var(--tick-len, 14px);
+  background-position:
+    left top, left top,
+    right top, right top,
+    left bottom, left bottom,
+    right bottom, right bottom;
+  background-repeat: no-repeat;
+}
+
+/* Messschild. Der Unterschied zwischen einer Ueberschrift und einem
+   Instrumentenschild. Fuer Befunde, Abschnittsmarken und Nummern. */
+.mono-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: 1.2;
+  letter-spacing: var(--tracking-label);
+  font-weight: 500;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+.mono-label-xs {
+  font-family: var(--font-mono);
+  font-size: var(--text-label-xs);
+  line-height: 1.2;
+  letter-spacing: 0.16em;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+/* Zahlen, die untereinander stehen und deshalb gleich breit sein muessen. */
+.mono-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Beschriftung innerhalb eines SVG, etwa am Ende einer Messschild-Linie.
+   Der Rand in Flaechenfarbe liegt UNTER der Schrift, sonst radiert er sie
+   aus. Ohne diese Kontur wird ein Befund unleserlich, sobald er ueber eine
+   Kante der alten Fassung laeuft. */
+.svg-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  paint-order: stroke fill;
+  stroke: var(--c-sheet);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+/* Das Kennzeichen "Demo, fiktives Beispiel". Steht als eigene Regel hier und
+   nicht in einer Komponente, weil der Plan es auf jeder Karte und jeder
+   Fallstudie verlangt: es muss ueberall gleich aussehen und darf nirgends
+   fehlen. Der Text dazu kommt aus content/, nicht von hier. */
+.demo-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--c-accent-line);
+  border-radius: var(--radius-sm);
+  background: var(--c-accent-wash);
+  color: var(--c-accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-label-xs);
+  letter-spacing: 0.16em;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+/* Textlink im Fliesstext. Die Unterstreichung ist immer da, weil ein Link
+   sich nicht allein durch Farbe unterscheiden darf. Beim Zeigen wechselt nur
+   die Farbe: kein Aufbau, keine Verschiebung, kein Umbruch. */
+.link-rule {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: var(--c-line3);
+  transition:
+    text-decoration-color var(--d-fast) var(--ease-standard),
+    color var(--d-fast) var(--ease-standard);
+}
+.link-rule:hover,
+.link-rule:focus-visible {
+  color: var(--c-accent);
+  text-decoration-color: var(--c-accent);
+}
+
+/* ── 6. BEWEGUNG ──────────────────────────────────────────────────────────
+   Drei Momente tragen die Seite, alles andere steht still: der Einstieg, der
+   Umschlag Vorher zu Nachher und das Auftauchen der Befunde. Es gibt keine
+   Dauerschleife im Sichtfeld. Bewegt werden ausschliesslich opacity,
+   transform, clip-path und stroke-dashoffset.
+
+   Vorsicht mit transform: ein stehen gebliebenes transform (auch
+   translateY(0)) erzeugt einen containing block und reisst position: fixed
+   in seinen Nachkommen vom Fenster los. Alle Animationen hier enden deshalb
+   ohne eigenen transform-Wert, und in einem .reveal steht nichts Fixiertes. */
+
+/* 6.1 EINSTIEG: die Ueberschrift setzt sich.
+   Jede Zeile bekommt einen .set-line-Rahmen, das Kind darin steigt aus dem
+   Setzkasten. Der Rahmen schneidet ab, deshalb der Griff mit padding-bottom
+   und negativem margin: ohne ihn kappt overflow: hidden bei einer
+   Zeilenhoehe von 1,02 die Unterlaengen von g, p und j.
+   Staffeln an der Aufrufstelle: style={{ "--enter-delay": "90ms" }}. */
+.set-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+.set-line > * {
+  display: block;
+  animation: lineSet var(--d-set) var(--ease-standard) var(--enter-delay, 0ms) both;
+}
+@keyframes lineSet {
+  from {
+    opacity: 0;
+    transform: translateY(105%);
+  }
+}
+
+/* Einstieg fuer alles, was keine Satzzeile ist: Vorspann, Knopf, Marke. */
+.enter-fade {
+  animation: enterFade var(--d-mid) var(--ease-standard) var(--enter-delay, 0ms) both;
+}
+@keyframes enterFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* 6.2 EINSTIEG: das Raster zeichnet sich.
+   clip-path statt Deckkraft, damit es gezogen wirkt und nicht nur auftaucht.
+   Auf .rule-grid-h nach unten, auf .rule-grid-v nach rechts. 820 ms, also
+   unter der Obergrenze von 900 ms fuer den ganzen Einstieg. */
+.draw-down {
+  animation: drawDown var(--d-grid) var(--ease-draw) var(--enter-delay, 0ms) both;
+}
+@keyframes drawDown {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+.draw-right {
+  animation: drawRight var(--d-grid) var(--ease-draw) var(--enter-delay, 0ms) both;
+}
+@keyframes drawRight {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* 6.3 REVEAL BEIM SCROLLEN.
+   Uebergang statt Animation, weil der IntersectionObserver nur eine Klasse
+   setzt und jedes Element genau einmal erfasst.
+   Der Endzustand ist transform: none und nicht translateY(0), siehe die
+   Warnung oben.
+
+   Der Startzustand steht in (scripting: enabled) und nicht offen im
+   Stylesheet. Sonst bliebe die Seite leer, wenn JavaScript aus ist oder die
+   Hydration scheitert: den Startzustand setzt CSS sofort, die Klasse is-in
+   setzt aber JavaScript. Wo die Anfrage nicht ausgewertet wird (vor Chrome
+   120, Safari 17, Firefox 113) faellt die Regel weg und der Inhalt steht
+   ohne Bewegung da. Beide Fehlerfaelle zeigen also zu viel und nie zu
+   wenig. */
+@media (scripting: enabled) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity var(--d-mid) var(--ease-standard) var(--reveal-delay, 0ms),
+      transform var(--d-mid) var(--ease-standard) var(--reveal-delay, 0ms);
+  }
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 6.4 DER BEFUND: die Messschild-Linie zeichnet sich.
+   Auf dem SVG-Pfad muss pathLength="1" stehen. Dann ist die Laenge unabhaengig
+   von der tatsaechlichen Kurve und kurze wie lange Linien brauchen gleich
+   lang; ohne das wirkt die kurze abgehackt und die lange traege.
+   Ausgeloest wird ueber .is-in am gemeinsamen Vorfahren, damit ein einziger
+   Beobachter eine ganze Befundgruppe startet. Gestaffelt wird je Marker mit
+   --draw-delay. */
+.draw-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.is-in .draw-line,
+.draw-line.is-in {
+  animation: drawLine var(--d-draw) var(--ease-draw) var(--draw-delay, 0ms) both;
+}
+@keyframes drawLine {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Das Schild am Ende der Linie. Es kommt nach der Linie an, sonst steht die
+   Beschriftung vor ihrem eigenen Zeiger da. Der Vorlauf steckt in
+   --draw-delay plus 70 Prozent der Zeichendauer. */
+.marker-in {
+  opacity: 0;
+}
+.is-in .marker-in,
+.marker-in.is-in {
+  animation: markerIn var(--d-mid) var(--ease-standard) calc(var(--draw-delay, 0ms) + var(--d-draw) * 0.7) both;
+}
+@keyframes markerIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 6.5 DER UMSCHLAG: Vorher zu Nachher.
+   Die neue Fassung liegt ueber der alten und wird von links freigeschnitten.
+   --split laeuft von 0 Prozent (nur alt) bis 100 Prozent (nur neu).
+
+   Warum ohne Uebergang: beim Ziehen muss die Kante am Finger kleben. Ein
+   Uebergang liesse sie hinterherhinken und wuerde genau das Gefuehl
+   zerstoeren, fuer das dieser Moment da ist. Wer zurueckzieht, bekommt sie
+   sofort zurueck.
+   Fuer den Umschalter ohne Ziehen (Knopf oder Pfeiltaste) setzt die
+   Komponente zusaetzlich .split-eased und nimmt es beim naechsten
+   Zeigerkontakt wieder weg. */
+.split {
+  --split: 50%;
+  position: relative;
+}
+.split-new {
+  clip-path: inset(0 calc(100% - var(--split)) 0 0);
+}
+.split-eased .split-new {
+  transition: clip-path var(--d-slow) var(--ease-standard);
+}
+.split-eased .split-seam {
+  transition: left var(--d-slow) var(--ease-standard);
+}
+/* Die Naht. Eine Haarlinie in Akzentfarbe, mehr braucht die Kante nicht: sie
+   markiert den Schnitt zwischen zwei Materialien, sie ist kein Bauteil. Der
+   Griff selbst gehoert in die Komponente, nicht hierher. */
+.split-seam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--split);
+  width: 1px;
+  background: var(--c-accent);
+  pointer-events: none;
+}
+
+/* ── 7. REDUZIERTE BEWEGUNG ───────────────────────────────────────────────
+   Kein dezenteres Fallback, sondern der fertige Zustand. Wer das eingestellt
+   hat, sieht dieselbe Seite, nur ohne den Weg dorthin. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Die Endzustaende ausdruecklich. Eine auf 0,01 ms gekuerzte Animation ist
+     zwar nicht mehr sichtbar, ein Startzustand wie opacity: 0 bliebe ohne
+     diese Zeilen aber stehen. */
+  .set-line > *,
+  .enter-fade,
+  .draw-down,
+  .draw-right,
+  .marker-in,
+  .is-in .marker-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
+
+  .reveal,
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .draw-line,
+  .is-in .draw-line {
+    animation: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+
+  .split-eased .split-new,
+  .split-eased .split-seam {
+    transition: none;
+  }
+
+  /* Der Lauftext in der alten Fassung (Abschnitt 8). Die Regel oben kuerzt
+     jede Animation auf 0,01 ms, und genau das waere hier falsch: der Endwert
+     ist translateX(-100%), der Text stuende also ausserhalb seines Kastens
+     und die Zeile waere leer. Deshalb ausdruecklich anhalten UND den
+     Vorlauf wegnehmen, mit dem der Lauftext von rechts einlaeuft. Ergebnis
+     ist eine ruhige Zeile, die von Anfang an lesbar ist. */
+  .alt-fassung .alt-lauftext > span {
+    animation: none;
+    padding-left: 0;
+    transform: none;
+  }
+}
+
+/* ── 8. DIE INSEL .alt-fassung ────────────────────────────────────────────
+   Die bewusst schlechte Fassung der Demo-Betriebe laeuft hier drin.
+   Zwei Regeln, und sie gelten ohne Ausnahme:
+
+   1. Nichts von aussen wirkt hinein. Keine Schriftfamilie, kein Farb-Token,
+      keine Zeilenhoehe dieser Datei. Die alte Fassung hat ihr eigenes,
+      schlechtes System, und genau das ist ihr Inhalt.
+   2. Nichts von innen wirkt hinaus. Jede Regel steht unter .alt-fassung,
+      jede Variable heisst --alt-* und nicht --c-*.
+
+   Der Nachtmodus ist ausgeschaltet. Eine Baukastenseite von 2012 hatte
+   keinen, und ein mitschaltender Nachtmodus wuerde die Aussage der Flaeche
+   zerstoeren. Die Farben sind absichtlich hart gesetzt und nicht
+   tokenisiert: sie gehoeren nicht zum Designsystem, sie sind das Fundstueck.
+
+   WARUM @layer components: Tailwind ordnet theme, base, components,
+   utilities. Damit steht alles hier zwischen Preflight und den Utilities.
+   Nach unten gewinnt die Insel gegen den Preflight-Reset (der einer alten
+   Seite ihre Browser-Vorgaben nimmt, also genau das, was sie ausmacht), nach
+   oben verliert sie gegen jede Utility. Das ist wichtig, weil die
+   Messschilder (components/showcase/befund-marker.tsx) MITTEN in dieser
+   Insel stehen: ihre Utilities muessen gewinnen, sonst faerbt der
+   Fundstueck-Look den Befund ein, der ihn benennt.
+
+   ALLE FARBWERTE UNTEN SIND GERECHNET (WCAG 2.1, relative Luminanz):
+     #979797 auf #ffffff  = 2,92:1  -> gerundet 2,9:1 (Befund elektro)
+     #ffffff auf #929292  = 3,11:1  -> gerundet 3,1:1 (Befund gasthof)
+     #ffffff auf #9a9a9a  = 2,81:1  (helles Ende desselben Verlaufs)
+     #333333 auf #ffffff  = 12,63:1 (Grundschrift der Insel)
+     #0000ee auf #ffffff  =  9,40:1 (Browser-Standardlink)
+   ========================================================================= */
+@layer components {
+  /* Die Huelle. Sie gehoert der Mechanik: components/showcase/vorher-nachher.tsx
+     wickelt jede alte Fassung in ein <div className="alt-fassung">. Die
+     Demo-Komponente selbst rendert deshalb .alt-blatt und NICHT noch einmal
+     .alt-fassung, sonst laegen zwei Bildlaufbereiche ineinander.
+
+     Hier steht nur, was fuer jede der drei Vorlagen gleich ist: die
+     Abdichtung, die Schriftgroesse und der Verzicht auf jede Vorgabe von
+     draussen. Farbe und Schrift kommen eine Ebene tiefer, weil erst dort
+     bekannt ist, welcher Betrieb gezeigt wird. */
+  .alt-fassung {
+    color-scheme: light;
+    background: #ffffff;
+    color: #333333;
+    font-size: 13px;
+    line-height: 1.35;
+    letter-spacing: normal;
+    text-align: left;
+    /* Die Seite drumherum bricht deutsche Komposita um. Eine Baukastenseite
+       tat das nicht, und das gehoert zum Fundstueck. */
+    overflow-wrap: normal;
+    hyphens: none;
+
+    /* Eigener Stapelkontext, damit die Messschilder sauber darueber liegen. */
+    isolation: isolate;
+
+    /* DIE ABDICHTUNG. Die Seite darin ist 900 Pixel breit und fest. Genau
+       das soll sie sein, und genau das laeuft in einem schmalen Fenster
+       seitlich ueber. Ueberlaufen darf es aber nur HIER, nie die
+       Portfolio-Seite: max-width kappt die Insel auf ihren Platz, overflow-x
+       macht aus dem Rest einen eigenen Bildlauf. overscroll-behavior
+       verhindert, dass ein Wisch am Ende der Insel die Seite dahinter
+       weiterschiebt.
+
+       Kein contain: paint und kein overflow: hidden. Beides wuerde die
+       Messschilder abschneiden, die absichtlich ueber die weisse Seite
+       hinaus in den grauen Rand ragen. Der graue Rand IST der Korridor, in
+       dem sie stehen. */
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Der graue Tisch. Wurzel der Demo-Komponente, traegt data-demo und damit
+     die Farb- und Schriftleiter der jeweiligen Baukasten-Vorlage. */
+  .alt-fassung .alt-blatt {
+    /* Eigene Leiter. Die Namen sind bewusst anders als die Tokens der Seite,
+       damit eine Verwechslung im Editor auffaellt. */
+    --alt-page: #ffffff;
+    --alt-body-a: #d7d7d7; /* Grauverlauf des Seitengrunds, oben */
+    --alt-body-b: #f1f1f1; /* und unten. Der Klassiker von 2012. */
+    --alt-text: #333333;
+    --alt-weak: #979797; /* 2,92:1 auf Weiss */
+    --alt-small: #666666;
+    --alt-link: #0000ee; /* der unveraenderte Browser-Standardlink */
+    --alt-visited: #551a8b;
+    --alt-rule: #cccccc;
+    --alt-frame: #b0b0b0;
+    --alt-bar-a: #4a6b8a; /* Navigationsverlauf, wird je Demo ueberschrieben */
+    --alt-bar-b: #35506b;
+    --alt-font: Arial, Helvetica, sans-serif;
+    --alt-font-head: Arial, Helvetica, sans-serif;
+
+    background: linear-gradient(#ffffff 0, var(--alt-body-a) 120px, var(--alt-body-b) 100%);
+    color: var(--alt-text);
+    font-family: var(--alt-font);
+
+    /* Fuellt die Huelle in beide Richtungen. min-width: max-content ist der
+       Grund, warum der graue Grund auch dann noch traegt, wenn seitlich
+       gescrollt wird: ohne das waere das Blatt nur so breit wie das Fenster
+       und die Seite laege ab Pixel 901 auf Nichts. */
+    flex: 1 0 auto;
+    min-width: max-content;
+
+    /* Waagerecht mittig wie 2012, aber "safe": sobald die 900 Pixel nicht
+       mehr passen, faellt die Ausrichtung auf den Anfang zurueck. Ohne das
+       waere bei zentrierter Ueberbreite die linke Haelfte der Seite nicht
+       mehr erreichbar. Browser ohne das Schluesselwort verwerfen die ganze
+       Zeile und landen bei stretch, was hier ebenfalls links ausrichtet. */
+    display: flex;
+    flex-direction: column;
+    align-items: safe center;
+  }
+
+  /* Die feste Seite. Der eigentliche Befund "Layout von 2012": eine
+     Pixelbreite, die nie jemand fuer ein Handy angefasst hat. */
+  .alt-fassung .alt-seite {
+    width: 900px;
+    flex: none;
+    background: var(--alt-page);
+    border-left: 1px solid var(--alt-frame);
+    border-right: 1px solid var(--alt-frame);
+    /* Der Korridor fuer die Messschilder liegt AUSSERHALB dieser Seite,
+       oben und unten im Grau. */
+    margin: 28px 0 44px;
+  }
+
+  /* Browser-Vorgaben zurueckholen, die Tailwinds Preflight abgeraeumt hat.
+     Ohne diese Zeilen sieht die alte Fassung nicht nach 2012 aus, sondern
+     nach einem sauberen Reset, und das ist das Gegenteil der Aussage. */
+  .alt-fassung h1 {
+    font-family: var(--alt-font-head);
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 1.2;
+    margin: 0 0 6px;
+    hyphens: none;
+  }
+  .alt-fassung h2 {
+    font-family: var(--alt-font-head);
+    font-size: 15px;
+    font-weight: bold;
+    margin: 0 0 5px;
+    hyphens: none;
+  }
+  .alt-fassung h3 {
+    font-family: var(--alt-font-head);
+    font-size: 13px;
+    font-weight: bold;
+    margin: 0 0 4px;
+    hyphens: none;
+  }
+  .alt-fassung p {
+    margin: 0 0 10px;
+  }
+  .alt-fassung ul {
+    list-style: disc outside;
+    padding-left: 22px;
+    margin: 0 0 10px;
+  }
+  .alt-fassung li {
+    margin: 0 0 2px;
+  }
+  .alt-fassung a {
+    color: var(--alt-link);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .alt-fassung a:visited {
+    color: var(--alt-visited);
+  }
+  .alt-fassung hr {
+    border: 0;
+    border-top: 1px solid var(--alt-rule);
+    margin: 10px 0;
+  }
+
+  /* Kopfzeile: Firmenname links, "Telefongrafik" rechts. */
+  .alt-fassung .alt-kopf {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px 12px;
+  }
+  /* Die "seriöse" Vorlage stellte den Kopf mittig, ohne zweite Spalte. */
+  .alt-fassung .alt-kopf--mittig {
+    justify-content: center;
+    text-align: center;
+    padding: 18px 16px 14px;
+  }
+  .alt-fassung .alt-logo {
+    font-family: var(--alt-font-head);
+    font-size: 21px;
+    font-weight: bold;
+    color: var(--alt-bar-b);
+    letter-spacing: -0.01em;
+    text-shadow: 1px 1px 0 #ffffff, 2px 2px 1px rgba(0, 0, 0, 0.18);
+  }
+
+  /* Die Telefonnummer als Grafik. Ein SVG statt Text: nicht markierbar,
+     nicht antippbar, kein tel:-Link, andere Schrift als der Rest und ein
+     Hauch unscharf, wie eine als JPEG gespeicherte Schriftgrafik.
+     Der Rahmen ist der 1-Pixel-Rand, den eingebundene Bilder damals hatten. */
+  .alt-fassung .alt-telbild {
+    display: inline-block;
+    border: 1px solid var(--alt-frame);
+    background: linear-gradient(#ffffff, #e4e4e4);
+    padding: 3px 5px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .alt-fassung .alt-telbild svg {
+    display: block;
+  }
+
+  /* Navigationsleiste. Die Hoehe ist der Befund und deshalb hart gesetzt:
+     .alt-nav--eng misst genau 26 Pixel. */
+  .alt-fassung .alt-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0 10px;
+    display: flex;
+    gap: 1px;
+    background: linear-gradient(var(--alt-bar-a), var(--alt-bar-b));
+    border-top: 1px solid rgba(255, 255, 255, 0.35);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  }
+  .alt-fassung .alt-nav li {
+    margin: 0;
+  }
+  .alt-fassung .alt-nav a {
+    display: inline-block;
+    height: 30px;
+    min-width: 30px;
+    line-height: 30px;
+    padding: 0 12px;
+    color: #ffffff;
+    font-size: 12px;
+    text-decoration: none;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
+  }
+  .alt-fassung .alt-nav a:visited {
+    color: #ffffff;
+  }
+  .alt-fassung .alt-nav a:hover {
+    text-decoration: underline;
+  }
+  /* BEFUND "Tap-Ziel 26 Pixel": gebaut, nicht behauptet. 26 Pixel Hoehe,
+     26 Pixel Mindestbreite. Der schmale Rand macht die Trefferflaeche nicht
+     groesser, er verschiebt sie nur optisch. */
+  .alt-fassung .alt-nav--eng a {
+    height: 26px;
+    min-width: 26px;
+    line-height: 26px;
+    padding: 0 9px;
+    font-size: 11px;
+  }
+
+  /* Senkrechte Navigation in der linken Spalte, die zweite Bauform des
+     Baukastens. Textlinks, blau, unterstrichen, eng gestapelt. */
+  .alt-fassung .alt-nav-seite {
+    list-style: none;
+    margin: 0 0 14px;
+    padding: 0;
+    border-top: 1px solid var(--alt-rule);
+  }
+  .alt-fassung .alt-nav-seite li {
+    margin: 0;
+    border-bottom: 1px solid var(--alt-rule);
+  }
+  .alt-fassung .alt-nav-seite a {
+    display: block;
+    padding: 4px 2px;
+    font-size: 12px;
+  }
+
+  /* Das Kopfband. Jede dieser Vorlagen hatte eines, und es war nie ein Bild
+     des Betriebs, sondern der Farbverlauf, den der Baukasten mitlieferte.
+     Nichts wird geladen: zwei Verlaeufe und ein Rahmen. */
+  .alt-fassung .alt-banner {
+    height: 132px;
+    border-bottom: 1px solid var(--alt-frame);
+    background:
+      linear-gradient(160deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 42%),
+      linear-gradient(115deg, var(--alt-bar-a), var(--alt-bar-b));
+  }
+
+  /* Zweispalter. Feste Pixelbreiten, weil damals alles fest war. */
+  .alt-fassung .alt-spalten {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 14px 16px 4px;
+  }
+  /* Eine Zeile ueber die volle Breite der festen Seite, fuer das
+     Handschlag-Klischee der Kanzlei. */
+  .alt-fassung .alt-spalten--breit > * {
+    width: 100%;
+  }
+  .alt-fassung .alt-inhalt {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .alt-fassung .alt-sidebar {
+    flex: none;
+    width: 210px;
+  }
+  /* Die linke Spalte der Kanzlei-Vorlage. Schmaler, und die Linkliste sitzt
+     ohne Vorlauf oben, weil dort kein Bild darueber steht. */
+  .alt-fassung .alt-sidebar--links {
+    width: 168px;
+  }
+  .alt-fassung .alt-sidebar--links ul {
+    margin-top: 0;
+  }
+  .alt-fassung .alt-sidebar ul {
+    margin-top: 10px;
+  }
+  .alt-fassung .alt-sidebar ul a {
+    font-size: 12px;
+  }
+
+  /* Die Groesse, in der die alten Fassungen alles Nebensaechliche setzen:
+     Fusszeile, Bildunterschrift, und in der elektro-Fassung ausgerechnet den
+     einzigen Kontaktweg. Steht hier und nicht als Inline-Stil, damit auch
+     das Fundstueck seine Werte an einer Stelle hat. */
+  .alt-fassung .alt-klein {
+    font-size: 11px;
+  }
+
+  /* Der Fliesstext. Blocksatz ohne Silbentrennung: im Deutschen reisst das
+     zuverlaessig Loecher zwischen die Woerter, und genau die sind gemeint. */
+  .alt-fassung .alt-fliess {
+    text-align: justify;
+    word-spacing: normal;
+  }
+  /* BEFUND "Kontrast 2,9:1": #979797 auf #ffffff = 2,92:1. */
+  .alt-fassung .alt-fliess--weak {
+    color: var(--alt-weak);
+  }
+  /* BEFUND "Schrift 11 Pixel": 11 Pixel Serifenschrift. */
+  .alt-fassung .alt-fliess--11 {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  /* Der Verlaufsknopf. Kein Kontrastproblem, nur beliebig: er sieht aus wie
+     jeder andere Kasten der Seite und faellt deshalb nirgends auf. */
+  .alt-fassung .alt-knopf {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid #9a9a9a;
+    border-radius: 3px;
+    background: linear-gradient(#fdfdfd, #dedede);
+    color: var(--alt-text);
+    font-size: 12px;
+    text-decoration: none;
+  }
+  .alt-fassung .alt-knopf:visited {
+    color: var(--alt-text);
+  }
+  .alt-fassung .alt-knopf:active {
+    background: linear-gradient(#dedede, #fdfdfd);
+  }
+
+  /* Platzhalterrahmen fuer alles, was ein Bild war. Es wird nie eine Datei
+     geladen: die Flaeche STELLT ein Bild dar, sie ist keines. */
+  .alt-fassung .alt-bildplatz {
+    border: 1px solid var(--alt-frame);
+    background: linear-gradient(#e9e9e9, #cfcfcf);
+    padding: 0;
+  }
+  .alt-fassung .alt-bildplatz > svg {
+    display: block;
+  }
+  /* Das grosse Kopfbild der Kanzlei-Vorlage. Der Verlauf ist kraeftiger als
+     beim kleinen Bildplatz, damit die mittig stehende Grafik nicht auf einer
+     fast weissen Flaeche schwimmt. */
+  .alt-fassung .alt-bildplatz--gross {
+    background: linear-gradient(#e4e4e4, #c2c2c2);
+  }
+  .alt-fassung .alt-bildunterschrift {
+    margin: 4px 0 10px;
+    font-size: 11px;
+    color: var(--alt-small);
+  }
+  /* BEFUND "Startbild 4 Megabyte": ein Bildplatz, der noch laedt. Der Balken
+     steht still bei 31 Prozent. Bewusst ohne Zeitangabe: eine Ladezeit waere
+     eine erfundene Messung. */
+  .alt-fassung .alt-ladebalken {
+    height: 12px;
+    border: 1px solid #9a9a9a;
+    background: #efefef;
+    padding: 1px;
+  }
+  .alt-fassung .alt-ladebalken > i {
+    display: block;
+    height: 100%;
+    width: 31%;
+    background: repeating-linear-gradient(45deg, #7f9fc0 0 6px, #6d8cad 6px 12px);
+  }
+
+  /* BEFUND "Kontrast 3,1:1": weisse Schrift auf hellem Verlauf.
+     #ffffff auf #929292 = 3,11:1 am dunkelsten Punkt, auf #9a9a9a = 2,81:1
+     am hellsten. Der Befund nennt den besten Wert, den die Schrift hier
+     ueberhaupt erreicht. */
+  .alt-fassung .alt-hellband {
+    background: linear-gradient(#929292, #9a9a9a);
+    color: #ffffff;
+    padding: 18px 16px;
+    text-shadow: none;
+  }
+  .alt-fassung .alt-hellband h1,
+  .alt-fassung .alt-hellband p {
+    color: #ffffff;
+  }
+  /* Als Startbild braucht die Flaeche Hoehe, sonst liest sie sich als
+     Farbbalken und nicht als Foto, auf das jemand Text gelegt hat. */
+  .alt-fassung .alt-bildplatz > .alt-hellband {
+    min-height: 156px;
+  }
+  .alt-fassung .alt-bildplatz > .alt-ladebalken {
+    margin: 8px;
+  }
+
+  /* Der Lauftext. Die einzige Dauerschleife im ganzen Projekt, und sie ist
+     Teil des Fundstuecks, nicht des Designs. Bei prefers-reduced-motion
+     steht sie still (siehe Abschnitt 7). */
+  .alt-fassung .alt-lauftext {
+    overflow: hidden;
+    white-space: nowrap;
+    background: #ffffcc;
+    border-top: 1px solid #e0d98a;
+    border-bottom: 1px solid #e0d98a;
+    padding: 3px 0;
+    font-size: 12px;
+  }
+  .alt-fassung .alt-lauftext > span {
+    display: inline-block;
+    padding-left: 100%;
+    animation: altLauf 22s linear infinite;
+  }
+
+  /* PDF-Link. Fuehrt nirgendwohin (href="#", onClick verhindert die
+     Navigation) und ist damit genau das, was der Befund beschreibt. */
+  .alt-fassung .alt-pdf {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+  }
+  .alt-fassung .alt-pdf svg {
+    display: block;
+    flex: none;
+  }
+
+  /* Fusszeile: mittig, klein, mit Zaehler. */
+  .alt-fassung .alt-fuss {
+    border-top: 1px solid var(--alt-rule);
+    margin-top: 10px;
+    padding: 10px 16px 14px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--alt-small);
+  }
+  /* Der Besucherzaehler als Ziffernkasten, wie ihn die Baukaesten mitgaben.
+     Die Ziffernfolge ist aufsteigend und damit als Platzhalter erkennbar,
+     in derselben Familie wie "0800 / 000 000" und "Musterstrasse 1". */
+  .alt-fassung .alt-zaehler {
+    display: inline-flex;
+    gap: 1px;
+    padding: 2px;
+    background: #000000;
+    border: 1px solid #000000;
+    vertical-align: middle;
+  }
+  .alt-fassung .alt-fuss-zeile {
+    margin-top: 6px;
+  }
+  .alt-fassung .alt-zaehler span {
+    display: block;
+    min-width: 11px;
+    padding: 1px 2px;
+    background: #1a1a1a;
+    color: #ffffff;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 11px;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  /* ── Die drei Baukasten-Anmutungen ──────────────────────────────────────
+     Drei Betriebe, drei Vorlagen, ein Baukasten. Nur Farbe und Schrift
+     unterscheiden sie, genau wie damals. */
+  .alt-fassung .alt-blatt[data-demo="elektro"] {
+    --alt-bar-a: #4a6b8a;
+    --alt-bar-b: #35506b;
+    --alt-font: Arial, Helvetica, sans-serif;
+    --alt-font-head: Arial, Helvetica, sans-serif;
+  }
+  .alt-fassung .alt-blatt[data-demo="gasthof"] {
+    --alt-bar-a: #6b5a3a;
+    --alt-bar-b: #4c3f28;
+    --alt-body-a: #ded7c6;
+    --alt-body-b: #f3efe6;
+    --alt-text: #444444;
+    --alt-font: Georgia, "Times New Roman", serif;
+    --alt-font-head: Georgia, "Times New Roman", serif;
+  }
+  .alt-fassung .alt-blatt[data-demo="kanzlei"] {
+    --alt-bar-a: #243b5e;
+    --alt-bar-b: #1b2c47;
+    --alt-body-a: #d5d5d5;
+    --alt-body-b: #ededed;
+    --alt-text: #3a3a3a;
+    --alt-font: "Times New Roman", Times, serif;
+    --alt-font-head: "Times New Roman", Times, serif;
+  }
+}
+
+@keyframes altLauf {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* ── 9. DIE ZONE .neu-fassung ─────────────────────────────────────────────
+   Die neue Fassung derselben drei Betriebe. Anders als .alt-fassung ist das
+   keine Insel, sondern eine gedeckelte Zone: sie benutzt die Tokens dieser
+   Datei, denn sie ist von derselben Hand. Gedeckelt heisst dreierlei, und
+   jedes davon ist eine bewusste Entscheidung:
+
+   1. EIGENER MASSSTAB. Die Ueberschrift laeuft ueber --text-demo-1 und
+      hoert bei 44 Pixeln auf. Eine gezeigte Website darf nie so laut werden
+      wie eine Sektionsueberschrift des Portfolios, sonst liest der Besucher
+      sie als Teil der Seite und nicht als Werk.
+   2. EIGENER MESSBEZUG. container-type: inline-size. Alles darin richtet
+      sich nach der Breite des Panels, nicht nach der des Fensters. Eine
+      Demo in einer 900 Pixel breiten Flaeche auf einem 1600-Pixel-Monitor
+      muss sich wie eine 900-Pixel-Website verhalten.
+   3. EIGENE FLAECHE. Grund ist --c-sheet (das aufgelegte Blatt), waehrend
+      die Seite auf --c-paper (dem Tisch) steht. Der Unterschied ist klein
+      und reicht: das hier liegt obendrauf.
+
+   Die drei Fassungen teilen Knopf, Navigationsziel, Haarlinie und
+   Messschild. Was sie unterscheidet, ist nicht Farbe (es gibt genau einen
+   Akzent, auch hier), sondern Aufbau: Handwerk asymmetrisch mit
+   Leitungsschema, Gasthof mittig wie ein Aushang, Kanzlei streng links mit
+   Paragraphenspalte. Gleiche Hand, drei Haltungen. */
+@layer components {
+  .neu-fassung {
+    container-type: inline-size;
+    background: var(--c-sheet);
+    color: var(--c-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.65;
+    overflow-wrap: break-word;
+    isolation: isolate;
+
+    /* Eigener Seitenrand, unabhaengig von --spacing-gutter der Seite: eine
+       Website in einem Panel braucht einen engeren Rand als eine Seite im
+       Fenster. In cqi, damit er an der Panelbreite haengt. */
+    --nf-gutter: clamp(1.125rem, 3.5cqi, 2.5rem);
+
+    /* Beide Fassungen liegen im selben Rasterfeld und werden auf dieselbe
+       Hoehe gezogen: die hoehere bestimmt sie, die niedrigere folgt. Deshalb
+       KEIN eigenes min-height in Pixeln, sondern nur 100 Prozent der Huelle.
+       Der Ueberschuss geht in die Fusszeile, die per margin-top: auto nach
+       unten faellt, statt in einen Sprung des Schiebers. */
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+
+  .nf-shell {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--nf-gutter);
+  }
+
+  /* Der eine Knopf. Gleiche Form in allen drei Fassungen, weil ein CTA das
+     Bauteil ist, an dem man eine Handschrift am schnellsten erkennt.
+     48 Pixel Mindesthoehe, also ueber den 44 aus WCAG 2.5.5. */
+  .nf-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6em;
+    min-height: 48px;
+    padding-inline: 1.25rem;
+    border-radius: var(--radius-sm);
+    background: var(--c-accent);
+    color: var(--c-accent-contrast);
+    font-size: var(--text-body);
+    font-weight: 500;
+    letter-spacing: -0.006em;
+    text-decoration: none;
+    transition:
+      background-color var(--d-quick) var(--ease-standard),
+      transform var(--d-quick) var(--ease-standard);
+  }
+  /* Nur fuer echte Zeiger: auf dem Handy loest ein Tipp sonst den
+     Hover-Zustand aus und laesst den Knopf danach angefasst stehen. */
+  @media (hover: hover) and (pointer: fine) {
+    .nf-cta:hover {
+      background: var(--c-accent-strong);
+    }
+  }
+  /* Der Knopf gibt nach. 0,98 statt 0,95: bei 48 Pixel Hoehe ist mehr schon
+     ein Wackeln. Ausserhalb von :active steht kein transform, damit kein
+     containing block liegen bleibt (siehe Warnung in Abschnitt 6). */
+  .nf-cta:active {
+    transform: scale(0.98);
+  }
+
+  /* Navigationsziel. 44 mal 44 Pixel, der Wert, den der Befund der alten
+     Fassung vermisst. Die Flaeche ist groesser als die Schrift: das ist der
+     ganze Unterschied zu den 26 Pixeln nebenan. */
+  .nf-navlink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding-inline: 0.625rem;
+    color: var(--c-soft);
+    font-size: var(--text-small);
+    text-decoration: none;
+    transition: color var(--d-quick) var(--ease-standard);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .nf-navlink:hover {
+      color: var(--c-ink);
+    }
+  }
+
+  /* Ein Ziel, das wie Text aussieht und sich trotzdem antippen laesst:
+     Telefonnummer, Adresse, Nebenweg. Die Trefferflaeche ist wieder 44
+     Pixel hoch, sichtbar bleibt nur die Zeile. */
+  .nf-tap {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--c-ink);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    text-decoration-color: var(--c-line3);
+    transition:
+      color var(--d-quick) var(--ease-standard),
+      text-decoration-color var(--d-quick) var(--ease-standard);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .nf-tap:hover {
+      color: var(--c-accent);
+      text-decoration-color: var(--c-accent);
+    }
+  }
+}
