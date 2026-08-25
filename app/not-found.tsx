@@ -18,11 +18,13 @@ import { start } from "@/content/start";
  * components/chrome/kopfleiste.tsx).
  */
 export default function NotFound() {
+  const { title, ctaLabel } = start.notFound;
+
   return (
     <main id={start.sprungmarke.zielId} tabIndex={-1} className="mx-auto max-w-6xl px-6 py-24">
-      <h1 className="text-3xl">Diese Seite gibt es nicht.</h1>
+      <h1 className="text-3xl">{title}</h1>
       <p className="mt-4">
-        <a href="/">Zurück zur Startseite</a>
+        <a href="/">{ctaLabel}</a>
       </p>
     </main>
   );

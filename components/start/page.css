@@ -216,6 +216,38 @@
   font-size: 22px; margin: 0; color: #aeb4bb; letter-spacing: 0;
   text-shadow: 0 1px 0 rgba(0,0,0,0.2);
 }
+/* DIE ZAHL AUF DEM SCHILD "Contrast 2.1:1" HAENGT AN DIESER ZEILE.
+   Gemessen wird nicht die deklarierte Farbe gegen den deklarierten Grund,
+   sondern das, was im Moment des Schildes wirklich auf dem Schirm steht:
+   die zusammengesetzte Flaeche, mit Verlauf, mit Drift, mit Filmkorn. Das
+   Korn (.sc-grain in scrollcraft.css) laesst sich nicht anmessen, sein
+   Rauschen macht jedes Histogramm unbrauchbar. Es wird deshalb ausgeblendet,
+   an fuenf Sonden bekannter Farbe einmal bestimmt (Mittelwirkung: rgb(180)
+   bei Deckkraft 0,0214, nicht die 0,045 aus der Regel, denn die
+   feTurbulence traegt ihren eigenen Alphakanal) und danach rechnerisch ueber
+   Schriftfarbe UND Grund gelegt. Gegenprobe an 17024 Pixeln: Vorhersage und
+   direkte Messung weichen um weniger als 0,4 von 255 ab.
+
+   Chrome 151, 1440x900, geparkt bei --sc-p = 0,10, also mitten im Fenster
+   0.03 bis 0.17, in dem das Schild leuchtet. Sichtbare Lauftexte:
+     .db-hero p    #838a92 auf gemessenem Grund #4e5661   2,12 roh, 2,08 mit Korn
+     .db-copy 1    #838a92 auf #4b525d                    2,26 roh, 2,21 mit Korn
+     .db-copy 2    #838a92 auf #444b55                    2,53 roh, 2,47 mit Korn
+   Die Spanne kommt vom Verlauf des Tracks, die Zeile hier liegt am hellsten
+   Punkt und ist damit der schlechteste Fall. 2,08 aufgerundet: 2,1.
+   Aufgerundet mit Absicht. Das Schild ist ein Vorwurf, und ein Vorwurf darf
+   nie uebertrieben sein: wer nachmisst, soll die Fassung hoechstens noch
+   schlechter finden, nie besser, als hier behauptet.
+
+   NICHT GEMEINT ist .db-phone (1,92). Die Kachel ist der schlechteste Wert
+   der Seite, traegt aber ihr eigenes Schild ("Phone number: an image, not
+   text") und ist eine Bedienflaeche, kein Lauftext. Wer sie fuer die
+   Kontrastzahl nimmt, kommt auf 1,95 ohne Korn und meint ein anderes Bauteil.
+
+   Bei 390x844 wird der Track hoeher, der Verlauf steht anders, und diese
+   Zeile faellt auf 1,98. Das ist die unbedenkliche Richtung (schlechter als
+   aufgedruckt) und deshalb kein Grund, am Verlauf zu drehen. Massgeblich ist
+   1440x900, dieselbe Bezugsgroesse wie bei allen anderen Messwerten hier. */
 .demo-track--bad .db-hero p {
   font-size: 13px; margin: 2px 0 0; color: #838a92;
 }
@@ -275,6 +307,35 @@
   font-size: 0.82rem; font-weight: 600; text-decoration: none;
   min-height: 44px; display: inline-flex; align-items: center;
 }
+/* DIE ZAHL AUF DEM SCHILD "Contrast 5.9:1" HAENGT AN DIESER ZEILE (und an
+   .dg-hero p, gleiche Farbe, gleicher Grund). Methode wie oben bei
+   .db-hero p beschrieben: die zusammengesetzte Flaeche, nicht das Stylesheet.
+
+   DIE FALLE, UND SIE HAT SCHON EINMAL ZUGESCHLAGEN: der Grund ist hier
+   var(--sc-canvas), und der Akt faerbt ihn per data-sc-drift="#171310" um.
+   Die Engine schreibt das auf <html>, voll ausgefahren ab 35 Prozent
+   Aktfortschritt. Im Fenster 0.58 bis 0.71, in dem das Schild leuchtet, ist
+   der Grund also #171310 und nicht mehr der Ausgangswert #0a0b0d aus
+   tokens.css. Wer gegen #0a0b0d rechnet, bekommt 6,52 und misst einen Grund,
+   den es in diesem Moment nicht mehr gibt.
+
+   Chrome 151, 1440x900, geparkt bei --sc-p = 0,645:
+     #93949c auf gemessenem Grund #171310    6,12 roh
+     dasselbe, Korn einkomponiert            5,98
+     Gegenprobe gegen den direkt mit Korn gemessenen Grund   5,97
+   Also 6,52 gegen 6,12 durch die Drift, 6,12 gegen 5,98 durch das Korn.
+   Beides zusammen ergibt die aufgedruckte Zahl, das Korn allein reicht dafuer
+   nicht. Bei 1280x720, 1920x1080 und 390x844 identisch 5,98, der Grund ist
+   dort dieselbe Volltonflaeche.
+
+   5,98 abgerundet: 5,9. Abgerundet mit Absicht, spiegelbildlich zur schlechten
+   Fassung: wer nachmisst, soll die neue Fassung hoechstens besser finden.
+
+   NICHT GEMEINT ist .dg-cta (5,02). Der Knopf ist eine Bedienflaeche mit
+   eigenem Schild ("Tap target 44px"), seine Beschriftung steht auf
+   var(--sc-accent), und selbst reines Schwarz kaeme darauf nur auf 5,45. Die
+   4,5:1 fuer kleine Schrift haelt er mit Abstand. Das Schild vergleicht auf
+   beiden Seiten dasselbe Bauteil, den Lauftext, sonst vergliche es nichts. */
 .demo-track--good .dg-copy {
   padding: var(--sc-5); font-size: 0.88rem; line-height: 1.6; color: var(--sc-ink-soft);
   max-width: 42ch;

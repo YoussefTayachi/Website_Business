@@ -60,6 +60,17 @@ export const start = {
   },
 
   /**
+   * app/not-found.tsx, das globale 404. Aus demselben Grund englisch wie
+   * `sprungmarke` direkt darueber: die Seite haengt am Wurzel-Layout
+   * (lang="en") und greift fuer jede Adresse, auch die deutschen
+   * Unterseiten, die keine eigene 404-Seite haben.
+   */
+  notFound: {
+    title: "This page doesn't exist.",
+    ctaLabel: "Back to the homepage",
+  },
+
+  /**
    * Die eigene Kopfleiste der Startseite (.site-bar). Nicht zu verwechseln mit
    * components/chrome/kopfleiste.tsx: die traegt die deutschen Unterseiten.
    */

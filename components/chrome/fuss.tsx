@@ -15,7 +15,7 @@ import { seite } from "@/content/seite";
  * es gibt keine zwei Abstaende, die sich addieren.
  */
 export default function SiteFooter() {
-  const { marke, tagline, rechtLinks, copyrightVorlage } = seite.fuss;
+  const { marke, tagline, rechtLinks, copyrightVorlage, rechtNavLabel } = seite.fuss;
 
   // Das Jahr wird beim Bauen eingesetzt, nicht beim Aufruf. Vor dem Livegang
   // pruefen, ob der Build aktuell genug ist.
@@ -34,10 +34,7 @@ export default function SiteFooter() {
         </div>
 
         <div className="flex flex-col gap-1 sm:items-end">
-          {/* TODO(inhalt): "Rechtliches" ist der letzte hartcodierte sichtbare
-              Text dieser Datei. Er gehoert nach content/seite.ts, ist dort
-              aber bisher nicht vorgesehen. */}
-          <nav aria-label="Rechtliches">
+          <nav aria-label={rechtNavLabel}>
             <ul className="flex items-center gap-6">
               {rechtLinks.map((link) => (
                 <li key={link.href}>

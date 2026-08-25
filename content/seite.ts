@@ -4,9 +4,11 @@
 // mit zwei Ausnahmen seit dem 2026-08-25: `impressum` und `datenschutz` sind
 // englisch, weil die Startseite dorthin verlinkt und beide Seiten deshalb
 // englisch sein muessen (Begruendung im Kommentar bei `impressum`). Damit
-// englisch beschriftet ist auch `fuss.rechtLinks` (die zwei Links, die zu
-// diesen Seiten fuehren) und `kleintexte.platzhalterWarnung` (der Hinweis,
-// der auf beiden Seiten steht). Alles andere hier bleibt Deutsch.
+// englisch beschriftet ist auch die Chrome, die auf allen drei Seiten
+// erscheint, die von der englischen Startseite aus erreichbar sind
+// (/impressum, /datenschutz, /arbeit/[slug]): `kopfleiste.ankerlinks`,
+// `fuss.tagline`, `fuss.rechtLinks` und `kleintexte.platzhalterWarnung`.
+// Alles andere hier bleibt Deutsch.
 //
 // STAND 2026-08-25: Die Startseite ist eine Scroll-Inszenierung auf Englisch
 // (app/page.tsx, content/start.ts). Mit ihr sind die sieben alten Sektionen
@@ -48,6 +50,7 @@ export const seite = {
   kopfleiste: {
     marke: "Youssef Tayachi",
     ankerlinks: [{ label: "Contact", href: "#kontakt" }],
+    navLabel: "Main navigation",
   },
 
   /**
@@ -86,7 +89,13 @@ export const seite = {
 
   fuss: {
     marke: "Youssef Tayachi",
-    tagline: "Websites für Bau, Elektro und Dach, die einen zweiten Blick verdienen.",
+    // Englisch seit 2026-08-25, aus demselben Grund wie `rechtLinks` direkt
+    // darunter (siehe Kommentar bei `impressum` unten). Nennt bewusst die
+    // drei Gewerke, statt allgemein zu bleiben: der andere Fuss, der im
+    // Schlussakt der Startseite steckt (content/start.ts, kontakt.fussSatz),
+    // ist der allgemeinere Satz. Beide stehen nie auf derselben Seite,
+    // sollen sich aber auch nicht widersprechen.
+    tagline: "Websites for construction, electrical and roofing companies that earn a second look.",
     // Labels englisch, seit Impressum und Datenschutz selbst englisch sind
     // (Entscheidung vom 2026-08-25, siehe Kommentar bei `impressum` unten).
     // Die URLs bleiben deutsch: /impressum und /datenschutz aendern sich nicht.
@@ -96,13 +105,18 @@ export const seite = {
     ],
     // {jahr} wird von der Komponente durch das aktuelle Jahr ersetzt.
     copyrightVorlage: "© {jahr} Youssef Tayachi",
+    // Englisch aus demselben Grund wie `tagline` und `rechtLinks` oben.
+    rechtNavLabel: "Legal",
   },
 
   kleintexte: {
     sprungmarke: { label: "Zum Inhalt springen", zielId: "inhalt" },
+    // Englisch aus demselben Grund wie kopfleiste.navLabel: der Schalter
+    // sitzt in der Kopfleiste und laeuft damit auch auf /impressum und
+    // /datenschutz.
     nachtmodusSchalter: {
-      ariaLabelZuDunkel: "Dunkelmodus aktivieren",
-      ariaLabelZuHell: "Hellmodus aktivieren",
+      ariaLabelZuDunkel: "Turn on dark mode",
+      ariaLabelZuHell: "Turn on light mode",
     },
     demoKennzeichen: {
       label: "Demo, fiktives Beispiel",

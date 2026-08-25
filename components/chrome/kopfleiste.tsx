@@ -29,7 +29,7 @@ import ThemeToggle from "./nachtmodus-schalter";
  */
 export default function SiteHeader() {
   const [compact, setCompact] = useState(false);
-  const { marke, ankerlinks } = seite.kopfleiste;
+  const { marke, ankerlinks, navLabel } = seite.kopfleiste;
 
   useEffect(() => {
     // Einmal beim Laden auswerten: wer mit einem Anker in der Adresse
@@ -76,10 +76,7 @@ export default function SiteHeader() {
           {marke}
         </a>
 
-        {/* TODO(inhalt): "Hauptnavigation" ist der letzte hartcodierte
-            sichtbare Text dieser Datei. Er gehoert nach content/seite.ts, ist
-            dort aber bisher nicht vorgesehen. */}
-        <nav aria-label="Hauptnavigation" className="ml-auto shrink-0">
+        <nav aria-label={navLabel} className="ml-auto shrink-0">
           <ul className="flex items-center gap-4 sm:gap-6">
             {ankerlinks.map((link) => (
               <li key={link.href}>
