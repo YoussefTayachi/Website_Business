@@ -197,7 +197,14 @@ kein zweiter.
 ## Vor dem Push
 
 `npm run typecheck` und `npm run build` muessen fehlerfrei durchlaufen. Es gibt
-keine CI, die das nachholt.
+zwar eine CI (`.github/workflows/ci.yml`, genau diese zwei Befehle auf jedem
+Push nach `main`), aber sie faengt den Fehler erst, wenn er schon im Repo
+steht. Vor dem Push pruefen, nicht danach.
+
+Was die CI **nicht** tut: deployen. Es gibt keinen Deployment-Schritt und
+keinen `.vercel`-Ordner in diesem Projekt. Ein Push nach `main` geht ins Repo
+und sonst nirgendwohin. Wer das aendert, macht jeden kuenftigen Push zu einem
+Livegang, und das gehoert dann hierher geschrieben.
 
 Dazu die vier Dinge, an denen sich diese Seite messen lassen muss, weil sie
 genau das verkauft: kein Layout-Sprung beim Laden, Tastaturbedienung ueberall,
