@@ -62,10 +62,11 @@ Hex-Werte in Komponenten.
 
 ## Später als Branch ins frostbreaker.app-Repo
 
-Das Projekt hat bewusst kein eigenes Git. Zum Übernehmen im Frostbreaker-Repo
-einen Branch anlegen, den Inhalt dieses Ordners dort ablegen (zum Beispiel als
-`apps/portfolio`) und die Abhängigkeiten aus der hiesigen `package.json` in die
-Zielanwendung übernehmen. Weil Next-, React- und Tailwind-Version identisch
+Das Projekt hat inzwischen ein eigenes Git
+(`github.com/YoussefTayachi/Website_Business`). Zum Übernehmen im
+Frostbreaker-Repo einen Branch anlegen, den Inhalt dieses Ordners dort ablegen
+(zum Beispiel als `apps/portfolio`) und die Abhängigkeiten aus der hiesigen
+`package.json` in die Zielanwendung übernehmen. Weil Next-, React- und Tailwind-Version identisch
 gewählt sind, ist das ein Verschieben von Dateien und kein Portieren.
 
 Zu prüfen ist dabei nur dreierlei:
