@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { seite } from "@/content/seite";
 import ThemeToggle from "./nachtmodus-schalter";
 
@@ -62,12 +61,20 @@ export default function SiteHeader() {
             min-w-0 und truncate sind die Notbremse fuer sehr schmale Geraete:
             bei 390 Pixeln (Zielbreite) passt die Zeile mit rund 50 Pixeln
             Luft, darunter gibt die Marke nach, statt die Leiste zu sprengen. */}
-        <Link
+        {/* Bewusst ein <a> und kein <Link>: jeder Weg zurueck zur Startseite
+            muss ein vollstaendiger Seitenaufbau sein. Die Startseite wird von
+            zwei Skripten ausserhalb von React getragen
+            (public/scrollcraft/scrollcraft.js und page.js). Bei einem
+            Client-Wechsel liegen beide im Cache und laufen nicht erneut: die
+            Engine bliebe an das alte, inzwischen verworfene DOM gebunden, und
+            der Signature Move in Akt 4 waere tot. Dasselbe gilt fuer die zwei
+            Ankerlinks darunter. */}
+        <a
           href="/"
           className="min-w-0 truncate font-display text-small text-ink transition-colors hover:text-accent sm:text-body"
         >
           {marke}
-        </Link>
+        </a>
 
         {/* TODO(inhalt): "Hauptnavigation" ist der letzte hartcodierte
             sichtbare Text dieser Datei. Er gehoert nach content/seite.ts, ist
@@ -80,13 +87,20 @@ export default function SiteHeader() {
                     sie absolut gemacht, sonst zeigen sie auf /impressum,
                     /datenschutz und /arbeit/[slug] ins Leere.
                     min-h-11: 44 Pixel Trefferflaeche, derselbe Wert, den die
-                    Befunde an der alten Fassung vermissen. */}
-                <Link
+                    Befunde an der alten Fassung vermissen.
+                    <a> statt <Link>, Begruendung eine Ebene weiter oben bei
+                    der Wortmarke.
+                    Nur noch ein Eintrag ("Contact" -> #kontakt): der fruehere
+                    zweite Link zeigte auf "#showcase", das es auf der neuen
+                    Startseite nicht mehr gibt. Zurueck zur Startseite fuehrt
+                    bereits die Wortmarke, ein zweiter Nav-Punkt dafuer waere
+                    doppelt. Siehe content/seite.ts, kopfleiste. */}
+                <a
                   href={`/${link.href}`}
                   className="inline-flex min-h-11 items-center text-small whitespace-nowrap text-soft transition-colors hover:text-ink"
                 >
                   {link.label}
-                </Link>
+                </a>
               </li>
             ))}
           </ul>

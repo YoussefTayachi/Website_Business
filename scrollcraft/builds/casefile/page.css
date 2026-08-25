@@ -1,0 +1,429 @@
+/* ============================================================================
+   casefile: page-specific styles.
+   Tokens come from scrollcraft.css and the overrides in index.html <style>.
+   Nothing here touches .sc-stage, .sc-copy or any [data-sc-*] mechanism.
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ bar -- */
+.site-bar {
+  position: fixed; inset: 0 0 auto 0; z-index: var(--sc-z-chrome);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--sc-4) var(--sc-gutter);
+  background: color-mix(in oklab, var(--sc-canvas) 72%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--sc-hairline);
+}
+.site-bar__mark {
+  font-family: var(--sc-font-mono);
+  font-size: var(--sc-t-xs);
+  letter-spacing: var(--sc-track-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--sc-ink);
+}
+.site-bar__cta {
+  font-family: var(--sc-font-mono);
+  font-size: var(--sc-t-xs);
+  letter-spacing: var(--sc-track-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--sc-accent-ink);
+  background: var(--sc-accent);
+  padding: 0.6em 1.1em;
+  border-radius: var(--sc-r-sm);
+  transition: transform var(--sc-d-fast) var(--sc-ease-out);
+}
+.site-bar__cta:hover { transform: translateY(-1px); }
+.site-bar__cta:active { transform: translateY(0) scale(0.97); }
+
+/* ---------------------------------------------------------------- hero --
+   Act 1, data-sc-act="pin". A still image (no video: see BRIEF.md budget
+   note) wrapped in an iris reveal, greet-cue kinetic headline. */
+.hero__figure { position: absolute; inset: 0; margin: 0; }
+.hero__figure img { width: 100%; height: 100%; object-fit: cover; }
+.hero__copy .sc-label { color: var(--sc-accent); margin-bottom: var(--sc-3); display: block; }
+/* Measured on the composited frame: the headline's ink came back at 4.47:1
+   over the brightest patch of the photo (the lit keys), just under the
+   4.5:1 floor. The corner scrim is a sibling of the copy (see taste.md,
+   "text over media"), so strengthening it here is measured, not guessed. */
+.hero .sc-scrim--lead {
+  background: linear-gradient(to top right,
+    color-mix(in oklab, var(--sc-canvas) 97%, transparent) 0%,
+    color-mix(in oklab, var(--sc-canvas) 82%, transparent) 32%,
+    color-mix(in oklab, var(--sc-canvas) 38%, transparent) 56%,
+    transparent 76%);
+}
+.hero__lede { margin-top: var(--sc-4) !important; font-size: var(--sc-t-lg); }
+
+/* ------------------------------------------------------------- befund --
+   Act 2, data-sc-act="flow". Sequential "up" reveals, one finding at a
+   time, in the plain measured language of an inspection tag. */
+.befund { background: var(--sc-surface); }
+.befund__head { max-width: 40rem; margin-bottom: var(--sc-9); }
+.befund__list { display: grid; gap: var(--sc-11); max-width: 52rem; }
+.finding {
+  display: grid; grid-template-columns: auto 1fr; gap: var(--sc-5);
+  align-items: start;
+  padding-bottom: var(--sc-8);
+  border-bottom: 1px solid var(--sc-hairline);
+}
+.finding:last-child { border-bottom: 0; padding-bottom: 0; }
+.finding__tag {
+  font-family: var(--sc-font-mono);
+  font-size: var(--sc-t-xs);
+  letter-spacing: var(--sc-track-wide);
+  text-transform: uppercase;
+  color: var(--sc-accent);
+  white-space: nowrap;
+  padding-top: 0.3em;
+}
+.finding__body { max-width: 40rem; }
+.finding__stat {
+  display: block;
+  font-family: var(--sc-font-mono);
+  font-size: var(--sc-t-sm);
+  color: var(--sc-ink-soft);
+  margin-top: var(--sc-2);
+}
+.befund__close {
+  margin-top: var(--sc-9);
+  font-family: var(--sc-font-display);
+  font-size: var(--sc-t-xl);
+  font-style: italic;
+  color: var(--sc-ink);
+}
+
+/* -------------------------------------------------------------- hinge --
+   Act 3, data-sc-act="flow". Authored silence before the peak: almost
+   nothing on screen, deliberately. */
+.hinge {
+  min-height: 46svh;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+}
+.hinge p {
+  font-family: var(--sc-font-display);
+  font-size: var(--sc-t-2xl);
+  font-style: italic;
+  color: var(--sc-ink-soft);
+  margin: 0;
+}
+
+/* ------------------------------------------------------- showcase peak --
+   Act 4, data-sc-act="pin". The signature move lives here: two demo sites,
+   each scrolling under the reader's own wheel, one of them lagging on
+   purpose, one of them exact. See page.js. */
+.peak__stage { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: var(--sc-6); }
+.peak__head { text-align: center; max-width: 42rem; padding-inline: var(--sc-gutter); }
+.peak__head .sc-label { color: var(--sc-accent); }
+.peak__tag { margin-top: var(--sc-3) !important; }
+
+.demo-frame {
+  position: relative;
+  width: clamp(20rem, 78vw, 58rem);
+  height: clamp(19rem, 46vh, 27rem);
+  border-radius: var(--sc-r-md);
+  overflow: clip;
+  background: #0d0e10;
+  box-shadow: var(--sc-e3);
+  border: 1px solid var(--sc-hairline-strong);
+}
+.demo-frame__bar {
+  position: relative; z-index: 3;
+  display: flex; align-items: center; gap: var(--sc-2);
+  padding: var(--sc-2) var(--sc-4);
+  background: #0a0a0c;
+  border-bottom: 1px solid var(--sc-hairline);
+  font-family: var(--sc-font-mono);
+  font-size: 0.68rem;
+  letter-spacing: var(--sc-track-wide);
+  color: var(--sc-ink-soft);
+}
+.demo-frame__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sc-hairline-strong); }
+.demo-frame__url { margin-left: var(--sc-3); opacity: 0.75; }
+.demo-frame__viewport {
+  position: relative;
+  height: calc(100% - 1.9rem);
+  overflow: clip;
+}
+.demo-pane {
+  position: absolute; inset: 0;
+  overflow: clip;
+}
+.demo-pane--bad { z-index: 1; }
+.demo-pane--good { z-index: 2; clip-path: inset(0 100% 0 0); }
+.demo-track { position: absolute; inset-inline: 0; top: 0; will-change: transform; }
+
+/* the intentionally bad island: everything here is scoped and does not
+   inherit the page's own type or spacing rules, on purpose, the way an
+   isolated demo of bad practice has to be self-contained. */
+.demo-track--bad {
+  background: linear-gradient(160deg, #5b6470 0%, #454c56 55%, #383d45 100%);
+  font-family: "Times New Roman", Georgia, serif;
+  color: #7d8590;
+}
+.demo-track--bad .db-nav {
+  display: flex; gap: 6px; padding: 6px 10px; font-size: 10px;
+  background: #40454d; color: #9aa0a8; white-space: nowrap; overflow: hidden;
+}
+.demo-track--bad .db-hero {
+  padding: 18px 14px 10px; text-align: center;
+}
+.demo-track--bad .db-hero h2 {
+  font-size: 22px; margin: 0; color: #aeb4bb; letter-spacing: 0;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.2);
+}
+.demo-track--bad .db-hero p {
+  font-size: 13px; margin: 2px 0 0; color: #838a92;
+}
+.demo-track--bad .db-phone {
+  display: inline-block; margin-top: 8px; padding: 3px 8px;
+  background: #4a5058; filter: blur(0.35px);
+  font-size: 15px; letter-spacing: 0.06em; color: #767d85;
+  transform: scaleY(0.94);
+}
+.demo-track--bad .db-copy {
+  padding: 12px 16px; font-size: 11px; line-height: 1.3; color: #838a92;
+}
+.demo-track--bad .db-link { color: #8fa3c9; text-decoration: underline; }
+.demo-track--bad .db-block {
+  height: 90px; margin: 10px 16px; background: repeating-linear-gradient(
+    45deg, #4b515a, #4b515a 8px, #454b53 8px, #454b53 16px);
+}
+.demo-track--bad .db-foot {
+  padding: 10px 16px 20px; font-size: 9px; color: #767d85;
+}
+
+.demo-track--good {
+  background: var(--sc-canvas);
+  font-family: var(--sc-font-text);
+  color: var(--sc-ink);
+}
+.demo-track--good .dg-nav {
+  display: flex; align-items: center; gap: var(--sc-6);
+  padding: var(--sc-3) var(--sc-5);
+  border-bottom: 1px solid var(--sc-hairline);
+  font-size: 0.72rem; letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+  color: var(--sc-ink-soft);
+}
+.demo-track--good .dg-nav strong { color: var(--sc-ink); font-weight: 600; }
+.demo-track--good .dg-hero { padding: var(--sc-7) var(--sc-5) var(--sc-4); }
+.demo-track--good .dg-hero h2 {
+  font-family: var(--sc-font-display);
+  font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+  margin: 0; color: var(--sc-ink); letter-spacing: var(--sc-track-snug);
+}
+.demo-track--good .dg-hero p {
+  margin: var(--sc-2) 0 0; color: var(--sc-ink-soft); font-size: 0.9rem; max-width: 34ch;
+}
+.demo-track--good .dg-cta {
+  display: inline-block; margin-top: var(--sc-4);
+  padding: 0.7em 1.3em; border-radius: var(--sc-r-sm);
+  background: var(--sc-accent); color: var(--sc-accent-ink);
+  font-size: 0.82rem; font-weight: 600; text-decoration: none;
+  min-height: 44px; display: inline-flex; align-items: center;
+}
+.demo-track--good .dg-copy {
+  padding: var(--sc-5); font-size: 0.88rem; line-height: 1.6; color: var(--sc-ink-soft);
+  max-width: 42ch;
+}
+.demo-track--good .dg-block {
+  height: 90px; margin: var(--sc-5); border-radius: var(--sc-r-sm);
+  background: var(--sc-surface); border: 1px solid var(--sc-hairline);
+}
+.demo-track--good .dg-foot {
+  padding: var(--sc-5); font-size: 0.72rem; color: var(--sc-ink-soft);
+  border-top: 1px solid var(--sc-hairline);
+}
+
+.demo-status {
+  position: absolute; top: var(--sc-2); right: var(--sc-3); z-index: 4;
+  font-family: var(--sc-font-mono); font-size: 0.62rem;
+  letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+  padding: 0.3em 0.6em; border-radius: var(--sc-r-sm);
+  background: color-mix(in oklab, var(--sc-canvas) 70%, transparent);
+  border: 1px solid var(--sc-hairline-strong);
+  color: var(--sc-ink-soft);
+  opacity: 0; transition: opacity var(--sc-d-base) var(--sc-ease-out);
+}
+.demo-status.is-active { opacity: 1; }
+.demo-status--bad.is-active { color: #d99a6e; }
+.demo-status--good.is-active { color: var(--sc-accent); }
+
+.demo-callout {
+  position: absolute; left: var(--sc-3); bottom: var(--sc-3); z-index: 4;
+  font-family: var(--sc-font-mono); font-size: 0.68rem;
+  letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+  color: var(--sc-ink);
+  padding: 0.4em 0.7em; border-radius: var(--sc-r-sm);
+  background: color-mix(in oklab, var(--sc-canvas) 82%, transparent);
+  border-left: 2px solid var(--sc-accent);
+  opacity: 0; transform: translateY(4px);
+  transition: opacity var(--sc-d-base) var(--sc-ease-out), transform var(--sc-d-base) var(--sc-ease-out);
+}
+.demo-callout.is-active { opacity: 1; transform: translateY(0); }
+
+.peak__caption {
+  font-family: var(--sc-font-mono); font-size: var(--sc-t-xs);
+  letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+  color: var(--sc-ink-soft); text-align: center;
+}
+
+/* Applied directly on the [data-sc-stage] element, which already carries the
+   engine's own height: 100vh/100svh via .sc-stage. Redeclaring height here
+   (even to 100%) fights that on the same element: a percentage height on a
+   sticky box resolves against the very tall act section, not one viewport,
+   and the stage stops looking pinned. Flex-centre only; never touch height. */
+.pan-stage { display: flex; align-items: center; }
+
+/* ------------------------------------------------------ showcase range -- */
+.rail { gap: var(--sc-9); align-items: stretch; padding-inline: var(--sc-gutter); }
+.range__lead { flex: none; width: clamp(18rem, 28vw, 26rem); padding-right: var(--sc-6); align-self: center; }
+.range__lead .sc-label { color: var(--sc-accent); }
+.case-card {
+  position: relative;
+  width: clamp(20rem, 42vw, 30rem);
+  border-radius: var(--sc-r-md);
+  overflow: clip;
+  border: 1px solid var(--sc-hairline);
+  background: var(--sc-surface);
+  flex: none;
+}
+.case-card__split { height: 12rem; display: grid; grid-template-rows: 1fr 1fr; }
+.case-card__before, .case-card__after { position: relative; overflow: clip; padding: var(--sc-3); }
+.case-card__before { background: #454b53; }
+.case-card__after { background: var(--sc-canvas); border-top: 1px solid var(--sc-hairline-strong); }
+.case-card__before span, .case-card__after span {
+  font-family: var(--sc-font-mono); font-size: 0.6rem;
+  letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+}
+.case-card__before span { color: #9aa0a8; }
+.case-card__after span { color: var(--sc-accent); }
+.case-card__before .cc-line { height: 6px; background: #767d85; border-radius: 2px; margin-top: 6px; opacity: 0.6; }
+.case-card__before .cc-line + .cc-line { width: 60%; }
+.case-card__after .cc-line { height: 6px; background: var(--sc-ink-soft); border-radius: 2px; margin-top: 8px; opacity: 0.5; }
+.case-card__after .cc-line + .cc-line { width: 55%; }
+.case-card__body { padding: var(--sc-4); }
+.case-card__body h3 { margin: 0 0 var(--sc-1); font-family: var(--sc-font-display); font-size: var(--sc-t-lg); }
+.case-card__body p { margin: 0; color: var(--sc-ink-soft); font-size: 0.85rem; }
+.case-card__flag {
+  font-family: var(--sc-font-mono); font-size: 0.6rem; letter-spacing: var(--sc-track-wide);
+  text-transform: uppercase; color: var(--sc-ink-soft);
+  padding: var(--sc-1) var(--sc-3) var(--sc-4);
+}
+.range__note { flex: none; width: clamp(18rem, 28vw, 26rem); align-self: center; }
+.range__note p { color: var(--sc-ink-soft); }
+
+/* ---------------------------------------------------------- leistungen -- */
+.offer__grid { display: grid; gap: 0; max-width: 56rem; }
+.offer__item {
+  display: grid; grid-template-columns: 6rem 1fr; gap: var(--sc-6);
+  padding-block: var(--sc-7);
+  border-top: 1px solid var(--sc-hairline);
+}
+.offer__item:last-child { border-bottom: 1px solid var(--sc-hairline); }
+.offer__index {
+  font-family: var(--sc-font-mono); font-size: var(--sc-t-xs);
+  color: var(--sc-accent); letter-spacing: var(--sc-track-wide);
+}
+.offer__item h3 { margin: 0 0 var(--sc-2); font-family: var(--sc-font-display); font-size: var(--sc-t-xl); }
+.offer__item p { margin: 0; color: var(--sc-ink-soft); max-width: 46ch; }
+
+/* -------------------------------------------------------------- prozess -- */
+.timeline { display: flex; align-items: stretch; gap: var(--sc-9); position: relative; padding-inline: var(--sc-gutter); }
+.timeline::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 3.6rem; height: 1px;
+  background: repeating-linear-gradient(to right, var(--sc-hairline-strong) 0 6px, transparent 6px 14px);
+}
+.timeline__lead { flex: none; width: clamp(15rem, 22vw, 21rem); padding-top: 2.4rem; }
+.step {
+  flex: none; width: clamp(15rem, 24vw, 20rem); position: relative;
+  padding-top: var(--sc-2);
+}
+.step__tick {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--sc-accent); margin-bottom: var(--sc-6);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--sc-accent) 20%, transparent);
+}
+.step__mark { font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: var(--sc-ink-soft); letter-spacing: var(--sc-track-wide); }
+.step h3 { margin: var(--sc-2) 0 var(--sc-2); font-family: var(--sc-font-display); font-size: var(--sc-t-lg); }
+.step p { margin: 0; color: var(--sc-ink-soft); font-size: 0.9rem; }
+
+/* ------------------------------------------------------------------ about -- */
+.about { }
+.about__wrap { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--sc-9); align-items: center; }
+.about__figure { margin: 0; border-radius: var(--sc-r-md); overflow: clip; }
+.about__figure img { width: 100%; height: auto; }
+.about__copy .sc-label { color: var(--sc-accent); }
+.about__copy p { margin-top: var(--sc-5); font-size: var(--sc-t-lg); line-height: 1.5; }
+.about__copy p + p { font-size: var(--sc-t-base); color: var(--sc-ink-soft); }
+
+/* ------------------------------------------------------------------ close -- */
+/* Same rule as .pan-stage: this sits on the [data-sc-stage] element itself,
+   so it must never redeclare height. */
+.close {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: var(--sc-gutter); max-width: var(--sc-maxw); margin-inline: auto;
+}
+.close__inner { text-align: left; max-width: 40rem; }
+.close__inner .sc-label { color: var(--sc-accent); display: block; margin-bottom: var(--sc-4); }
+.cta {
+  display: inline-flex; align-items: center; gap: var(--sc-3);
+  margin-top: var(--sc-7);
+  padding: 0.9em 1.6em;
+  border-radius: var(--sc-r-sm);
+  background: var(--sc-accent); color: var(--sc-accent-ink);
+  font-family: var(--sc-font-mono); font-size: var(--sc-t-sm);
+  letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+  text-decoration: none;
+  min-height: 48px;
+}
+.foot {
+  margin-top: var(--sc-11);
+  padding-top: var(--sc-5);
+  border-top: 1px solid var(--sc-hairline);
+  display: flex; justify-content: space-between; gap: var(--sc-4);
+  font-family: var(--sc-font-mono); font-size: 0.7rem;
+  color: var(--sc-ink-soft); letter-spacing: var(--sc-track-wide);
+  max-width: 40rem;
+}
+.foot a { color: inherit; }
+
+/* -------------------------------------------------------- shared helpers -- */
+/* Administrative content (services, credentials) is information, not
+   experience: compress it rather than spending scroll the reader will not
+   remember. See feel.md section 5. */
+.tight { padding-block: clamp(2.5rem, 5vw, 5.5rem); }
+
+.fictional {
+  display: inline-block;
+  font-family: var(--sc-font-mono); font-size: 0.62rem;
+  letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+  color: var(--sc-ink-soft);
+  border: 1px solid var(--sc-hairline-strong);
+  border-radius: var(--sc-r-sm);
+  padding: 0.25em 0.6em;
+  margin-top: var(--sc-3);
+}
+
+/* ------------------------------------------------------------------ mobile -- */
+@media (max-width: 860px) {
+  /* .sc-copy--lead spans the full width below 860px (see scrollcraft.css),
+     so the top-right corner gradient this scrim uses on desktop leaves most
+     of the now full-width headline uncovered. The engine already re-shapes
+     .sc-scrim--trail into a band for this exact reason; .sc-scrim--lead has
+     no such override, and measuring this page on a 390px viewport found the
+     gap: 3.55:1 on the headline. Band it here too. */
+  .hero .sc-scrim--lead {
+    background: linear-gradient(to top,
+      color-mix(in oklab, var(--sc-canvas) 97%, transparent) 0%,
+      color-mix(in oklab, var(--sc-canvas) 82%, transparent) 26%,
+      color-mix(in oklab, var(--sc-canvas) 38%, transparent) 48%,
+      transparent 66%);
+  }
+  .about__wrap { grid-template-columns: 1fr; }
+  .peak__head, .peak__caption { padding-inline: var(--sc-4); }
+  .demo-frame { width: 92vw; height: 56svh; }
+  .offer__item { grid-template-columns: 1fr; gap: var(--sc-2); }
+  .site-bar__mark { font-size: 0.62rem; }
+}

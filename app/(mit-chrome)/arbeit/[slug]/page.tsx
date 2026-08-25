@@ -50,6 +50,12 @@ export async function generateMetadata({
   return {
     title: `${projekt.firma} (${seite.kleintexte.demoKennzeichen.label})`,
     description: projekt.kurzbeschreibung,
+    // Nicht indexieren, seit die Startseite englisch ist. Drei Gruende, und
+    // alle drei muessten wegfallen, bevor die Zeile geht: die Fallstudien sind
+    // weiter deutsch, von der neuen Startseite fuehrt kein einziger Link mehr
+    // hierher, und ob es sie in dieser Form ueberhaupt weiter geben soll, ist
+    // noch nicht entschieden. Bis dahin gehoeren sie nicht in einen Index.
+    robots: { index: false },
   };
 }
 
@@ -83,7 +89,12 @@ export default async function CaseStudyPage({
   );
 
   return (
-    <article className="mx-auto max-w-page px-gutter pt-block pb-section">
+    // lang="de" traegt die Fallstudie selbst, nicht mehr das Layout der Route
+    // Group: sie ist die einzige Route, die nach dem Wechsel auf Englisch noch
+    // deutschen Text zeigt. Ohne die Angabe erbt sie das lang="en" der Wurzel,
+    // ein Screenreader liest "Baubetrieb Mustergrund" englisch und hyphens:
+    // auto trennt die Komposita falsch.
+    <article lang="de" className="mx-auto max-w-page px-gutter pt-block pb-section">
       {zurueckLink}
 
       <header className="mt-block">

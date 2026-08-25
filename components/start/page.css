@@ -1,0 +1,580 @@
+/* ============================================================================
+   casefile: page-specific styles.
+   Tokens come from scrollcraft.css and the overrides in index.html <style>.
+   Nothing here touches .sc-stage, .sc-copy or any [data-sc-*] mechanism.
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ bar --
+   Die Bauhoehe der Leiste, aus ihren eigenen Werten gerechnet und nicht
+   geschaetzt: zweimal var(--sc-4) Polsterung, dazu der CTA mit der geerbten
+   Zeilenhoehe 1,62 und seiner senkrechten Polsterung (zweimal 0.6em), beides
+   in Vielfachen von var(--sc-t-xs), plus die Haarlinie unten.
+   1,62 + 1,2 = 2,82. Nachgemessen in Chrome: 70,0px bei 1440px Breite und
+   67,1px bei 390px, beides auf ein Zehntel genau.
+
+   WOFUER: die Leiste liegt fixiert und damit ausserhalb des Flusses. Eine
+   gepinnte Buehne, die ihren Inhalt senkrecht zentriert, rechnet mit der
+   vollen Viewporthoehe und schiebt ihre oberste Zeile deshalb unter die
+   Leiste. Wer eine solche Buehne baut, haelt diese Hoehe selbst frei. */
+:root {
+  --site-bar-h: calc(2 * var(--sc-4) + 2.82 * var(--sc-t-xs) + 1px);
+}
+
+.site-bar {
+  position: fixed; inset: 0 0 auto 0; z-index: var(--sc-z-chrome);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--sc-4) var(--sc-gutter);
+  background: color-mix(in oklab, var(--sc-canvas) 72%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--sc-hairline);
+}
+.site-bar__mark {
+  font-family: var(--sc-font-mono);
+  font-size: var(--sc-t-xs);
+  letter-spacing: var(--sc-track-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--sc-ink);
+}
+.site-bar__cta {
+  font-family: var(--sc-font-mono);
+  font-size: var(--sc-t-xs);
+  letter-spacing: var(--sc-track-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--sc-accent-ink);
+  background: var(--sc-accent);
+  padding: 0.6em 1.1em;
+  border-radius: var(--sc-r-sm);
+  transition: transform var(--sc-d-fast) var(--sc-ease-out);
+}
+.site-bar__cta:hover { transform: translateY(-1px); }
+.site-bar__cta:active { transform: translateY(0) scale(0.97); }
+
+/* ---------------------------------------------------------------- hero --
+   Act 1, data-sc-act="pin". A still image (no video: see BRIEF.md budget
+   note) wrapped in an iris reveal, greet-cue kinetic headline. */
+.hero__figure { position: absolute; inset: 0; margin: 0; }
+.hero__figure img { width: 100%; height: 100%; object-fit: cover; }
+.hero__copy .sc-label { color: var(--sc-accent); margin-bottom: var(--sc-3); display: block; }
+/* Measured on the composited frame: the headline's ink came back at 4.47:1
+   over the brightest patch of the photo (the lit keys), just under the
+   4.5:1 floor. The corner scrim is a sibling of the copy (see taste.md,
+   "text over media"), so strengthening it here is measured, not guessed. */
+.hero .sc-scrim--lead {
+  background: linear-gradient(to top right,
+    color-mix(in oklab, var(--sc-canvas) 97%, transparent) 0%,
+    color-mix(in oklab, var(--sc-canvas) 82%, transparent) 32%,
+    color-mix(in oklab, var(--sc-canvas) 38%, transparent) 56%,
+    transparent 76%);
+}
+.hero__lede { margin-top: var(--sc-4) !important; font-size: var(--sc-t-lg); }
+
+/* ------------------------------------------------------------- befund --
+   Act 2, data-sc-act="flow". Sequential "up" reveals, one finding at a
+   time, in the plain measured language of an inspection tag. */
+.befund { background: var(--sc-surface); }
+.befund__head { max-width: 40rem; margin-bottom: var(--sc-9); }
+.befund__list { display: grid; gap: var(--sc-11); max-width: 52rem; }
+.finding {
+  display: grid; grid-template-columns: auto 1fr; gap: var(--sc-5);
+  align-items: start;
+  padding-bottom: var(--sc-8);
+  border-bottom: 1px solid var(--sc-hairline);
+}
+.finding:last-child { border-bottom: 0; padding-bottom: 0; }
+.finding__tag {
+  font-family: var(--sc-font-mono);
+  font-size: var(--sc-t-xs);
+  letter-spacing: var(--sc-track-wide);
+  text-transform: uppercase;
+  color: var(--sc-accent);
+  white-space: nowrap;
+  padding-top: 0.3em;
+}
+.finding__body { max-width: 40rem; }
+.finding__stat {
+  display: block;
+  font-family: var(--sc-font-mono);
+  font-size: var(--sc-t-sm);
+  color: var(--sc-ink-soft);
+  margin-top: var(--sc-2);
+}
+.befund__close {
+  margin-top: var(--sc-9);
+  font-family: var(--sc-font-display);
+  font-size: var(--sc-t-xl);
+  font-style: italic;
+  color: var(--sc-ink);
+}
+
+/* -------------------------------------------------------------- hinge --
+   Act 3, data-sc-act="flow". Authored silence before the peak: almost
+   nothing on screen, deliberately. */
+.hinge {
+  min-height: 46svh;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+}
+.hinge p {
+  font-family: var(--sc-font-display);
+  font-size: var(--sc-t-2xl);
+  font-style: italic;
+  color: var(--sc-ink-soft);
+  margin: 0;
+}
+
+/* ------------------------------------------------------- showcase peak --
+   Act 4, data-sc-act="pin". The signature move lives here: two demo sites,
+   each scrolling under the reader's own wheel, one of them lagging on
+   purpose, one of them exact. See page.js. */
+/* padding-top: die fixierte Leiste liegt ueber dieser Buehne. Ohne die
+   Freihaltung zentriert die Buehne ihren Inhalt gegen die volle Viewporthoehe
+   und schiebt die oberste Zeile darunter. Nachgemessen (Chrome, 1440x900):
+   Unterkante Leiste 70,0px, Oberkante des Labels "Case one, live in this
+   frame" 62,2px, also 7,8px verdeckt; bei 390x844 war das Label mit 53,3px
+   gegen 67,1px vollstaendig verschwunden. box-sizing: border-box steht global
+   in scrollcraft.css, height: 100% bleibt deshalb unangetastet. */
+.peak__stage {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100%; gap: var(--sc-6);
+  padding-top: var(--site-bar-h);
+}
+.peak__head { text-align: center; max-width: 42rem; padding-inline: var(--sc-gutter); }
+.peak__head .sc-label { color: var(--sc-accent); }
+.peak__tag { margin-top: var(--sc-3) !important; }
+
+/* Spalte statt Block: die Adresszeile nimmt sich ihre Hoehe, der Ausschnitt
+   bekommt exakt den Rest. Vorher stand am Ausschnitt height: calc(100% -
+   1.9rem), und 1,9rem trafen die Adresszeile nicht: die misst 34,63px
+   (2 x var(--sc-2) Polsterung + 0,68rem Schrift auf Zeilenhoehe 1,62 + 1px
+   Haarlinie), also 2,164rem. Die 4,2px Differenz hingen unten aus dem Rahmen
+   heraus und wurden von dessen overflow: clip abgeschnitten. Sichtbar wurde
+   das an den Messschildern: sie sitzen mit bottom: var(--sc-3) an, standen
+   nachgemessen aber nur 4,7px (1440x900) beziehungsweise 4,8px (390x844) ueber
+   der Rahmenkante statt der gemeinten 12px, und klebten damit am Rand. */
+.demo-frame {
+  position: relative;
+  display: flex; flex-direction: column;
+  width: clamp(20rem, 78vw, 58rem);
+  height: clamp(19rem, 46vh, 27rem);
+  border-radius: var(--sc-r-md);
+  overflow: clip;
+  background: #0d0e10;
+  box-shadow: var(--sc-e3);
+  border: 1px solid var(--sc-hairline-strong);
+}
+.demo-frame__bar {
+  position: relative; z-index: 3; flex: none;
+  display: flex; align-items: center; gap: var(--sc-2);
+  padding: var(--sc-2) var(--sc-4);
+  background: #0a0a0c;
+  border-bottom: 1px solid var(--sc-hairline);
+  font-family: var(--sc-font-mono);
+  font-size: 0.68rem;
+  letter-spacing: var(--sc-track-wide);
+  color: var(--sc-ink-soft);
+}
+.demo-frame__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sc-hairline-strong); }
+/* 0.75 kam auf #0a0a0c nachgemessen auf 4,08:1, bei 10,88px also unter der
+   4,5:1. Die Adresszeile ist zwar aria-hidden und damit erklaerter Zierrat,
+   sie traegt aber die einzige Stelle, an der die Adresse des gezeigten
+   Betriebs steht, und wird gelesen. 0.85 misst 4,94:1 und bleibt gedaempft. */
+.demo-frame__url { margin-left: var(--sc-3); opacity: 0.85; }
+/* min-height: 0, sonst nimmt der Flex-Gegenstand seine Inhaltshoehe als
+   Mindestmass und kann nicht kleiner werden als der Rahmen. */
+.demo-frame__viewport {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: clip;
+}
+.demo-pane {
+  position: absolute; inset: 0;
+  overflow: clip;
+}
+.demo-pane--bad { z-index: 1; }
+.demo-pane--good { z-index: 2; clip-path: inset(0 100% 0 0); }
+.demo-track { position: absolute; inset-inline: 0; top: 0; will-change: transform; }
+
+/* the intentionally bad island: everything here is scoped and does not
+   inherit the page's own type or spacing rules, on purpose, the way an
+   isolated demo of bad practice has to be self-contained. */
+.demo-track--bad {
+  background: linear-gradient(160deg, #5b6470 0%, #454c56 55%, #383d45 100%);
+  font-family: "Times New Roman", Georgia, serif;
+  color: #7d8590;
+}
+.demo-track--bad .db-nav {
+  display: flex; gap: 6px; padding: 6px 10px; font-size: 10px;
+  background: #40454d; color: #9aa0a8; white-space: nowrap; overflow: hidden;
+}
+.demo-track--bad .db-hero {
+  padding: 18px 14px 10px; text-align: center;
+}
+.demo-track--bad .db-hero h2 {
+  font-size: 22px; margin: 0; color: #aeb4bb; letter-spacing: 0;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.2);
+}
+.demo-track--bad .db-hero p {
+  font-size: 13px; margin: 2px 0 0; color: #838a92;
+}
+/* Die Hoehe ist gerechnet und nicht geschaetzt, weil das Messschild daneben
+   "Tap target 18px" behauptet und diese Seite keine erfundenen Zahlen
+   ausliefern darf. Die Zeile traegt die ganze Hoehe (keine senkrechte
+   Polsterung mehr), und weil transform: scaleY(0.94) die Kachel anschliessend
+   staucht, muss die Zeile 18/0,94 = 19,149px hoch sein. Vorher: 3px Polsterung
+   auf der von scrollcraft.css geerbten Zeilenhoehe 1,62, nachgemessen in
+   Chrome 28,5px, also ein gutes Drittel ueber der aufgedruckten Zahl.
+   Die Kachel wird dadurch enger und billiger, und das ist ihre Aufgabe. */
+.demo-track--bad .db-phone {
+  display: inline-block; margin-top: 8px; padding: 0 8px;
+  line-height: calc(18px / 0.94);
+  background: #4a5058; filter: blur(0.35px);
+  font-size: 15px; letter-spacing: 0.06em; color: #767d85;
+  transform: scaleY(0.94);
+}
+.demo-track--bad .db-copy {
+  padding: 12px 16px; font-size: 11px; line-height: 1.3; color: #838a92;
+}
+.demo-track--bad .db-link { color: #8fa3c9; text-decoration: underline; }
+.demo-track--bad .db-block {
+  height: 90px; margin: 10px 16px; background: repeating-linear-gradient(
+    45deg, #4b515a, #4b515a 8px, #454b53 8px, #454b53 16px);
+}
+.demo-track--bad .db-foot {
+  padding: 10px 16px 20px; font-size: 9px; color: #767d85;
+}
+
+.demo-track--good {
+  background: var(--sc-canvas);
+  font-family: var(--sc-font-text);
+  color: var(--sc-ink);
+}
+.demo-track--good .dg-nav {
+  display: flex; align-items: center; gap: var(--sc-6);
+  padding: var(--sc-3) var(--sc-5);
+  border-bottom: 1px solid var(--sc-hairline);
+  font-size: 0.72rem; letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+  color: var(--sc-ink-soft);
+}
+.demo-track--good .dg-nav strong { color: var(--sc-ink); font-weight: 600; }
+.demo-track--good .dg-hero { padding: var(--sc-7) var(--sc-5) var(--sc-4); }
+.demo-track--good .dg-hero h2 {
+  font-family: var(--sc-font-display);
+  font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+  margin: 0; color: var(--sc-ink); letter-spacing: var(--sc-track-snug);
+}
+.demo-track--good .dg-hero p {
+  margin: var(--sc-2) 0 0; color: var(--sc-ink-soft); font-size: 0.9rem; max-width: 34ch;
+}
+.demo-track--good .dg-cta {
+  display: inline-block; margin-top: var(--sc-4);
+  padding: 0.7em 1.3em; border-radius: var(--sc-r-sm);
+  background: var(--sc-accent); color: var(--sc-accent-ink);
+  font-size: 0.82rem; font-weight: 600; text-decoration: none;
+  min-height: 44px; display: inline-flex; align-items: center;
+}
+.demo-track--good .dg-copy {
+  padding: var(--sc-5); font-size: 0.88rem; line-height: 1.6; color: var(--sc-ink-soft);
+  max-width: 42ch;
+}
+.demo-track--good .dg-block {
+  height: 90px; margin: var(--sc-5); border-radius: var(--sc-r-sm);
+  background: var(--sc-surface); border: 1px solid var(--sc-hairline);
+}
+.demo-track--good .dg-foot {
+  padding: var(--sc-5); font-size: 0.72rem; color: var(--sc-ink-soft);
+  border-top: 1px solid var(--sc-hairline);
+}
+
+/* max-width: die Schilder sind absolut gesetzt und schrumpfen auf ihren
+   Inhalt. Ohne Deckel waere ihre Hoechstbreite die Ausschnittbreite minus dem
+   einen gesetzten Versatz, das Schild liefe also bis auf null an die
+   Gegenkante. Der Text kommt aus content/start.ts und wird redaktionell
+   ueberarbeitet: ein Wort mehr, und das Schild klebte am Rand. Mit dem Deckel
+   bricht es stattdessen um und behaelt beidseitig seine 12px. */
+.demo-status {
+  position: absolute; top: var(--sc-2); right: var(--sc-3); z-index: 4;
+  max-width: calc(100% - 2 * var(--sc-3));
+  font-family: var(--sc-font-mono); font-size: 0.62rem;
+  letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+  padding: 0.3em 0.6em; border-radius: var(--sc-r-sm);
+  background: color-mix(in oklab, var(--sc-canvas) 70%, transparent);
+  border: 1px solid var(--sc-hairline-strong);
+  color: var(--sc-ink-soft);
+  opacity: 0; transition: opacity var(--sc-d-base) var(--sc-ease-out);
+}
+.demo-status.is-active { opacity: 1; }
+.demo-status--bad.is-active { color: #d99a6e; }
+.demo-status--good.is-active { color: var(--sc-accent); }
+
+/* Deckel wie bei .demo-status, aus demselben Grund. */
+.demo-callout {
+  position: absolute; left: var(--sc-3); bottom: var(--sc-3); z-index: 4;
+  max-width: calc(100% - 2 * var(--sc-3));
+  font-family: var(--sc-font-mono); font-size: 0.68rem;
+  letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+  color: var(--sc-ink);
+  padding: 0.4em 0.7em; border-radius: var(--sc-r-sm);
+  background: color-mix(in oklab, var(--sc-canvas) 82%, transparent);
+  border-left: 2px solid var(--sc-accent);
+  opacity: 0; transform: translateY(4px);
+  transition: opacity var(--sc-d-base) var(--sc-ease-out), transform var(--sc-d-base) var(--sc-ease-out);
+}
+.demo-callout.is-active { opacity: 1; transform: translateY(0); }
+
+.peak__caption {
+  font-family: var(--sc-font-mono); font-size: var(--sc-t-xs);
+  letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+  color: var(--sc-ink-soft); text-align: center;
+}
+
+/* Applied directly on the [data-sc-stage] element, which already carries the
+   engine's own height: 100vh/100svh via .sc-stage. Redeclaring height here
+   (even to 100%) fights that on the same element: a percentage height on a
+   sticky box resolves against the very tall act section, not one viewport,
+   and the stage stops looking pinned. Flex-centre only; never touch height. */
+.pan-stage { display: flex; align-items: center; }
+
+/* ------------------------------------------------------ showcase range -- */
+.rail { gap: var(--sc-9); align-items: stretch; padding-inline: var(--sc-gutter); }
+.range__lead { flex: none; width: clamp(18rem, 28vw, 26rem); padding-right: var(--sc-6); align-self: center; }
+.range__lead .sc-label { color: var(--sc-accent); }
+.case-card {
+  position: relative;
+  width: clamp(20rem, 42vw, 30rem);
+  border-radius: var(--sc-r-md);
+  overflow: clip;
+  border: 1px solid var(--sc-hairline);
+  background: var(--sc-surface);
+  flex: none;
+}
+.case-card__split { height: 12rem; display: grid; grid-template-rows: 1fr 1fr; }
+.case-card__before, .case-card__after { position: relative; overflow: clip; padding: var(--sc-3); }
+.case-card__before { background: #454b53; }
+.case-card__after { background: var(--sc-canvas); border-top: 1px solid var(--sc-hairline-strong); }
+.case-card__before span, .case-card__after span {
+  font-family: var(--sc-font-mono); font-size: 0.6rem;
+  letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+}
+/* "Before" ist kein Teil der gezeigten schlechten Fassung, sondern die eigene
+   Beschriftung dieser Seite: sie sagt dem Leser, welche Haelfte er ansieht,
+   und muss deshalb lesbar sein. Die Andeutung der alten Website sind die
+   .cc-line darunter, die tragen keinen Text. Nachgemessen in Chrome kam
+   #9aa0a8 auf dem Feld #454b53 auf 3,2:1, bei 9,6px gesperrter Monoschrift
+   also unter der 4,5:1 fuer Fliesstext. #c2c8d0 misst 5,1:1 und bleibt in
+   derselben kuehlen Graufamilie. */
+.case-card__before span { color: #c2c8d0; }
+.case-card__after span { color: var(--sc-accent); }
+.case-card__before .cc-line { height: 6px; background: #767d85; border-radius: 2px; margin-top: 6px; opacity: 0.6; }
+.case-card__before .cc-line + .cc-line { width: 60%; }
+.case-card__after .cc-line { height: 6px; background: var(--sc-ink-soft); border-radius: 2px; margin-top: 8px; opacity: 0.5; }
+.case-card__after .cc-line + .cc-line { width: 55%; }
+.case-card__body { padding: var(--sc-4); }
+.case-card__body h3 { margin: 0 0 var(--sc-1); font-family: var(--sc-font-display); font-size: var(--sc-t-lg); }
+.case-card__body p { margin: 0; color: var(--sc-ink-soft); font-size: 0.85rem; }
+.case-card__flag {
+  font-family: var(--sc-font-mono); font-size: 0.6rem; letter-spacing: var(--sc-track-wide);
+  text-transform: uppercase; color: var(--sc-ink-soft);
+  padding: var(--sc-1) var(--sc-3) var(--sc-4);
+}
+.range__note { flex: none; width: clamp(18rem, 28vw, 26rem); align-self: center; }
+.range__note p { color: var(--sc-ink-soft); }
+
+/* ---------------------------------------------------------- leistungen -- */
+.offer__grid { display: grid; gap: 0; max-width: 56rem; }
+.offer__item {
+  display: grid; grid-template-columns: 6rem 1fr; gap: var(--sc-6);
+  padding-block: var(--sc-7);
+  border-top: 1px solid var(--sc-hairline);
+}
+.offer__item:last-child { border-bottom: 1px solid var(--sc-hairline); }
+.offer__index {
+  font-family: var(--sc-font-mono); font-size: var(--sc-t-xs);
+  color: var(--sc-accent); letter-spacing: var(--sc-track-wide);
+}
+.offer__item h3 { margin: 0 0 var(--sc-2); font-family: var(--sc-font-display); font-size: var(--sc-t-xl); }
+.offer__item p { margin: 0; color: var(--sc-ink-soft); max-width: 46ch; }
+
+/* -------------------------------------------------------------- prozess -- */
+.timeline { display: flex; align-items: stretch; gap: var(--sc-9); position: relative; padding-inline: var(--sc-gutter); }
+.timeline::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 3.6rem; height: 1px;
+  background: repeating-linear-gradient(to right, var(--sc-hairline-strong) 0 6px, transparent 6px 14px);
+}
+.timeline__lead { flex: none; width: clamp(15rem, 22vw, 21rem); padding-top: 2.4rem; }
+.step {
+  flex: none; width: clamp(15rem, 24vw, 20rem); position: relative;
+  padding-top: var(--sc-2);
+}
+.step__tick {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--sc-accent); margin-bottom: var(--sc-6);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--sc-accent) 20%, transparent);
+}
+.step__mark { font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: var(--sc-ink-soft); letter-spacing: var(--sc-track-wide); }
+.step h3 { margin: var(--sc-2) 0 var(--sc-2); font-family: var(--sc-font-display); font-size: var(--sc-t-lg); }
+.step p { margin: 0; color: var(--sc-ink-soft); font-size: 0.9rem; }
+
+/* ------------------------------------------------------------------ about -- */
+.about { }
+.about__wrap { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--sc-9); align-items: center; }
+.about__figure { margin: 0; border-radius: var(--sc-r-md); overflow: clip; }
+.about__figure img { width: 100%; height: auto; }
+.about__copy .sc-label { color: var(--sc-accent); }
+.about__copy p { margin-top: var(--sc-5); font-size: var(--sc-t-lg); line-height: 1.5; }
+.about__copy p + p { font-size: var(--sc-t-base); color: var(--sc-ink-soft); }
+
+/* ------------------------------------------------------------------ close -- */
+/* Same rule as .pan-stage: this sits on the [data-sc-stage] element itself,
+   so it must never redeclare height. */
+.close {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: var(--sc-gutter); max-width: var(--sc-maxw); margin-inline: auto;
+}
+.close__inner { text-align: left; max-width: 40rem; }
+.close__inner .sc-label { color: var(--sc-accent); display: block; margin-bottom: var(--sc-4); }
+.cta {
+  display: inline-flex; align-items: center; gap: var(--sc-3);
+  margin-top: var(--sc-7);
+  padding: 0.9em 1.6em;
+  border-radius: var(--sc-r-sm);
+  background: var(--sc-accent); color: var(--sc-accent-ink);
+  font-family: var(--sc-font-mono); font-size: var(--sc-t-sm);
+  letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+  text-decoration: none;
+  min-height: 48px;
+}
+.foot {
+  margin-top: var(--sc-11);
+  padding-top: var(--sc-5);
+  border-top: 1px solid var(--sc-hairline);
+  display: flex; justify-content: space-between; gap: var(--sc-4);
+  font-family: var(--sc-font-mono); font-size: 0.7rem;
+  color: var(--sc-ink-soft); letter-spacing: var(--sc-track-wide);
+  max-width: 40rem;
+}
+.foot a { color: inherit; }
+
+/* -------------------------------------------------------- shared helpers -- */
+/* Administrative content (services, credentials) is information, not
+   experience: compress it rather than spending scroll the reader will not
+   remember. See feel.md section 5. */
+.tight { padding-block: clamp(2.5rem, 5vw, 5.5rem); }
+
+.fictional {
+  display: inline-block;
+  font-family: var(--sc-font-mono); font-size: 0.62rem;
+  letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+  color: var(--sc-ink-soft);
+  border: 1px solid var(--sc-hairline-strong);
+  border-radius: var(--sc-r-sm);
+  padding: 0.25em 0.6em;
+  margin-top: var(--sc-3);
+}
+
+/* ------------------------------------------------------------------ mobile -- */
+@media (max-width: 860px) {
+  /* .sc-copy--lead spans the full width below 860px (see scrollcraft.css),
+     so the top-right corner gradient this scrim uses on desktop leaves most
+     of the now full-width headline uncovered. The engine already re-shapes
+     .sc-scrim--trail into a band for this exact reason; .sc-scrim--lead has
+     no such override, and measuring this page on a 390px viewport found the
+     gap: 3.55:1 on the headline. Band it here too. */
+  .hero .sc-scrim--lead {
+    background: linear-gradient(to top,
+      color-mix(in oklab, var(--sc-canvas) 97%, transparent) 0%,
+      color-mix(in oklab, var(--sc-canvas) 82%, transparent) 26%,
+      color-mix(in oklab, var(--sc-canvas) 38%, transparent) 48%,
+      transparent 66%);
+  }
+  .about__wrap { grid-template-columns: 1fr; }
+  .peak__head, .peak__caption { padding-inline: var(--sc-4); }
+
+  /* Der Kopf des Hoehepunkt-Akts blendet bei einem Fortschritt von 0,14 wieder
+     aus (data-sc-cue="0 0.14 0" im Markup), behaelt aber seinen Platz im
+     Fluss. Auf 390px stand dadurch ueber vier Fuenftel des Akts eine leere
+     Bahn von 205px zwischen Leiste und Rahmen, nachgemessen in Chrome.
+     Dagegen zwei Griffe, beide nur unterhalb dieser Breite:
+
+     1. Die Schlagzeile eine Stufe kleiner. --sc-t-3xl bricht auf einem Telefon
+        dreizeilig und kostet allein 138px; --sc-t-2xl kommt mit gut zwei
+        Dritteln davon aus. Auf dem Desktop bleibt die Stufe unberuehrt.
+     2. Der Rahmen nimmt sich den Rest der Buehne statt einer festen Hoehe.
+        Damit landet der Gewinn aus 1. dort, wo der Akt seinen Inhalt hat,
+        statt als Zentrierrest wieder oben zu erscheinen.
+
+     Ganz weg geht die Bahn nicht: sie ist der Platz des Kopfes selbst, und
+     eine per Inline-Deckkraft ausgeblendete Zeile ist fuer CSS nicht von einer
+     sichtbaren zu unterscheiden. Nachgemessen schrumpft sie von 205px auf
+     164px, der Rahmen waechst dabei von 472px auf 544px. Mehr ist ohne Skript
+     nicht zu holen, und das Skript ist die verifizierte Mechanik.
+
+     max-height ist KEIN Geschmack, sondern die Bedingung des Signature Move.
+     page.js faehrt die schlechte Bahn ueber badMax = scrollHeight minus Hoehe
+     des Ausschnitts. Ist der Ausschnitt so hoch wie die Bahn, ist badMax null,
+     es bewegt sich nichts mehr, und damit ruckelt auch nichts mehr: der Beweis
+     der ganzen Seite faellt aus. Ohne Deckel wuchs der Ausschnitt bei 768x1024
+     auf 709px gegen eine 501px hohe Bahn, badMax war null. Der Deckel haelt
+     ihn nachgemessen bei 93px (768x1024) bis 247px (360x740) Weg. */
+  .peak__stage { gap: var(--sc-4); padding-bottom: var(--sc-3); }
+  .peak__head .sc-display { font-size: var(--sc-t-2xl); }
+  .demo-frame {
+    width: 92vw;
+    height: auto; flex: 1 1 auto;
+    min-height: 16rem; max-height: 34rem;
+  }
+  /* Die zweite Haelfte derselben Rechnung. Der Rahmen darf hier deutlich
+     hoeher werden als auf dem Desktop, also muss die schlechte Bahn
+     mitwachsen, sonst bleibt zu wenig Weg zum Ruckeln uebrig. Die zwei
+     Platzhalterflaechen sind die einzige Stelle, an der sich Hoehe zugeben
+     laesst, ohne einen Text zu erfinden. 90px auf 140px, zweimal, sind 100px
+     mehr Bahn; auf dem Desktop bleibt es bei 90px und damit beim verifizierten
+     Weg von 124px. */
+  .demo-track--bad .db-block { height: 140px; }
+
+  .offer__item { grid-template-columns: 1fr; gap: var(--sc-2); }
+  .site-bar__mark { font-size: 0.62rem; }
+}
+
+/* ------------------------------------------------------- flache Fenster --
+   Gemessen in Chrome bei 1280x720, einer sehr gewoehnlichen Notebookgroesse:
+   die Schlagzeile des Heros stand fuenfzeilig da, ihre erste Zeile lag mit
+   Oberkante 0px halb unter der Leiste, und das Label "Cold read" war ganz aus
+   dem Bild. Im Hoehepunkt-Akt dasselbe Bild, dort war zusaetzlich das Label
+   "Case one, live in this frame" verschwunden und die erste Zeile der
+   Schlagzeile angeschnitten. Beide Akte sind gepinnt: was hier oben
+   herauslaeuft, kommt nicht wieder, es ist kein Vorbeiscrollen.
+
+   Die Typostufen der Seite haengen allein an der Breite (clamp mit vw). Auf
+   einem flachen Fenster ist aber die Hoehe knapp, nicht die Breite. Diese
+   Abfrage greift deshalb erst unter 820px Hoehe und laesst 1440x900,
+   768x1024 und 390x844 unveraendert. */
+@media (max-height: 820px) and (min-width: 861px) {
+  .hero .sc-display--xl { font-size: clamp(2.6rem, 8.4svh, 4.6rem); }
+  .peak__head .sc-display { font-size: clamp(1.8rem, 6svh, 3rem); }
+  .peak__stage { gap: var(--sc-4); padding-bottom: var(--sc-3); }
+  /* max-height aus demselben Grund wie im Mobilblock: waechst der Ausschnitt
+     ueber die Hoehe der schlechten Bahn hinaus, faellt badMax in page.js auf
+     null und der Signature Move faellt aus. */
+  .demo-frame { height: auto; flex: 1 1 auto; min-height: 14rem; max-height: 27rem; }
+}
+
+/* --------------------------------------------------------- reduced motion --
+   scrollcraft.css raeumt seine eigenen Geraete ab ([data-sc-in], Parallax,
+   die kinetischen Zeilen, den Wisch, den Zeiger-Spot). Zwei Bewegungen
+   gehoeren aber dieser Datei und fallen dort nicht mit: das Anheben des
+   CTA in der Leiste und das Einschieben der Messschilder um 4px. Beide werden
+   hier auf ihren Endzustand gestellt, nicht auf einen halben.
+
+   Die Deckkraft bleibt. Das ist dieselbe Linie, die scrollcraft.css im eigenen
+   Block zieht ("Opacity still carries the reveal"): ohne sie waeren alle sechs
+   Messschilder gleichzeitig zu sehen, und der Akt verloere seine Aussage. */
+@media (prefers-reduced-motion: reduce) {
+  .site-bar__cta { transition: none; }
+  .site-bar__cta:hover,
+  .site-bar__cta:active { transform: none; }
+  .demo-callout { transform: none; transition: opacity var(--sc-d-base) var(--sc-ease-out); }
+  .demo-callout.is-active { transform: none; }
+}

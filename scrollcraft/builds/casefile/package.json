@@ -1,0 +1,8 @@
+{
+  "name": "casefile-scrollcraft-build",
+  "private": true,
+  "description": "Verification-only package.json. Scopes playwright-core (used by the skill's shoot.mjs harness) to this build folder so npm install does not walk up into the parent Next.js project's package.json.",
+  "dependencies": {
+    "playwright-core": "^1.62.1"
+  }
+}

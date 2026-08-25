@@ -1,0 +1,74 @@
+/* ============================================================================
+   Marken-Tokens und Kollisionsschutz fuer die Startseite.
+
+   HERKUNFT: der Inline-<style>-Block aus dem <head> von
+   scrollcraft/builds/casefile/index.html. Er steht hier und nicht in
+   app/globals.css, weil er sonst auch /impressum, /datenschutz und
+   /arbeit/[slug] tiefdunkel einfaerben wuerde. Diese Datei wird ausschliesslich
+   aus app/page.tsx importiert und landet damit nur im CSS-Buendel der
+   Startseite.
+
+   REIHENFOLGE, und sie ist Bedingung:
+       globals.css  ->  scrollcraft.css  ->  page.css  ->  DIESE DATEI
+   scrollcraft.css setzt dieselben --sc-*-Namen mit anderen Werten. Wandert
+   diese Datei nach vorn, gewinnen die Vorgabewerte der Engine und die Seite
+   verliert ihre Farbe.
+   ========================================================================== */
+
+:root {
+  --sc-canvas: #0a0b0d;
+  --sc-surface: #15171b;
+  --sc-ink: #efece4;
+  --sc-ink-soft: #93949c;
+  --sc-accent: #e2542a;
+  --sc-accent-ink: #150b07;
+
+  /* ABWEICHUNG VOM BUILD, und sie ist noetig. Im Build kamen die drei
+     Schriften vom Google-CDN und hiessen dort "Fraunces", "Archivo" und
+     "JetBrains Mono". Hier kommen sie als @fontsource-variable-Paket, und
+     diese Pakete registrieren ihre Familien mit dem Zusatz "Variable"
+     (nachgesehen am 2026-08-25 in der index.css der beiden Pakete unter
+     node_modules). Stuende hier weiter "Fraunces", faende der Browser nichts
+     und fiele auf Georgia zurueck: die Seite saehe kaputt aus, ohne dass
+     irgendetwas einen Fehler meldet.
+     Der Rest der Stapel ist unveraendert aus dem Build uebernommen. */
+  --sc-font-display: "Fraunces Variable", Georgia, serif;
+  --sc-font-text: "Archivo Variable", system-ui, sans-serif;
+  --sc-font-mono: "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", monospace;
+}
+
+/* ── Kollisionen mit app/globals.css ──────────────────────────────────────
+   globals.css liegt im selben Dokument und ist nicht wegzudenken: es traegt
+   Tailwind, und das Wurzel-Layout braucht es. Zwei seiner Grundregeln zielen
+   aber auf helles Papier und deutschen Satz, und beide treffen hier daneben.
+   Beide Gegenregeln stehen NUR in dieser Datei, wirken also nur auf der
+   Startseite. */
+
+/* 1. globals.css setzt h1, h2, h3 auf die Newsreader-Displayschrift und auf
+      hyphens: auto. Die Ueberschriften dieser Seite tragen ihre Schrift
+      selbst (.sc-display, .step h3, .offer__item h3 und so weiter), die
+      gewinnen ueber die Klasse. Wo aber KEINE Klasse steht, greift globals
+      durch, und das trifft ausgerechnet die absichtlich schlechte Demo:
+      .demo-track--bad .db-hero h2 setzt bewusst keine Familie, weil die
+      Ueberschrift die Times New Roman ihres Rahmens erben soll. Ohne diese
+      Zeile stuende die Schlagzeile der schlechten Demo in einer gut
+      gezeichneten Bildschirmserife, und der Vergleich verloere seinen Punkt.
+      hyphens gleich mit zurueck: die Trennung ist fuer deutschen Satz
+      eingeschaltet worden, die Seite ist englisch. */
+h1,
+h2,
+h3 {
+  font-family: inherit;
+  hyphens: manual;
+}
+
+/* 2. globals.css faerbt die Bildlaufleiste fuer Papier ein, unter anderem mit
+      border: 3px solid var(--c-paper). Auf dieser Seite ist der Grund fast
+      schwarz, und weil in Chromium eigene ::-webkit-scrollbar-Regeln die
+      Standardeigenschaft scrollbar-color aus scrollcraft.css ausser Kraft
+      setzen, bliebe eine helle Leiste stehen. Dieselben Regeln, in den Farben
+      dieser Seite. */
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--sc-ink) 26%, transparent);
+  border: 3px solid var(--sc-canvas);
+}

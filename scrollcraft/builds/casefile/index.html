@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Casefile · web design measured, not sold</title>
+<meta name="description" content="A cold read of your website, then the same site rebuilt. Scroll it and feel which one is which.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230A0B0D'/><path d='M8 20 L15 12 L20 17 L24 9' stroke='%23E2542A' stroke-width='2' fill='none'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,500&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="scrollcraft.css">
+<link rel="stylesheet" href="page.css">
+<style>
+  :root {
+    --sc-canvas:      #0A0B0D;
+    --sc-surface:     #15171B;
+    --sc-ink:         #EFECE4;
+    --sc-ink-soft:    #93949C;
+    --sc-accent:      #E2542A;
+    --sc-accent-ink:  #150B07;
+    --sc-font-display: "Fraunces", Georgia, serif;
+    --sc-font-text:    "Archivo", system-ui, sans-serif;
+    --sc-font-mono:    "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  }
+</style>
+</head>
+<body>
+
+<span data-sc-progress></span>
+<div class="sc-grain" aria-hidden="true"></div>
+
+<header class="site-bar">
+  <a class="site-bar__mark" href="#top">Youssef Tayachi</a>
+  <a class="site-bar__cta" href="mailto:youtaybusiness@gmail.com?subject=Website%20audit">Email me</a>
+</header>
+
+<main id="top">
+
+  <!-- 1 · HERO. pin, still image, iris reveal, greet-cue kinetic headline.
+       No video: see BRIEF.md, the whole 80-credit budget is spent on two
+       stills and the clip would have cost more than the entire budget. -->
+  <section class="hero" data-sc-act="pin" data-sc-span="1.6" data-sc-drift="#0A0B0D">
+    <div data-sc-stage>
+      <figure class="hero__figure" data-sc-reveal="iris" data-sc-reveal-at="0.02 0.4">
+        <img src="assets/hero.webp" width="2000" height="1112"
+             alt="A steel dial caliper and a ruler laid across a dark mechanical keyboard, lit by one hard light in a dark room.">
+      </figure>
+      <div class="sc-scrim sc-scrim--lead" aria-hidden="true"></div>
+      <div class="hero__copy sc-copy sc-copy--lead" data-sc-cue="0 0.85 0">
+        <span class="sc-label">Cold read</span>
+        <h1 class="sc-display sc-display--xl" data-sc-kinetic="lines">Every website has a fault. Most owners have never seen it measured.</h1>
+        <p class="sc-body hero__lede">I read yours the way an inspector reads a building. Then I show you the fix, built, not described.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · BEFUND. flow + sequential "up" reveals, the measured findings. -->
+  <section class="sc-section befund" data-sc-act="flow" data-sc-drift="#121316">
+    <div class="sc-wrap">
+      <div class="befund__head sc-stack" data-sc-in data-sc-stagger="60">
+        <span class="sc-label">Three things I check first</span>
+        <h2 class="sc-display sc-display--lg">Before I write to anyone, I measure this.</h2>
+      </div>
+      <div class="befund__list">
+        <figure class="finding" data-sc-reveal="up" data-sc-reveal-at="0.08 0.30">
+          <figcaption class="finding__tag">01 · contrast</figcaption>
+          <div class="finding__body">
+            <p class="sc-lede">Text that fails at arm's length, on the page meant to make someone trust you.</p>
+            <span class="finding__stat">Common on the sites I check: under 3:1. The standard for body text is 4.5:1.</span>
+          </div>
+        </figure>
+        <figure class="finding" data-sc-reveal="up" data-sc-reveal-at="0.35 0.57">
+          <figcaption class="finding__tag">02 · tap target</figcaption>
+          <div class="finding__body">
+            <p class="sc-lede">A phone number nobody can hit on the first try, on a screen most visitors are holding in one hand.</p>
+            <span class="finding__stat">Often 18 to 24 pixels tall. A comfortable tap needs at least 44.</span>
+          </div>
+        </figure>
+        <figure class="finding" data-sc-reveal="up" data-sc-reveal-at="0.62 0.84">
+          <figcaption class="finding__tag">03 · the ask</figcaption>
+          <div class="finding__body">
+            <p class="sc-lede">A homepage that lists every service and never says what happens after you call.</p>
+            <span class="finding__stat">Nothing invented here, just absent: no next step, no hours, no way to reach a person.</span>
+          </div>
+        </figure>
+      </div>
+      <p class="befund__close" data-sc-in>Not opinions. Measurements.</p>
+    </div>
+  </section>
+
+  <!-- 3 · HINGE. flow, authored silence. The quiet in front of the peak. -->
+  <section class="hinge" data-sc-act="flow" data-sc-drift="#0D0E11">
+    <p data-sc-in>So I built the same site twice.</p>
+  </section>
+
+  <!-- 4 · SHOWCASE PEAK. pin, largest span on the page. The signature move
+       (page.js) lives inside .demo-frame: the bad pane's inner track is
+       rendered on a throttled, jittery schedule, the good pane's is 1:1
+       with the real scroll position. data-sc-peak marks the act element so
+       page.js can read --sc-p straight off it. -->
+  <section class="showcase-peak" data-sc-act="pin" data-sc-span="3.2" data-sc-drift="#171310" data-sc-peak>
+    <div data-sc-stage>
+      <div class="peak__stage">
+        <div class="peak__head">
+          <span class="sc-label" data-sc-cue="0 0.14 0">Case one, live in this frame</span>
+          <h2 class="sc-display sc-display--lg" data-sc-cue="0 0.14 0" data-sc-kinetic="lines">Scroll it. You will feel which one is which.</h2>
+          <p class="peak__tag fictional" data-sc-cue="0 0.14 0">Fictional demo. Not a real business.</p>
+        </div>
+
+        <div class="demo-frame">
+          <div class="demo-frame__bar" aria-hidden="true">
+            <span class="demo-frame__dot"></span><span class="demo-frame__dot"></span><span class="demo-frame__dot"></span>
+            <span class="demo-frame__url">volkmann-electric.example</span>
+          </div>
+          <div class="demo-frame__viewport">
+
+            <div class="demo-pane demo-pane--bad">
+              <div class="demo-track demo-track--bad">
+                <div class="db-nav">Home&nbsp;&nbsp;&nbsp;Services&nbsp;&nbsp;&nbsp;About&nbsp;&nbsp;&nbsp;Contact</div>
+                <div class="db-hero">
+                  <h2>WELCOME TO VOLKMANN ELECTRIC</h2>
+                  <p>Your certified electrician since 1998</p>
+                  <div class="db-phone">030 1234567</div>
+                </div>
+                <div class="db-copy">We offer everything around electrical work for your home and business. Contact us for a <span class="db-link">no obligation quote</span>, we look forward to your enquiry and are happy to help by phone or by email, whichever suits you best.</div>
+                <div class="db-block" aria-hidden="true"></div>
+                <div class="db-copy">Wiring, fuse boxes, lighting and emergency callouts around the clock, across the whole region and every town nearby, for homes and for businesses alike.</div>
+                <div class="db-block" aria-hidden="true"></div>
+                <div class="db-foot">Copyright Volkmann Electric 2011. All rights reserved.</div>
+              </div>
+              <span class="demo-status demo-status--bad">Response: delayed</span>
+              <span class="demo-callout" data-checkpoint="0.03 0.17">Contrast 2.1:1</span>
+              <span class="demo-callout" data-checkpoint="0.17 0.29">Tap target 18px</span>
+              <span class="demo-callout" data-checkpoint="0.29 0.42">Phone number: an image, not text</span>
+            </div>
+
+            <div class="demo-pane demo-pane--good">
+              <div class="demo-track demo-track--good">
+                <div class="dg-nav"><strong>Volkmann Electric</strong><span>Services</span><span>Contact</span></div>
+                <div class="dg-hero">
+                  <h2>Volkmann Electric</h2>
+                  <p>Certified electrician, on call across the region.</p>
+                  <a class="dg-cta" href="#" tabindex="-1">Call 030 1234567</a>
+                </div>
+                <div class="dg-copy">Wiring, fuse boxes, lighting and emergency callouts. Book a visit below or call directly: the number above is a real link on every device.</div>
+                <div class="dg-block" aria-hidden="true"></div>
+                <div class="dg-copy">Licensed, insured, and on site within the hour for anything that cannot wait.</div>
+                <div class="dg-block" aria-hidden="true"></div>
+                <div class="dg-foot">Volkmann Electric. Licensed and insured.</div>
+              </div>
+              <span class="demo-status demo-status--good">Response: immediate</span>
+              <span class="demo-callout" data-checkpoint="0.58 0.71">Contrast 7.4:1</span>
+              <span class="demo-callout" data-checkpoint="0.71 0.83">Tap target 48px</span>
+              <span class="demo-callout" data-checkpoint="0.83 0.97">Phone number: a real link</span>
+            </div>
+
+          </div>
+        </div>
+
+        <p class="peak__caption" data-sc-cue="0.58 0.94 0">Same business. Same content. Rebuilt.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · SHOWCASE RANGE. pan, two more fictional trades, proving the
+       first case was not a one-off. -->
+  <section class="range" data-sc-act="pan" data-sc-span="2.0" data-sc-drift="#101215">
+    <div data-sc-stage class="pan-stage">
+      <div class="rail" data-sc-pan="0.1">
+        <div class="range__lead sc-stack">
+          <span class="sc-label">Two more, so the first was not a trick</span>
+          <h2 class="sc-display sc-display--md">The same read, different trades.</h2>
+        </div>
+
+        <article class="case-card">
+          <div class="case-card__split">
+            <div class="case-card__before"><span>Before</span><div class="cc-line"></div><div class="cc-line"></div></div>
+            <div class="case-card__after"><span>After</span><div class="cc-line"></div><div class="cc-line"></div></div>
+          </div>
+          <div class="case-card__body">
+            <h3>Kestner's Table</h3>
+            <p>The menu was a photo of a printout. Now it is text you can read, search and zoom.</p>
+          </div>
+          <p class="case-card__flag fictional">Fictional demo. Not a real business.</p>
+        </article>
+
+        <article class="case-card">
+          <div class="case-card__split">
+            <div class="case-card__before"><span>Before</span><div class="cc-line"></div><div class="cc-line"></div></div>
+            <div class="case-card__after"><span>After</span><div class="cc-line"></div><div class="cc-line"></div></div>
+          </div>
+          <div class="case-card__body">
+            <h3>Arnholt &amp; Voss</h3>
+            <p>Contact details were on page four of a PDF. Now there is one button, at the top.</p>
+          </div>
+          <p class="case-card__flag fictional">Fictional demo. Not a real business.</p>
+        </article>
+
+        <div class="range__note sc-stack">
+          <p class="sc-body">Same process every time: read the site, measure it, rebuild the one page that actually gets clicked.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · LEISTUNGEN. flow, plain statements, no cards, no icon grid. -->
+  <section class="sc-section tight" data-sc-act="flow" data-sc-drift="#0E0F12">
+    <div class="sc-wrap">
+      <div class="sc-stack" data-sc-in data-sc-stagger="60">
+        <span class="sc-label">What I build</span>
+        <h2 class="sc-display sc-display--lg">Three things, stated plainly.</h2>
+      </div>
+      <div class="offer__grid" data-sc-in data-sc-stagger="70">
+        <div class="offer__item">
+          <span class="offer__index">01</span>
+          <div>
+            <h3>A site that loads fast and reads clearly on the phone it will mostly be seen on.</h3>
+            <p>One page, not a template with twelve you will never fill in.</p>
+          </div>
+        </div>
+        <div class="offer__item">
+          <span class="offer__index">02</span>
+          <div>
+            <h3>Contrast, type and tap targets measured, not guessed.</h3>
+            <p>The same checks you just watched, run against your own site before anything is built.</p>
+          </div>
+        </div>
+        <div class="offer__item">
+          <span class="offer__index">03</span>
+          <div>
+            <h3>One clear next step on every page, not three competing ones.</h3>
+            <p>A phone number that is a link, a form that goes somewhere, or both.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · PROZESS. pan, a hairline timeline, four steps. -->
+  <section class="sc-section" data-sc-act="pan" data-sc-span="2.0" data-sc-drift="#121316">
+    <div data-sc-stage class="pan-stage">
+      <div class="timeline" data-sc-pan="0.08">
+        <div class="timeline__lead sc-stack">
+          <span class="sc-label">How it runs</span>
+          <h2 class="sc-display sc-display--md">Four steps, no mystery.</h2>
+        </div>
+        <div class="step">
+          <div class="step__tick" aria-hidden="true"></div>
+          <span class="step__mark">01</span>
+          <h3>Look</h3>
+          <p>I read your current site the way a visitor does, then measure it the way you just saw.</p>
+        </div>
+        <div class="step">
+          <div class="step__tick" aria-hidden="true"></div>
+          <span class="step__mark">02</span>
+          <h3>Plan</h3>
+          <p>One page, scoped honestly, in writing, before anything gets built.</p>
+        </div>
+        <div class="step">
+          <div class="step__tick" aria-hidden="true"></div>
+          <span class="step__mark">03</span>
+          <h3>Build</h3>
+          <p>Built once, checked on an actual phone before you ever see it.</p>
+        </div>
+        <div class="step">
+          <div class="step__tick" aria-hidden="true"></div>
+          <span class="step__mark">04</span>
+          <h3>Hand over</h3>
+          <p>You get the files and the login. Nothing rented back to you every month.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · UEBER. flow, first person, no team, no stock photo of a person. -->
+  <section class="sc-section about tight" data-sc-act="flow" data-sc-drift="#0D0E11">
+    <div class="sc-wrap about__wrap">
+      <figure class="about__figure" data-sc-in>
+        <img src="assets/about.webp" width="1600" height="888"
+             alt="A mechanical pencil, a steel ruler and a pair of dial calipers on an open notebook with a hand drawn grid, lit by one hard light.">
+      </figure>
+      <div class="about__copy sc-stack" data-sc-in data-sc-stagger="80">
+        <span class="sc-label">Who does the work</span>
+        <p>I'm Youssef. I build one site at a time, by hand, and I check it on a real phone before it goes anywhere near yours.</p>
+        <p>No studio, no account manager, no handoff to someone junior. The person who wrote your audit email is the person who builds the fix.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · KONTAKT. pin + pointer, the close. One CTA, footer inside the
+       stage so nothing trails off after it, single-value cue since only
+       the last act may hold. -->
+  <section id="kontakt" data-sc-act="pin" data-sc-span="1.15" data-sc-drift="#0A0B0D">
+    <div data-sc-stage class="close" data-sc-spotlight>
+      <div class="close__inner">
+        <span class="sc-label" data-sc-cue="0.05">Last thing</span>
+        <h2 class="sc-display sc-display--lg" data-sc-cue="0.05" data-sc-kinetic="lines">Tell me which one felt like your site.</h2>
+        <a class="cta" href="mailto:youtaybusiness@gmail.com?subject=Website%20audit" data-sc-magnet="0.26" data-sc-cue="0.05" data-sc-rise="0">Email me</a>
+      </div>
+      <footer class="foot">
+        <span>Youssef Tayachi. Web design for trades that would rather be shown than sold to.</span>
+        <a href="mailto:youtaybusiness@gmail.com">youtaybusiness@gmail.com</a>
+      </footer>
+    </div>
+  </section>
+
+</main>
+
+<script src="scrollcraft.js"></script>
+<script>ScrollCraft.mount(document.body);</script>
+<script src="page.js"></script>
+</body>
+</html>

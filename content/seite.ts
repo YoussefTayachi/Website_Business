@@ -1,94 +1,53 @@
-// Alle Texte der Portfolio-Seite außer den Demo-Projekten (siehe projekte.ts).
+// Die Texte aller Seiten ausser der Startseite: Kopfleiste, Fuss, Fallstudie,
+// Impressum, Datenschutz und die Kleintexte. Die Demo-Projekte stehen in
+// projekte.ts, die englische Startseite in start.ts. Ueberwiegend Deutsch,
+// mit zwei Ausnahmen seit dem 2026-08-25: `impressum` und `datenschutz` sind
+// englisch, weil die Startseite dorthin verlinkt und beide Seiten deshalb
+// englisch sein muessen (Begruendung im Kommentar bei `impressum`). Damit
+// englisch beschriftet ist auch `fuss.rechtLinks` (die zwei Links, die zu
+// diesen Seiten fuehren) und `kleintexte.platzhalterWarnung` (der Hinweis,
+// der auf beiden Seiten steht). Alles andere hier bleibt Deutsch.
+//
+// STAND 2026-08-25: Die Startseite ist eine Scroll-Inszenierung auf Englisch
+// (app/page.tsx, content/start.ts). Mit ihr sind die sieben alten Sektionen
+// und ihre Komponenten unter components/sections/ weggefallen, und damit auch
+// die Abschnitte meta, hero, befund, leistungen, prozess, ueber und kontakt
+// aus dieser Datei: sie wurden nachweislich von nichts mehr gelesen. Was hier
+// steht, wird gelesen.
+//
+// Drei Strings in `showcase` (eyebrow, intro, fallstudieLinkLabel) liest
+// derzeit ebenfalls niemand. Sie bleiben trotzdem stehen, weil der Abschnitt
+// als Ganzes noch gebraucht wird und noch nicht entschieden ist, ob und in
+// welcher Form es die Fallstudien weiter gibt.
 //
 // Muster: erst der Inhalt als literales Objekt (`as const`), danach die
 // Typen als `typeof`-Ableitung davon. So bleibt der Inhalt die einzige
 // Quelle der Wahrheit, und kein Typ kann vom tatsächlichen Text abweichen.
 //
-// Sprache: ausschließlich Deutsch (siehe PLAN.md Abschnitt 10, kein
-// Sprachumschalter). Ich-Form, kein Agentur-Plural, keine Gedankenstriche,
-// keine erfundenen Zahlen oder Referenzen.
+// Sprache: Deutsch, ausser den zwei oben genannten Ausnahmen. Ich-Form, kein
+// Agentur-Plural, keine Gedankenstriche, keine erfundenen Zahlen oder
+// Referenzen. Gilt auch fuer die englischen Abschnitte.
 
 export const seite = {
   /**
-   * Metadaten für layout.tsx / generateMetadata. `ogTitle` und
-   * `ogDescription` sind bewusst eigene Felder statt einer Wiederverwendung
-   * von `title`/`description`: Suchergebnis und Social-Card dürfen leicht
-   * unterschiedlich formuliert sein, ohne dass eine Änderung am einen Text
-   * automatisch das andere mitzieht.
-   */
-  meta: {
-    title: "Youssef Tayachi: Website-Neubau für Bau, Elektro und Dach",
-    description:
-      "Zwei Fassungen derselben Beispielseite, nebeneinander: die alte Bauweise und die neue. Website-Neubau für Bauunternehmen, Elektriker und Dachdecker, gebaut von einer Person.",
-    ogTitle: "Alt und neu, nebeneinander: Website-Neubau von Youssef Tayachi",
-    ogDescription:
-      "Der Befund stand in der Mail. Hier steht die Korrektur: eine Beispielseite in zwei Fassungen, zum Selbstprüfen.",
-  },
-
-  /**
-   * Kopfleiste. Bewusst wenige Ankerlinks (siehe PLAN.md Abschnitt 5:
-   * "keine Navigation über sieben Punkte"): nur die zwei Sprünge, die für
-   * einen Kaltklick zählen, der Beweis und der nächste Schritt.
+   * Kopfleiste, sichtbar auf allen Seiten ausser der Startseite (Impressum,
+   * Datenschutz, /arbeit/[slug]). Die Wortmarke selbst ist bereits der Weg
+   * zurueck zur Startseite (href="/" in kopfleiste.tsx), darum bleibt hier
+   * nur der eine Sprung, den eine Unterseite sonst nicht bietet: der Kontakt.
+   * "#kontakt" ist ein echtes Ziel auf der neuen Startseite (id="kontakt" in
+   * components/start/akt-9-kontakt.tsx). Ein fruehered zweiter Eintrag zeigte
+   * auf "#showcase", das es seit dem Umbau der Startseite nicht mehr gibt,
+   * und ist deshalb ersatzlos entfernt statt auf ein neues Ziel umgebogen:
+   * PLAN.md Abschnitt 5 ("keine Navigation über sieben Punkte") gilt auch in
+   * die andere Richtung, ein Punkt ohne echtes Ziel ist keiner wert.
+   *
+   * Englisch, nicht Deutsch: die Leiste erscheint auch auf den jetzt
+   * englischen Seiten /impressum und /datenschutz, eine deutsche
+   * Beschriftung dort saehe halb uebersetzt aus.
    */
   kopfleiste: {
     marke: "Youssef Tayachi",
-    ankerlinks: [
-      { label: "Vergleich", href: "#showcase" },
-      { label: "Kontakt", href: "#kontakt" },
-    ],
-  },
-
-  hero: {
-    // Kicker macht die Zielgruppe zur ersten Zeile, die jemand liest (siehe
-    // Auftrag: "das bin ja ich" beim ersten Bildschirm). Das Vertrauenssignal
-    // "ein Entwickler, keine Agentur" steht dafuer jetzt in ueber.absaetze.
-    kicker: "Für Bauunternehmen, Elektriker, Dachdecker",
-    headline: "Deine Arbeit ist gut. Deine Website soll das zeigen.",
-    unterzeile: "Direkt darunter: eine Beispielseite, einmal wie viele sie bauen, einmal neu.",
-    primaerCta: { label: "Fassungen vergleichen", href: "#showcase" },
-    sekundaerCta: { label: "Kontakt aufnehmen", href: "#kontakt" },
-    // Die Messleiste im "Messlauf" (components/sections/hero.tsx) zeigt genau
-    // diese zwei Werte, gerechnet und nachgerechnet, in der Form der
-    // Befund-tag-Zeilen aus content/projekte.ts. Wer Farben oder die Hoehe des
-    // primaeren Knopfes aendert, muss diese zwei Zeilen mitziehen (Rechenweg
-    // steht im Dateikopf von hero.tsx).
-    messwerte: ["Kontrast über 15:1", "Tap-Ziel 48 Pixel"] as const,
-  },
-
-  befund: {
-    eyebrow: "Der Befund",
-    // Vorher: "Vier Befunde, die sich wiederholen" (neutrale Pruefberichtssprache).
-    // Jetzt aus Sicht des suchenden Kunden: nicht was am Betrieb falsch ist,
-    // sondern was der Kunde erlebt, bevor er weiterzieht (siehe Regel 1 des
-    // Auftrags: der Schmerz gehoert dem Kunden, nie dem Betrieb).
-    headline: "Was der Kunde erlebt, bevor er weiterzieht",
-    intro: "Vier Gründe, warum ein Kunde wieder geht, ohne dass du es merkst.",
-    items: [
-      {
-        // Neu gegenueber der alten Fassung ("Tempo ungeprueft"): der fehlende
-        // Beleg der eigenen Arbeit ist fuer Bau, Elektro und Dach der staerkere
-        // Aufhaenger als ungeprueftes Ladetempo. Tafel 01 in befund.tsx zeigt
-        // bisher einen Bilder-Wasserfall ueber einem Maszstab; das Thema hat
-        // gewechselt und muss neu gezeichnet werden (siehe Bericht).
-        label: "Kein Beweis der Arbeit",
-        text: "Ohne ein Bild von der Baustelle sucht der Kunde beim nächsten weiter.",
-      },
-      {
-        label: "Unlesbar am Handy",
-        text: "Der Kunde sucht dich am Handy, die Seite lässt sich dort kaum bedienen.",
-      },
-      {
-        label: "Design ohne Datum",
-        text: "Der Kunde hält den Betrieb für geschlossen, nur weil die Seite alt aussieht.",
-      },
-      {
-        // Gleiches Thema wie zuvor ("Kein naechster Schritt"), nur zugespitzt:
-        // fuer die neue Zielgruppe ist der fehlende naechste Schritt fast immer
-        // der fehlende Anruf im Notfall, nicht ein abstraktes Formular.
-        label: "Kein Weg zum Anruf",
-        text: "Beim Sturmschaden zählt nur ein Klick zum Anruf, den die Seite nicht bietet.",
-      },
-    ],
+    ankerlinks: [{ label: "Contact", href: "#kontakt" }],
   },
 
   /**
@@ -125,107 +84,15 @@ export const seite = {
     },
   },
 
-  leistungen: {
-    eyebrow: "Leistungen",
-    headline: "Was ich baue",
-    intro: "Vier Bausteine für eine Website, die Aufträge bringt statt nur zu stehen.",
-    items: [
-      {
-        titel: "Website-Neubau",
-        text: "Neu gebaut für Bau, Elektro und Dach, am Handy so leicht wie am Tisch.",
-      },
-      {
-        // Neu gegenueber der alten Fassung ("Inhalt und Struktur", Thema:
-        // viel Text auf wenig verdichten). Fuer Bau, Elektro und Dach zaehlt
-        // staerker der fehlende Beleg der eigenen Arbeit (siehe befund.items[0]
-        // und PLAN.md-Auftrag: "kein sichtbarer Beweis"). Abbildung 02 in
-        // leistungen.tsx zeigt bisher verdichteten Flieszstext; das Thema hat
-        // gewechselt und braucht eine neue Zeichnung (siehe Bericht).
-        titel: "Beweis deiner Arbeit",
-        text: "Fotos von der Baustelle, sichtbar statt versteckt im Aktenordner.",
-      },
-      {
-        titel: "Tempo und Technik",
-        text: "Bilder in Ladegröße, schlanker Code: die Seite steht, bevor er weiterzieht.",
-      },
-      {
-        titel: "Übergabe und Pflege",
-        text: "Nach dem Start verstehst du die Seite selbst, oder ich pflege sie weiter.",
-      },
-    ],
-  },
-
-  prozess: {
-    eyebrow: "Prozess",
-    headline: "Wie es abläuft",
-    intro: "Vier Schritte, keiner davon eine Überraschung.",
-    schritte: [
-      {
-        nummer: "01",
-        titel: "Erstgespräch",
-        text: "Ich kläre, was deine Seite können muss und was heute fehlt.",
-      },
-      {
-        nummer: "02",
-        titel: "Entwurf",
-        text: "Du siehst Aufbau und Text, bevor die Technik beginnt.",
-      },
-      {
-        nummer: "03",
-        titel: "Umsetzung",
-        text: "Du siehst Zwischenstände, keine Überraschung am Ende.",
-      },
-      {
-        nummer: "04",
-        titel: "Übergabe",
-        text: "Die Seite geht live, mit Zugriff und einer Erklärung dazu.",
-      },
-    ],
-  },
-
-  /**
-   * Erwähnt Frostbreaker bewusst: es ist der reale Grund, warum der
-   * Besucher gerade hier ist (die Kaltakquise-Mail kam aus diesem
-   * selbstgebauten Werkzeug). Das ist Fakt, keine Referenz im Sinne der
-   * verbotenen Kundenreferenzen, und es ist der ehrlichste Beleg für
-   * technisches Können, den es gibt.
-   */
-  ueber: {
-    eyebrow: "Über",
-    headline: "Warum ausgerechnet ich",
-    // Von drei auf zwei Absaetze gekuerzt (Auftrag: "radikal weniger"). Das
-    // dritte Argument von vorher ("ich sage lieber, was nicht funktioniert")
-    // steckt jetzt in der Haltung des zweiten Satzes statt in einem eigenen
-    // Absatz.
-    absaetze: [
-      "Die Mail kam aus Frostbreaker, meinem eigenen Kaltakquise-Programm. Websites und Werkzeuge baue ich selbst.",
-      "Ich arbeite allein: Wer schreibt, bekommt Antwort von der Person, die auch baut, und ehrliche Worte dazu.",
-    ],
-  },
-
-  /**
-   * `mailtoBetreff` ist der vorbereitete Betreff für den mailto-Link.
-   * `emailAdresse` ist Youssefs bestehende geschäftliche Adresse; nichts
-   * hier ist ein Platzhalter. `terminlinkHinweis` markiert dagegen bewusst
-   * eine Lücke: es gibt noch keinen Terminlink, dafür einen sichtbaren,
-   * unaufgeregten Platzhalter statt eines toten Buttons.
-   */
-  kontakt: {
-    eyebrow: "Kontakt",
-    headline: "Der nächste Schritt",
-    intro: "Schreib mir, was an deiner Seite nicht funktioniert, ich sage dir ehrlich, ob ich helfen kann.",
-    emailLabel: "E-Mail schreiben",
-    emailAdresse: "youtaybusiness@gmail.com",
-    mailtoBetreff: "Anfrage: Website-Neubau",
-    terminlinkHinweis: "Ein Terminlink folgt, bis dahin genügt eine E-Mail.",
-  },
-
   fuss: {
     marke: "Youssef Tayachi",
     tagline: "Websites für Bau, Elektro und Dach, die einen zweiten Blick verdienen.",
+    // Labels englisch, seit Impressum und Datenschutz selbst englisch sind
+    // (Entscheidung vom 2026-08-25, siehe Kommentar bei `impressum` unten).
+    // Die URLs bleiben deutsch: /impressum und /datenschutz aendern sich nicht.
     rechtLinks: [
-      { label: "Impressum", href: "/impressum" },
-      { label: "Datenschutz", href: "/datenschutz" },
+      { label: "Legal notice", href: "/impressum" },
+      { label: "Privacy", href: "/datenschutz" },
     ],
     // {jahr} wird von der Komponente durch das aktuelle Jahr ersetzt.
     copyrightVorlage: "© {jahr} Youssef Tayachi",
@@ -241,8 +108,12 @@ export const seite = {
       label: "Demo, fiktives Beispiel",
       beschreibung: "Kein realer Kunde, eigens gebaut, um Vorher und Nachher zu zeigen.",
     },
+    // Englisch, weil sie nur auf /impressum und /datenschutz erscheint und
+    // beide seit dem 2026-08-25 englisch sind. Die anderen Kleintexte in
+    // diesem Abschnitt bleiben deutsch: sie bedienen die deutschen
+    // Fallstudienseiten und die Seitenchrome, nicht diese beiden Seiten.
     platzhalterWarnung:
-      "Platzhalter: Diese Angaben sind unvollständig und werden vor dem Livegang durch echte Daten ersetzt.",
+      "Placeholder: this information is incomplete and will be replaced with real details before launch.",
     fehlertexte: {
       seiteNichtGefunden: {
         titel: "Diese Seite gibt es nicht",
@@ -266,71 +137,76 @@ export const seite = {
    * dafür steht zentral in `kleintexte.platzhalterWarnung`, damit beide
    * Seiten denselben Text zeigen und eine spätere Änderung nur an einer
    * Stelle passiert.
+   *
+   * SPRACHE: Englisch seit 2026-08-25, wie die Startseite, auf die diese
+   * beiden Seiten von jedem Aufruf entfernt sind: eine deutsche Rechtsseite
+   * hinter einer englischen Startseite sah abgebrochen aus. Nur Platzhalter
+   * gehen hier verloren, keine echten Angaben. Die Paragraphen (§ 5 TMG,
+   * § 18 Abs. 2 MStV) bleiben deutsch benannt, weil sie deutsches Recht
+   * zitieren, das sich durch die Uebersetzung nicht aendert.
+   *
+   * OFFEN vor dem Livegang: Youssefs Kunden sind deutsche Gewerbebetriebe,
+   * fuer die ein deutsches Impressum ueblich ist. Pruefen, ob zusaetzlich
+   * zur englischen Fassung eine deutsche noetig ist, bevor die Platzhalter
+   * durch echte Daten ersetzt werden.
    */
   impressum: {
-    titel: "Impressum",
+    titel: "Legal notice",
     abschnitte: [
       {
-        ueberschrift: "Angaben gemäß § 5 TMG",
-        text: "[Vollständiger Name]\n[Straße und Hausnummer]\n[Postleitzahl und Ort]",
+        ueberschrift: "Information according to § 5 TMG",
+        text: "[Full name]\n[Street and house number]\n[Postal code and city]",
       },
       {
-        ueberschrift: "Kontakt",
-        text: "E-Mail: [E-Mail-Adresse einsetzen]\nTelefon: [Telefonnummer einsetzen, sofern gewünscht]",
+        ueberschrift: "Contact",
+        text: "Email: [insert email address]\nPhone: [insert phone number, if you want one listed]",
       },
       {
-        ueberschrift: "Umsatzsteuer-ID",
-        text: "[Umsatzsteuer-Identifikationsnummer einsetzen, sofern vorhanden]",
+        ueberschrift: "VAT ID",
+        text: "[Insert VAT identification number, if applicable]",
       },
       {
-        ueberschrift: "Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV",
-        text: "[Vollständiger Name]\n[Anschrift wie oben]",
+        ueberschrift: "Responsible for content under § 18 (2) MStV",
+        text: "[Full name]\n[Address as above]",
       },
       {
-        ueberschrift: "EU-Streitschlichtung",
-        text: "Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung bereit: [Link zur Plattform einsetzen]. Zur Teilnahme an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle ist [Name] nicht verpflichtet und nicht bereit.",
+        ueberschrift: "EU dispute resolution",
+        text: "The European Commission provides a platform for online dispute resolution: [insert link to the platform]. [Name] is not obliged and not willing to take part in dispute resolution proceedings before a consumer arbitration board.",
       },
     ],
   },
 
   datenschutz: {
-    titel: "Datenschutzerklärung",
+    titel: "Privacy",
     abschnitte: [
       {
-        ueberschrift: "Verantwortlicher",
-        text: "[Vollständiger Name]\n[Straße und Hausnummer]\n[Postleitzahl und Ort]\nE-Mail: [E-Mail-Adresse einsetzen]",
+        ueberschrift: "Controller",
+        text: "[Full name]\n[Street and house number]\n[Postal code and city]\nEmail: [insert email address]",
       },
       {
-        ueberschrift: "Hosting und Server-Logdaten",
-        text: "[Name und Anschrift des Hosting-Anbieters einsetzen, sobald die Seite live ist]. Beim Aufruf dieser Website erhebt der Hosting-Anbieter automatisch Zugriffsdaten, wie sie technisch für die Auslieferung der Seite notwendig sind.",
+        ueberschrift: "Hosting and server log data",
+        text: "[Insert name and address of the hosting provider once the site is live]. When you visit this website, the hosting provider automatically collects the access data technically required to deliver the page.",
       },
       {
-        ueberschrift: "Cookies und eingebundene Inhalte",
-        text: "Diese Website setzt keine Cookies und bindet keine Inhalte von Drittanbietern ein. Schriften sind lokal eingebunden, nicht von einem externen Server geladen.",
+        ueberschrift: "Cookies and embedded content",
+        text: "This website sets no cookies and loads no content from third-party servers. Fonts are bundled locally, not fetched from an external domain.",
       },
       {
-        ueberschrift: "Kontaktaufnahme per E-Mail",
-        text: "Schreibst du mir per E-Mail, verarbeite ich deine Angaben ausschließlich, um deine Anfrage zu beantworten.",
+        ueberschrift: "Contact by email",
+        text: "If you write to me by email, I use your details only to answer your message.",
       },
       {
-        ueberschrift: "Deine Rechte",
-        text: "Du hast das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung deiner personenbezogenen Daten sowie das Recht, dich bei einer Aufsichtsbehörde zu beschweren.",
+        ueberschrift: "Your rights",
+        text: "You have the right to access, correct, delete and restrict the processing of your personal data, and the right to lodge a complaint with a supervisory authority.",
       },
     ],
   },
 } as const;
 
 export type SeiteContent = typeof seite;
-export type MetaContent = typeof seite.meta;
 export type KopfleisteContent = typeof seite.kopfleiste;
-export type HeroContent = typeof seite.hero;
-export type BefundContent = typeof seite.befund;
 export type ShowcaseContent = typeof seite.showcase;
 export type FallstudieContent = typeof seite.fallstudie;
-export type LeistungenContent = typeof seite.leistungen;
-export type ProzessContent = typeof seite.prozess;
-export type UeberContent = typeof seite.ueber;
-export type KontaktContent = typeof seite.kontakt;
 export type FussContent = typeof seite.fuss;
 export type KleintexteContent = typeof seite.kleintexte;
 export type LegalPageContent = typeof seite.impressum;

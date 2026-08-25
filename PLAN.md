@@ -1,9 +1,74 @@
 # Implementierungsplan: Portfolio-Website Webdesign
 
-Stand: 2026-08-23. Zielordner: `C:\Users\Youssef Tayachi\Desktop\Website Business`.
-Eigenständiges Next.js-Projekt, kein Git, kein Deployment. Später als Branch in
-das frostbreaker.app-Repo übernehmbar, deshalb technisch identische Basis
-(Next.js 15 App Router, React 19, Tailwind v4, TypeScript strict).
+Stand: 2026-08-23, teilweise überholt am 2026-08-25.
+Zielordner: `C:\Users\Youssef Tayachi\Desktop\Website Business`.
+Eigenständiges Next.js-Projekt. Später als Branch in das frostbreaker.app-Repo
+übernehmbar, deshalb technisch identische Basis (Next.js 15 App Router,
+React 19, Tailwind v4, TypeScript strict).
+
+---
+
+## Stand 2026-08-25: das scrollcraft-Redesign
+
+Die Startseite wurde neu gebaut. Sie ist kein statischer One-Pager mehr,
+sondern eine Scroll-Erlebnis-Seite aus neun Akten, getragen von einer eigenen
+Vanilla-JS-Engine. Der Weg dahin: zuerst als eigenständige HTML/CSS/JS-Seite
+gebaut und im Browser verifiziert (`scrollcraft/builds/casefile/`, mit
+`BRIEF.md` als Interview und Begründung), dann nach React portiert.
+
+**Was der Nutzer für dieses Redesign ausdrücklich aufgehoben hat.** Die drei
+Punkte sind Entscheidungen, keine Versäumnisse:
+
+| Frühere Festlegung | Steht in | Gilt jetzt |
+|---|---|---|
+| Alle sichtbaren Texte deutsch | §10, §3 | **Englisch.** Kommentare, Commits und Doku bleiben deutsch. |
+| Kein Sprachumschalter, weil die Zielkunden deutschsprachig sind | §5 | Weiterhin kein Umschalter, aber aus dem umgekehrten Grund: es gibt genau eine Sprache, und das ist Englisch. |
+| Keine Animationsbibliothek | §8 | Eine Ausnahme: die scrollcraft-Engine. Kein React-Framework wie Framer Motion, sondern eigenes Vanilla JS und CSS ohne Abhängigkeiten, statisch in `public/scrollcraft/`, lädt nur auf `/`. Ohne eine Scroll-Engine ist der Signature Move nicht baubar. |
+
+Dazu eine neue Leitlinie, die für alles Weitere gilt: **80 Prozent visuell,
+20 Prozent Text.** Was man zeigen kann, wird gezeigt und nicht beschrieben.
+
+**Der Signature Move.** In Akt 4 stehen zwei Mini-Websites im selben Rahmen.
+Die schlechte Fassung ruckelt beim Scrollen wirklich: ihre innere Bahn wird auf
+einem gedrosselten, unregelmäßigen Zeitplan gemalt und holt ihren Rückstand nie
+auf, so wie es der Paint-Thread einer langsamen Seite unter einem schnellen
+Scroll tut. Die neue Fassung folgt dem Rad in jedem Frame, 1:1. Der Besucher
+fühlt den Unterschied in der Hand, bevor er einen Satz darüber gelesen hat.
+Das ist die eine Sache, die diese Seite kann und ein Standard-Portfolio nicht,
+und sie ist der Grund, warum §4 (Bewegungskonzept) und §7
+(Komponentenarchitektur) unten nur noch historisch gelten.
+
+**Die neun Akte**, mit dem Gefühl, das jeder tragen soll:
+
+| # | Akt | Gefühl | Bauart |
+|---|---|---|---|
+| 1 | Hero | Verdacht, Kälte | gepinnt, Iris-Enthüllung auf ein Still |
+| 2 | Befund | wachsende Unruhe | fließend, drei Befunde nacheinander |
+| 3 | Scharnier | angehaltener Atem | fließend, **absichtlich fast leer** |
+| 4 | Vergleich | Erleichterung (**der Höhepunkt**) | gepinnt, größte Spanne, der Signature Move |
+| 5 | Weitere Fälle | Neugier, Bestätigung | seitlich schwenkend, zwei weitere Gewerke |
+| 6 | Leistungen | Klarheit | fließend, drei Aussagen |
+| 7 | Prozess | Zuversicht | schwenkend, vier Schritte auf einer Haarlinie |
+| 8 | Über | Nähe | fließend, erste Person, ein Still |
+| 9 | Kontakt | Entschluss | gepinnt, ein `mailto:`, Fuß eingefaltet |
+
+Akt 3 ist kein Defekt. Die Stille vor dem Höhepunkt ist gebaut, nicht
+vergessen.
+
+**Was das strukturell nach sich zog.** Die Startseite bringt eigene
+Kopfleiste, eigenes `<main id="top">` und einen in Akt 9 eingefalteten Fuß mit.
+Das Wurzel-Layout darf deshalb keine Chrome mehr tragen, sonst stünden zwei
+Kopfleisten und zwei verschachtelte `<main>` auf der Seite. Die drei übrigen
+Routen holen sich die Chrome aus der Route Group `(mit-chrome)`. Die URLs sind
+unverändert geblieben.
+
+Die vier Stylesheets der Startseite werden aus `app/page.tsx` importiert, nie
+aus einem Layout: `page.css` benutzt sehr allgemeine Selektoren, und die
+`--sc-*`-Tokens würden sonst das Impressum tiefschwarz einfärben.
+
+Der aktuelle Aufbau steht in `README.md`, die Arbeitsregeln in `CLAUDE.md`.
+Die Abschnitte 1, 2 und 6 unten gelten unverändert weiter. Die Abschnitte 3
+bis 5 und 7 bis 10 sind an den markierten Stellen überholt.
 
 ---
 
@@ -48,6 +113,18 @@ Gestaltungsleistung.
 
 ## 3. Visuelle Richtung
 
+> **Teilweise überholt (2026-08-25).** Gilt weiter für `/arbeit/[slug]`,
+> `/impressum` und `/datenschutz`. Die Startseite folgt seit dem
+> scrollcraft-Redesign einer eigenen Richtung: Kino-Tech-Noir, tiefdunkler
+> Grund, ein hartes Führungslicht, ein warmer Akzent, dazu dieselbe
+> Messschild-Sprache aus Haarlinien und Monoschrift. Nur dunkel, kein
+> Nachtmodus-Schalter: eine Kinoseite hat keine Tagfassung. Ihre Tokens stehen
+> in `components/start/tokens.css`, die Begründung in
+> `scrollcraft/builds/casefile/BRIEF.md`.
+>
+> Auch die Zielgruppenzeile unten ist überholt: seit dem Pivot sind es
+> Bauunternehmen, Elektriker und Dachdecker, und die Seite spricht Englisch.
+
 Nicht der zurückhaltende Werkzeug-Look von Frostbreaker, aber auch nicht
 Berlin-Startup-Neon. Zielkunden sind deutschsprachige Betriebe, die noch eine
 Website von 2011 haben: Handwerk, Kanzleien, Praxen, Autohäuser, Gastronomie.
@@ -79,6 +156,16 @@ fremde Anfrage lädt.
 
 ## 4. Bewegungskonzept
 
+> **Für die Startseite überholt (2026-08-25).** Die drei Momente unten
+> beschreiben den alten One-Pager. Die Bewegung der Startseite kommt jetzt aus
+> der scrollcraft-Engine: gepinnte und fließende Akte, ein seitlicher Schwenk,
+> ein wandernder Grundton, und in Akt 4 der Signature Move. Die Regeln
+> darunter gelten trotzdem alle weiter, besonders diese:
+> `prefers-reduced-motion: reduce` zeigt den **Endzustand**, nicht eine
+> gedämpfte Fassung, und das Ruckeln der schlechten Demo verschwindet dabei
+> vollständig. Es ist der Beweis der Seite, aber es ist auch Bewegung, und für
+> jemanden mit Bewegungsempfindlichkeit hat es nichts zu suchen.
+
 Motion-Budget bewusst gedeckelt. Drei Momente tragen die Seite, alles andere
 ist ruhig:
 
@@ -108,6 +195,12 @@ Bewusst klein. Fünf Routen, davon zwei rechtlich.
 
 ### `/` (One-Pager)
 
+> **Überholt (2026-08-25).** Die sieben Sektionen sind durch die neun Akte
+> oben ersetzt, die Komponenten unter `components/sections/` sind gelöscht.
+> Die Zuordnung ist im Kern erhalten geblieben: aus Sektion 3 (Showcase) sind
+> die Akte 3 bis 5 geworden, und der Fuß ist in Akt 9 eingefaltet statt im
+> Layout.
+
 | # | Sektion | Aufgabe | Besonderheit |
 |---|---|---|---|
 | 1 | Hero | In sieben Sekunden klarmachen, was hier passiert | Display-Serif, Haarlinienraster, ein CTA |
@@ -126,6 +219,14 @@ Fassung ganzflächig mit allen Befunden, die neue Fassung ganzflächig, dazwisch
 die Begründung jeder Entscheidung. Zweiter großer Gestaltungsmoment nach dem
 Hero.
 
+> **Nachtrag (2026-08-25).** Die Route steht noch, ist aber deutsch geblieben,
+> während die Startseite englisch spricht, und von der Startseite führt kein
+> Link mehr dorthin. Sie trägt deshalb `robots: { index: false }`. Ob sie
+> übersetzt oder entfernt wird, ist offen. Der Grund für den Aufschub: von der
+> Kaltakquise-Mail führt der Klick auf `/`, und der Beweis liegt seit dem
+> Redesign vollständig in Akt 4. Drei tiefe Unterseiten zu übersetzen wäre die
+> teuerste Arbeit an der Stelle mit der geringsten Wirkung.
+
 ### `/impressum` und `/datenschutz`
 
 Pflicht in Deutschland und bei dieser Zielgruppe ein Glaubwürdigkeitsloch, wenn
@@ -137,9 +238,24 @@ Platzhalter** mit einem Hinweisbalken, den er vor dem Livegang entfernt.
 Blog, Preisseite, Kontaktformular mit Backend, CMS, Sprachumschalter,
 Cookie-Banner, Kundenlogos, Testimonials, Zahlen-Ticker.
 
-Zum Sprachumschalter: **nein.** Die Zielkunden sind deutschsprachig. Ein
-halbgepflegter englischer Zweig wäre ein Qualitätsrisiko genau dort, wo die
-Seite Qualität beweisen soll. Weniger Fläche, mehr Politur.
+Zum Sprachumschalter: **nein, aber die Begründung hat sich umgedreht
+(2026-08-25).** Der alte Grund steht unten und gilt nicht mehr: die Seite ist
+seit dem scrollcraft-Redesign englisch. Der Umschalter fehlt trotzdem, und
+zwar aus genau demselben Argument, nur andersherum gelesen: es gibt eine
+Sprache, und sie ist gepflegt. Ein halbgepflegter zweiter Zweig, egal in
+welche Richtung, wäre ein Qualitätsrisiko genau dort, wo die Seite Qualität
+beweisen soll. Wer eine deutsche Fassung will, baut sie als eigenes Vorhaben.
+
+Der überholte Wortlaut, zur Nachvollziehbarkeit: *„Die Zielkunden sind
+deutschsprachig. Ein halbgepflegter englischer Zweig wäre ein Qualitätsrisiko
+genau dort, wo die Seite Qualität beweisen soll. Weniger Fläche, mehr
+Politur."*
+
+Ein Rest davon bleibt offen und gehört ehrlich benannt: die Zielkunden **sind**
+deutschsprachige Betriebe, und die Seite spricht sie jetzt auf Englisch an.
+Das ist eine bewusste Entscheidung des Nutzers, kein Versehen. Ob sie sich in
+der Antwortquote rechnet, ist ungemessen und lässt sich nur an echten Zahlen
+aus der Kaltakquise entscheiden, nicht am Schreibtisch.
 
 Zum Kontaktformular: ohne Deployment gibt es keinen Empfänger. Also `mailto:`
 mit vorbereitetem Betreff plus ein deutlich markierter Platz für einen
@@ -148,7 +264,23 @@ Terminlink. Ein Formular, das ins Leere schreibt, wäre schlimmer als keines.
 ## 6. Die drei Demo-Projekte
 
 Fiktive Betriebe aus Branchen, die Youssefs Zielgruppe entsprechen. Vorschlag
-für die Zuschnitte, Namen und Texte macht der copywriter:
+für die Zuschnitte, Namen und Texte macht der copywriter.
+
+> **Korrigiert (2026-08-25).** Der Zielgruppen-Pivot hat Gastronomie und
+> Kanzlei gestrichen. Es sind drei Gewerke, und alle drei sind Handwerk:
+>
+> 1. **Elektro.** Typisch: Baukasten-Seite von 2012, Telefonnummer als Bild,
+>    kein Formular, mobil unbrauchbar.
+> 2. **Bau.** Typisch: Referenzen unsichtbar oder gar nicht vorhanden, kein
+>    erkennbarer nächster Schritt.
+> 3. **Dach.** Typisch: Notdienst nicht auffindbar, Anruf-Knopf zu klein für
+>    einen Daumen.
+>
+> Das gilt für die drei Fallstudien unter `/arbeit` **und** für die Demos auf
+> der Startseite: Akt 4 zeigt einen Elektriker, Akt 5 ein Bauunternehmen und
+> einen Dachdecker.
+
+Der überholte Zuschnitt, zur Nachvollziehbarkeit:
 
 1. **Handwerk** (Elektro, Sanitär, Dach). Typisch: Baukasten-Seite von 2012,
    Telefonnummer als Bild, kein Formular, mobil unbrauchbar.
@@ -167,6 +299,22 @@ Fassung **tatsächlich zu sehen ist** (Kontrastwert, Schriftgröße, Tap-Ziel in
 Pixeln). Keine erfundenen Ladezeiten.
 
 ## 7. Komponentenarchitektur
+
+> **Überholt (2026-08-25).** Der Baum unten beschreibt den alten One-Pager.
+> Der aktuelle steht in `README.md` und in `CLAUDE.md`. Zwei Regeln sind neu
+> dazugekommen und wiegen schwerer als alles im Baum:
+>
+> - **Die `data-sc-*`-Attribute im Markup sind der Vertrag mit der Engine.**
+>   Sie liest genau diese Struktur. Ein umsortiertes oder eingespartes Element
+>   bricht einen Akt, ohne dass TypeScript etwas merkt.
+> - **Die Stylesheets der Startseite werden aus `app/page.tsx` importiert,
+>   nie aus einem Layout.** Sonst färben ihre Tokens das Impressum ein.
+>
+> Die Regel zur `.alt-fassung`-Insel unten gilt weiter, und die Startseite
+> macht dasselbe noch strenger: die zwei Mini-Websites in Akt 4 leben in
+> `.demo-track--bad` und `.demo-track--good`, und nichts von dort darf nach
+> außen wirken. Die schlechte Fassung erbt bewusst Times New Roman von ihrem
+> Rahmen, damit sie aussieht wie das, was sie darstellt.
 
 ```
 app/
@@ -209,15 +357,34 @@ außen wirken. Dasselbe Vorgehen wie `.fb-hud` im Hauptprojekt.
 - **Keine** Supabase-, Stripe-, Auth- oder Middleware-Abhängigkeit.
 - Server Components als Standard. `"use client"` nur dort, wo Zeiger, Tastatur
   oder `IntersectionObserver` gebraucht werden: Vorher/Nachher, Reveal,
-  Nachtmodus-Schalter, Kopfleiste.
+  Nachtmodus-Schalter, Kopfleiste, dazu seit dem Redesign der Skriptlader
+  `components/start/skripte.tsx`. Die neun Akte selbst sind statisches Markup
+  und bleiben Server Components.
 - Nachtmodus wie im Hauptprojekt: `localStorage`-Skript im `<head>` setzt
-  `.dark` vor dem ersten Bild, `suppressHydrationWarning`.
+  `.dark` vor dem ersten Bild, `suppressHydrationWarning`. Gilt für die
+  Rechts- und Fallstudienseiten. Die Startseite ist nur dunkel: eine
+  Kinoseite hat keine Tagfassung.
 - Bilder: keine fremden Stockfotos. Alles Sichtbare ist gebaut (CSS, SVG,
   Typografie). Das ist gleichzeitig die Performance-Entscheidung und die
-  ehrlichste Demonstration.
-- Keine Animationsbibliothek. CSS und Web Animations reichen für drei Momente,
-  und ein Portfolio, das 40 kB Framer Motion für einen Schieber lädt, widerlegt
-  sich selbst.
+  ehrlichste Demonstration. **Nachtrag (2026-08-25):** zwei generierte Stills
+  kommen dazu (Hero, Über), beide zeigen Werkzeug auf einem Tisch, keine
+  Person, kein Stockfoto, kein erfundenes Porträt.
+- Schriften über `@fontsource-variable`-Pakete, nie über ein CDN. Die Seite
+  stellt keine Anfrage an eine fremde Domain, und der Datenschutztext
+  behauptet genau das. Der scrollcraft-Build lud Fraunces und Archivo noch von
+  Google und musste beim Portieren umgestellt werden.
+- **Keine Animationsbibliothek, mit einer Ausnahme (2026-08-25): die
+  scrollcraft-Engine.** Kein React-Framework wie Framer Motion, sondern eigenes
+  Vanilla JS und CSS ohne Abhängigkeiten, statisch in `public/scrollcraft/`,
+  lädt nur auf `/`. Der Nutzer hat sie für dieses Redesign ausdrücklich
+  freigegeben, weil der Signature Move ohne eine Scroll-Engine nicht baubar
+  ist. Das alte Argument gilt eine Ebene höher weiter: ein Portfolio, das
+  40 kB Framer Motion für einen Schieber lädt, widerlegt sich selbst. Bevor
+  eine **weitere** Abhängigkeit dazukommt, prüfen, ob CSS, Web Animations oder
+  die vorhandene Engine reichen.
+- Engine und Signature Move (`scrollcraft.css`, `scrollcraft.js`, `page.js`)
+  sind byte-identisch aus dem verifizierten Build übernommen und bleiben es.
+  Wer sie „verbessert", verliert die Verifikation.
 - Ziel: kein Layout-Sprung beim Laden, Tastaturbedienung überall, sichtbarer
   Fokusring, `npx tsc --noEmit` und `npm run build` fehlerfrei.
 
@@ -238,6 +405,14 @@ begegnen.
 | 5 | senior-developer | Verifikation: `npm install`, `npm run dev`, `tsc --noEmit`, `npm run build` | Alles grün |
 
 ## 10. Sprachregeln für alle Beteiligten
+
+> **Erste Zeile überholt (2026-08-25).** Sichtbarer Seitentext ist Englisch,
+> alles andere bleibt Deutsch. Die Tabelle dazu steht in `CLAUDE.md`,
+> Abschnitt „Sprache". Die vier Regeln darunter gelten unverändert weiter, in
+> jeder Sprache, und die dritte hat beim Redesign drei Fundstellen gehabt:
+> zwei Häufigkeitsangaben im Befund-Akt und die aufgedruckten Messwerte über
+> den Demos. Messwerte über einer Demo sind nur zulässig, wenn die Demo
+> daneben wirklich so gerendert wird.
 
 - Alle Texte, Kommentare und Bezeichner-Kommentare deutsch. Bezeichner selbst
   englisch, wie im Hauptprojekt.
