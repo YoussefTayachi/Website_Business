@@ -15,6 +15,48 @@ import { start } from "@/content/start";
  * seitlichen Lauf ist immer nur ein Ausschnitt zu sehen, eine gemeinsame
  * Ueberschrift waere im entscheidenden Moment aus dem Bild.
  */
+/**
+ * Die gezeichnete Miniatur einer Website, einmal alt und einmal neu.
+ *
+ * DER GANZE WITZ IST, DASS BEIDE FASSUNGEN DASSELBE MARKUP HABEN. Genau das
+ * behauptet die Bildunterschrift von Akt 4 ("Same business. Same content.
+ * Rebuilt."), und hier laesst es sich beweisen statt behaupten: dieselben acht
+ * Elemente, zwei Stylesheets, zwei Ergebnisse. Der Knopf (.cc-cta) steht in
+ * beiden an derselben Stelle im Dokument; in der alten Fassung schiebt ihn
+ * allein `order` ans Ende, was der Kartentext darunter woertlich sagt ("the
+ * quote request was buried ... now it is one line, at the top").
+ *
+ * Kein Screenshot und kein Bild: die Betriebe sind erfunden, ein Screenshot
+ * waere eine erfundene Referenz. Gezeichnet wird deshalb nur die STRUKTUR
+ * einer Seite, und die traegt den Unterschied allein: links randlos, gedraengt,
+ * eine Wand aus Text; rechts Rand, Rhythmus, eine einzige Handlung.
+ *
+ * Reine Zeichnung, deshalb traegt der ganze Block aria-hidden (siehe unten):
+ * fuer einen Screenreader steht der Sinn der Karte im Text darunter, und eine
+ * Reihe leerer <i> vorzulesen hilft niemandem.
+ */
+function Miniatur({ fassung }: { fassung: "alt" | "neu" }) {
+  return (
+    <div className={`cc-site cc-site--${fassung}`}>
+      <div className="cc-top">
+        <i className="cc-brand" />
+        <i className="cc-navlink" />
+        <i className="cc-navlink" />
+        <i className="cc-navlink" />
+      </div>
+      <i className="cc-head" />
+      <i className="cc-head cc-head--sub" />
+      <i className="cc-cta" />
+      <i className="cc-media" />
+      <i className="cc-text" />
+      <i className="cc-text" />
+      <i className="cc-text" />
+      <i className="cc-text" />
+      <i className="cc-text cc-text--end" />
+    </div>
+  );
+}
+
 export default function AktWeitereFaelle() {
   const { label, headline, vorherLabel, nachherLabel, kennzeichen, karten, notiz } =
     start.weitereFaelle;
@@ -30,20 +72,23 @@ export default function AktWeitereFaelle() {
 
           {karten.map((karte) => (
             <article key={karte.titel} className="case-card">
-              {/* Vorher und Nachher als gezeichnete Andeutung, nicht als
-                  Screenshot: es gibt diese Betriebe nicht, und ein erfundener
-                  Screenshot waere eine erfundene Referenz. Die .cc-line sind
-                  reine Flaeche und tragen deshalb keinen Text. */}
-              <div className="case-card__split">
+              {/* Nebeneinander, nicht uebereinander: der Vorher/Nachher-Griff
+                  dieser Seite laeuft waagerecht (Akt 4 zieht die neue Fassung
+                  per clip-path von links nach rechts auf). Zwei gestapelte
+                  Baender waeren derselbe Gedanke in einer zweiten Sprache.
+
+                  aria-hidden auf dem ganzen Block, samt der Beschriftungen:
+                  ohne die Zeichnung sind "Before" und "After" fuer einen
+                  Screenreader zwei Woerter ohne Bezug. Der Sinn der Karte
+                  steht im Text darunter und wird dort vorgelesen. */}
+              <div className="case-card__split" aria-hidden="true">
                 <div className="case-card__before">
                   <span>{vorherLabel}</span>
-                  <div className="cc-line" />
-                  <div className="cc-line" />
+                  <Miniatur fassung="alt" />
                 </div>
                 <div className="case-card__after">
                   <span>{nachherLabel}</span>
-                  <div className="cc-line" />
-                  <div className="cc-line" />
+                  <Miniatur fassung="neu" />
                 </div>
               </div>
               <div className="case-card__body">

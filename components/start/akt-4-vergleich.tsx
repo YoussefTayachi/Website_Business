@@ -100,21 +100,38 @@ export default function AktVergleich() {
                       <span key={eintrag}>{eintrag}</span>
                     ))}
                   </div>
+                  {/* Der Kopf ist zweispaltig, und das ist keine Zierde. Der
+                      Rahmen ist bis zu 928px breit, also ein Desktopfenster.
+                      Die Fassung stand darin vorher einspaltig und mit
+                      Textbreiten fuer ein Telefon: rechts blieben zwei Drittel
+                      leer. Genau so sieht eine Seite aus, die nie fuer die
+                      Breite gebaut wurde, auf der sie gerade laeuft, und das
+                      ist der Vorwurf, den diese Demo widerlegen soll.
+                      Naeheres bei .dg-hero in components/start/page.css. */}
                   <div className="dg-hero">
-                    <h2>{neu.headline}</h2>
-                    <p>{neu.unterzeile}</p>
-                    {/* tabIndex -1 mit Absicht: der Knopf gehoert zu einer
-                        gezeigten Website, nicht zu dieser hier. Waere er per
-                        Tabulator erreichbar, liefe die Tastatur mitten in eine
-                        Demo, deren Links nirgendwohin fuehren. */}
-                    <a className="dg-cta" href="#" tabIndex={-1}>
-                      {neu.ctaLabel}
-                    </a>
+                    <div className="dg-hero__copy">
+                      <h2>{neu.headline}</h2>
+                      <p>{neu.unterzeile}</p>
+                      {/* tabIndex -1 mit Absicht: der Knopf gehoert zu einer
+                          gezeigten Website, nicht zu dieser hier. Waere er per
+                          Tabulator erreichbar, liefe die Tastatur mitten in eine
+                          Demo, deren Links nirgendwohin fuehren. */}
+                      <a className="dg-cta" href="#" tabIndex={-1}>
+                        {neu.ctaLabel}
+                      </a>
+                    </div>
+                    {/* Vorher standen zwei leere .dg-block mitten in der Seite.
+                        Ein leeres graues Rechteck ist in der NEU gebauten
+                        Fassung das denkbar falscheste Bild: es ist genau das,
+                        was eine unfertige Seite zeigt. Jetzt eine gezeichnete
+                        Bildplatte an der Stelle, an der ein Kopfbild sitzt.
+                        Reine Zeichnung, deshalb aria-hidden. */}
+                    <div className="dg-plate" aria-hidden="true" />
                   </div>
-                  <div className="dg-copy">{neu.absatz1}</div>
-                  <div className="dg-block" aria-hidden="true" />
-                  <div className="dg-copy">{neu.absatz2}</div>
-                  <div className="dg-block" aria-hidden="true" />
+                  <div className="dg-cols">
+                    <div className="dg-copy">{neu.absatz1}</div>
+                    <div className="dg-copy">{neu.absatz2}</div>
+                  </div>
                   <div className="dg-foot">{neu.fuss}</div>
                 </div>
                 <span className="demo-status demo-status--good">{neu.status}</span>

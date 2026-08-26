@@ -106,17 +106,17 @@ export const start = {
       {
         tag: "01 · contrast",
         text: "Text that fails at arm's length, on the page meant to make someone trust you.",
-        stat: "The standard for body text is 4.5:1.",
+        stat: "Some of the people looking at your site just can't read it.",
       },
       {
         tag: "02 · tap target",
         text: "A phone number nobody can hit on the first try, on a screen most visitors are holding in one hand.",
-        stat: "A comfortable tap target is at least 44 pixels tall.",
+        stat: "He tries to tap your number, hits the wrong thing, and calls someone else.",
       },
       {
         tag: "03 · the ask",
         text: "A homepage that lists every service and never says what happens after you call.",
-        stat: "Nothing invented, only missing: no next step, no hours, no way to reach a person.",
+        stat: "No next step, no hours, no way to reach you: he closes the tab and moves on.",
       },
     ],
     abschluss: "Not opinions. Measurements.",
@@ -171,17 +171,17 @@ export const start = {
        * aendert, verschiebt den Marker gegenueber dem, was gerade zu sehen ist.
        */
       marker: [
-        { checkpoint: "0.03 0.17", text: "Contrast 2.1:1" },
-        { checkpoint: "0.17 0.29", text: "Tap target 18px" },
-        { checkpoint: "0.29 0.42", text: "Phone number: an image, not text" },
+        { checkpoint: "0.03 0.17", text: "Too pale to read" },
+        { checkpoint: "0.17 0.29", text: "Buttons too small for a thumb" },
+        { checkpoint: "0.29 0.42", text: "Can't tap to call" },
       ],
     },
 
     /** Dieselbe Firma, dieselben Inhalte, neu gebaut. */
     neu: {
       navMarke: "Volkmann Electric",
-      navLinks: ["Services", "Contact"],
-      headline: "Volkmann Electric",
+      navLinks: ["Services", "Emergency callout", "Contact"],
+      headline: "Electrical work, done right the first time.",
       unterzeile: "Certified electrician, on call across the region.",
       ctaLabel: "Call 030 1234567",
       absatz1:
@@ -190,9 +190,9 @@ export const start = {
       fuss: "Volkmann Electric. Licensed and insured.",
       status: "Response: immediate",
       marker: [
-        { checkpoint: "0.58 0.71", text: "Contrast 5.9:1" },
-        { checkpoint: "0.71 0.83", text: "Tap target 44px" },
-        { checkpoint: "0.83 0.97", text: "Phone number: a real link" },
+        { checkpoint: "0.58 0.71", text: "Easy to read" },
+        { checkpoint: "0.71 0.83", text: "Big enough to tap" },
+        { checkpoint: "0.83 0.97", text: "Tap to call" },
       ],
     },
   },
@@ -236,8 +236,8 @@ export const start = {
       },
       {
         index: "02",
-        titel: "Contrast, type and tap targets: measured, not guessed.",
-        text: "The same checks you just watched, run on your own site before anything is built.",
+        titel: "Text you can read, buttons that work: measured, not guessed.",
+        text: "I run the same checks on your site first, so you see exactly what's costing you calls, before I build anything.",
       },
       {
         index: "03",
@@ -263,7 +263,7 @@ export const start = {
       {
         mark: "02",
         titel: "Plan",
-        text: "One page, scoped in writing, before anything gets built.",
+        text: "One page, planned and written down, before anything gets built.",
       },
       {
         mark: "03",

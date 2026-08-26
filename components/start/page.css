@@ -48,7 +48,12 @@
   border-radius: var(--sc-r-sm);
   transition: transform var(--sc-d-fast) var(--sc-ease-out);
 }
-.site-bar__cta:hover { transform: translateY(-1px); }
+/* Eingezaeunt, weil eine Beruehrung auf dem Telefon einen Hoverzustand setzt,
+   der danach haengen bleibt: der Knopf stuende dann bis zum naechsten Tippen
+   irgendwo anders um 1px angehoben da. */
+@media (hover: hover) and (pointer: fine) {
+  .site-bar__cta:hover { transform: translateY(-1px); }
+}
 .site-bar__cta:active { transform: translateY(0) scale(0.97); }
 
 /* ---------------------------------------------------------------- hero --
@@ -75,10 +80,33 @@
    time, in the plain measured language of an inspection tag. */
 .befund { background: var(--sc-surface); }
 .befund__head { max-width: 40rem; margin-bottom: var(--sc-9); }
+/* DIE DREI BEFUNDE STANDEN NICHT AUF EINER KANTE. Jeder .finding war sein
+   eigenes Raster mit grid-template-columns: auto 1fr, und "auto" misst den
+   Inhalt DIESES Rasters: der Marker "01 · contrast" ist kuerzer als
+   "02 · tap target", also begann der Text daneben bei jedem Befund woanders.
+   Nachgemessen in Chrome 151 bei 1440x900: 272px, 289px, 265px, also
+   Abweichungen bis 24px zwischen Zeilen, die untereinander stehen und deshalb
+   verglichen werden.
+
+   subgrid loest das an der Wurzel: die Spaltenbreite wird einmal an der Liste
+   bestimmt und von jedem Befund uebernommen. Ein fester min-width am Marker
+   taete es auch, waere aber eine Zahl, die beim naechsten redaktionellen
+   Durchgang still danebenliegt: die Marker stehen in content/start.ts. */
 .befund__list { display: grid; gap: var(--sc-11); max-width: 52rem; }
+@supports (grid-template-columns: subgrid) {
+  .befund__list { grid-template-columns: auto 1fr; }
+  .finding { grid-column: 1 / -1; grid-template-columns: subgrid; }
+}
+/* align-items: baseline statt start. Vorher stand am Marker ein
+   padding-top: 0.3em, also ein von Hand gesuchter Wert, der die Marke bei
+   einer Schriftgroesse traf und bei jeder anderen daneben lag: beide Spalten
+   sind fluid gesetzt (--sc-t-xs gegen --sc-t-lg), ihre Zeilenkaesten wachsen
+   verschieden schnell, und der Versatz war damit von der Fensterbreite
+   abhaengig. Grundlinienausrichtung ist derselbe Gedanke, nur ausgerechnet
+   statt geschaetzt, und sie stimmt auf jeder Breite. */
 .finding {
   display: grid; grid-template-columns: auto 1fr; gap: var(--sc-5);
-  align-items: start;
+  align-items: baseline;
   padding-bottom: var(--sc-8);
   border-bottom: 1px solid var(--sc-hairline);
 }
@@ -90,15 +118,17 @@
   text-transform: uppercase;
   color: var(--sc-accent);
   white-space: nowrap;
-  padding-top: 0.3em;
 }
 .finding__body { max-width: 40rem; }
+/* War --sc-t-sm (14 bis 15,2px). Das ist ein ganzer Satz Fliesstext und keine
+   Beschriftung, also die Grundstufe der Seite. Ueber ihm steht .sc-lede auf
+   --sc-t-lg, der Sprung bleibt damit eindeutig. */
 .finding__stat {
   display: block;
-  font-family: var(--sc-font-mono);
-  font-size: var(--sc-t-sm);
+  font-family: var(--sc-font-text);
+  font-size: var(--sc-t-base);
   color: var(--sc-ink-soft);
-  margin-top: var(--sc-2);
+  margin-top: var(--sc-3);
 }
 .befund__close {
   margin-top: var(--sc-9);
@@ -161,7 +191,12 @@
   border-radius: var(--sc-r-md);
   overflow: clip;
   background: #0d0e10;
-  box-shadow: var(--sc-e3);
+  /* --sc-edge ist die 1px-Lichtkante aus scrollcraft.css ("real raised things
+     catch light on their lip"). Sie war auf dieser Seite bisher an keiner
+     Stelle benutzt, und der Rahmen ist das eine Bauteil, das wirklich ueber
+     der Seite liegt. Schatten allein macht Abstand, die Lichtkante macht ein
+     Geraet daraus. */
+  box-shadow: var(--sc-e3), var(--sc-edge);
   border: 1px solid var(--sc-hairline-strong);
 }
 .demo-frame__bar {
@@ -175,12 +210,39 @@
   letter-spacing: var(--sc-track-wide);
   color: var(--sc-ink-soft);
 }
-.demo-frame__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sc-hairline-strong); }
+.demo-frame__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sc-hairline-strong); }
+/* Drei gleich helle Punkte sind der Vorgabewert jedes gezeichneten Browsers.
+   An einem echten Fenster stehen die Knoepfe nie gleich laut nebeneinander.
+   Die Abstufung kostet nichts und nimmt dem Rahmen das Schablonenhafte. */
+.demo-frame__dot:nth-of-type(2) { opacity: 0.66; }
+.demo-frame__dot:nth-of-type(3) { opacity: 0.44; }
+
 /* 0.75 kam auf #0a0a0c nachgemessen auf 4,08:1, bei 10,88px also unter der
    4,5:1. Die Adresszeile ist zwar aria-hidden und damit erklaerter Zierrat,
    sie traegt aber die einzige Stelle, an der die Adresse des gezeigten
-   Betriebs steht, und wird gelesen. 0.85 misst 4,94:1 und bleibt gedaempft. */
-.demo-frame__url { margin-left: var(--sc-3); opacity: 0.85; }
+   Betriebs steht, und wird gelesen. 0.85 misst 4,94:1 und bleibt gedaempft.
+
+   Die Adresse sitzt jetzt in einem eingelassenen Feld statt frei in der
+   Leiste, wie in jedem echten Browser. Der Grund des Feldes ist DUNKLER als
+   die Leiste, nicht heller: eingelassen ist die wahrere Zeichnung, und der
+   Kontrast der Adresse steigt dadurch, statt zu fallen. Die 4,94:1 von oben
+   bleiben also die untere Schranke und muessen nicht neu erstritten werden.
+
+   Das Feld macht die Adresszeile hoeher als die 34,63px, die im Kommentar
+   ueber .demo-frame stehen. Das ist unkritisch, seit der Rahmen eine
+   Flex-Spalte ist: die Leiste nimmt sich ihre Hoehe, der Ausschnitt bekommt
+   den Rest. Der Ausschnitt wird dadurch minimal flacher, badMax und goodMax in
+   page.js werden dadurch groesser, nie kleiner. */
+.demo-frame__url {
+  flex: 1 1 auto; min-width: 0;
+  margin-left: var(--sc-2); opacity: 0.85;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  padding: 0.2em 0.75em;
+  border-radius: var(--sc-r-pill);
+  background: #060608;
+  border: 1px solid color-mix(in oklab, var(--sc-ink) 7%, transparent);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.45);
+}
 /* min-height: 0, sonst nimmt der Flex-Gegenstand seine Inhaltshoehe als
    Mindestmass und kann nicht kleiner werden als der Rahmen. */
 .demo-frame__viewport {
@@ -266,47 +328,153 @@
   font-size: 15px; letter-spacing: 0.06em; color: #767d85;
   transform: scaleY(0.94);
 }
+/* text-align: justify ist die eine Zeile, die aus "grau" ein Baujahr macht.
+   Blocksatz ohne Silbentrennung reisst bei 11px Loecher in jede Zeile, und
+   genau dieses Flussbild hat jede von Hand gebaute Betriebsseite aus der
+   Tabellenzeit. Es aendert weder Farbe noch Zeilenumbruch, die gemessenen
+   Kontrastwerte oben und der Weg badMax in page.js bleiben unberuehrt. */
 .demo-track--bad .db-copy {
   padding: 12px 16px; font-size: 11px; line-height: 1.3; color: #838a92;
+  text-align: justify; hyphens: none;
 }
 .demo-track--bad .db-link { color: #8fa3c9; text-decoration: underline; }
 .demo-track--bad .db-block {
   height: 90px; margin: 10px 16px; background: repeating-linear-gradient(
     45deg, #4b515a, #4b515a 8px, #454b53 8px, #454b53 16px);
 }
+/* Zentriert, weil der zentrierte Copyright-Einzeiler das Erkennungszeichen
+   dieser Bauweise ist. Hoehe und Farbe bleiben, damit sich am Weg der Bahn
+   nichts verschiebt. */
 .demo-track--bad .db-foot {
-  padding: 10px 16px 20px; font-size: 9px; color: #767d85;
+  padding: 10px 16px 20px; font-size: 9px; color: #767d85; text-align: center;
 }
 
+/* ── die neu gebaute Fassung ───────────────────────────────────────────────
+   Sie ist nur ein paar hundert Pixel gross, und deshalb entscheidet nicht der
+   Einfall, sondern die Buchfuehrung: EIN Seitenrand und EINE Rhythmuseinheit,
+   beide hier einmal deklariert, und jedes Bauteil darunter rechnet nur noch in
+   Vielfachen davon. Genau das sieht man einer Seite an, auch wenn man den
+   Grund nicht benennen kann, und genau das fehlte hier vorher: die alte
+   Fassung mischte var(--sc-3), var(--sc-4), var(--sc-5) und var(--sc-7) und
+   war dadurch nur aufgeraeumt, nicht gesetzt.
+
+   Die zwei Werte stehen als PROZENT der Rahmenbreite in einem clamp, nicht in
+   vw: die Miniatur soll mit ihrem eigenen Rahmen atmen und nicht mit dem
+   Fenster, sonst hat die Demo bei 92vw auf dem Telefon Desktop-Raender. Der
+   Bezug ist sauber, weil .demo-track in .demo-frame__viewport absolut liegt
+   und Prozente in Polsterung und Abstand gegen dessen Breite aufloesen.
+
+   Das Vokabular der Abstaende ist absichtlich klein: 4 Schritte trennen
+   Abschnitte, 2 fassen eine Gruppe, 1 ein Paar, 0,5 zwei Zeilen. Bodenabstand
+   gibt es nicht, jeder Abstand gehoert dem folgenden Element. Ein Rhythmus mit
+   vier Werten ist zu sehen, einer mit sieben ist nur Zufall.
+
+   Der Schritt ist mit Absicht gross (bei 928px Rahmenbreite 22px, also 89px
+   Abschnittsabstand). Zwei Gruende, und beide zaehlen:
+   1. So sieht ein Abschnittswechsel auf einer 928px breiten Seite wirklich
+      aus. Bei 53px klebten die Abschnitte aneinander.
+   2. Er ist Mechanik. page.js faehrt die gute Bahn ueber
+      goodMax = scrollHeight minus Hoehe des Ausschnitts. Nach dem Umbau auf
+      zwei Spalten war die Bahn so kompakt, dass goodMax bei 1440x900 auf 204px
+      fiel: die gute Fassung bewegte sich pro gescrolltem Pixel nur noch halb
+      so weit wie vorher, und der Beweis "sie folgt dem Rad" wurde leiser.
+      Mit diesem Schritt sind es nachgemessen wieder rund 440px. */
 .demo-track--good {
+  --dg-pad: clamp(1rem, 3.6%, 2.25rem);
+  --dg-step: clamp(0.8rem, 2.4%, 1.9rem);
+
   background: var(--sc-canvas);
   font-family: var(--sc-font-text);
   color: var(--sc-ink);
 }
 .demo-track--good .dg-nav {
-  display: flex; align-items: center; gap: var(--sc-6);
-  padding: var(--sc-3) var(--sc-5);
+  display: flex; align-items: center; gap: var(--sc-5);
+  padding: var(--dg-step) var(--dg-pad);
   border-bottom: 1px solid var(--sc-hairline);
-  font-size: 0.72rem; letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+  font-size: 0.7rem; letter-spacing: var(--sc-track-wide); text-transform: uppercase;
   color: var(--sc-ink-soft);
 }
-.demo-track--good .dg-nav strong { color: var(--sc-ink); font-weight: 600; }
-.demo-track--good .dg-hero { padding: var(--sc-7) var(--sc-5) var(--sc-4); }
+/* Marke links, Links rechts. Marke und Navigation in einer Reihe links
+   aneinandergeklebt ist der Vorgabewert eines Flex-Containers und nicht die
+   Entscheidung eines Gestalters. Der Griff sitzt an der Marke, damit das
+   Markup nichts davon wissen muss: sie schiebt den Rest an die Gegenkante.
+   Dazu die einzige Groessenstufe der Zeile, weil eine Wortmarke keine
+   Navigation ist und auch nicht wie eine aussehen darf. */
+.demo-track--good .dg-nav strong {
+  margin-right: auto;
+  color: var(--sc-ink); font-weight: 600;
+  font-size: 0.86rem; text-transform: none;
+  letter-spacing: var(--sc-track-snug);
+}
+/* DER KOPF NUTZT DIE BREITE, DIE ER HAT. Vorher stand hier eine Spalte mit
+   max-width: 34ch: in einem 928px breiten Rahmen lagen damit zwei Drittel der
+   Flaeche leer, und die Fassung sah aus wie eine Telefonseite, die jemand in
+   ein Desktopfenster gezogen hat. Nachgesehen in Chrome 151 bei 1440x900:
+   der Textsatz endete bei 486px, der Rahmen ging bis 1160px.
+
+   Das ist keine Kleinigkeit, sondern derselbe Vorwurf, den diese Demo
+   widerlegen soll. Deshalb jetzt der Griff, an dem eine gebaute Seite auf den
+   ersten Blick zu erkennen ist: Text links, Bild rechts, beide auf einer
+   Achse, das Verhaeltnis ungleich (1,05 zu 1) statt halbe halbe, weil zwei
+   exakt gleiche Spalten die Vorgabe sind und kein Verhaeltnis. */
+.demo-track--good .dg-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: center;
+  gap: calc(var(--dg-step) * 2);
+  padding: calc(var(--dg-step) * 4) var(--dg-pad) 0;
+}
+/* DIE ZEILE, DIE DEN GROESSTEN UNTERSCHIED MACHT, ist line-height. Ohne sie
+   erbte diese Schlagzeile die 1,62 aus dem body-Satz von scrollcraft.css: eine
+   Fraunces auf 38px in Zeilenhoehe 1,62 baut Zeilenkaesten von 62px und faellt
+   damit optisch auseinander, sobald sie zweizeilig wird. Eine Displayschrift
+   traegt ihre eigene Zeilenhoehe, hier --sc-leading-tight (1,06), dieselbe
+   Stufe, mit der .sc-display auf der uebrigen Seite gesetzt ist. */
 .demo-track--good .dg-hero h2 {
+  margin: 0;
   font-family: var(--sc-font-display);
-  font-size: clamp(1.3rem, 2.4vw, 1.9rem);
-  margin: 0; color: var(--sc-ink); letter-spacing: var(--sc-track-snug);
+  font-size: clamp(1.45rem, 4.1%, 2.5rem);
+  line-height: var(--sc-leading-tight);
+  letter-spacing: var(--sc-track-tight);
+  color: var(--sc-ink);
+  text-wrap: balance;
 }
 .demo-track--good .dg-hero p {
-  margin: var(--sc-2) 0 0; color: var(--sc-ink-soft); font-size: 0.9rem; max-width: 34ch;
+  margin: calc(var(--dg-step) * 0.5) 0 0;
+  color: var(--sc-ink-soft);
+  font-size: clamp(0.85rem, 1.75%, 1.05rem);
+  line-height: 1.5; max-width: 34ch; text-wrap: pretty;
 }
+/* min-height 44px traegt die Zahl auf dem Schild "Tap target 44px", die
+   senkrechte Polsterung ist deshalb null: haetten beide einen Wert, waere die
+   aufgedruckte Zahl geraten. Waagerecht steht ein eigener Wert, weil ein Knopf
+   in der Breite mehr Luft braucht als in der Hoehe, sonst sieht er gequetscht
+   aus, obwohl er die Norm haelt.
+   Schatten und Lichtkante: ein Knopf ist das eine Element auf einer Seite, das
+   ueber ihr liegt. Flach gezeichnet bleibt er ein oranges Rechteck. */
 .demo-track--good .dg-cta {
-  display: inline-block; margin-top: var(--sc-4);
-  padding: 0.7em 1.3em; border-radius: var(--sc-r-sm);
+  display: inline-flex; align-items: center;
+  margin-top: calc(var(--dg-step) * 2);
+  min-height: 44px; padding-inline: 1.15rem;
+  border-radius: var(--sc-r-sm);
   background: var(--sc-accent); color: var(--sc-accent-ink);
-  font-size: 0.82rem; font-weight: 600; text-decoration: none;
-  min-height: 44px; display: inline-flex; align-items: center;
+  font-size: 0.82rem; font-weight: 600;
+  letter-spacing: var(--sc-track-normal); text-decoration: none;
+  box-shadow: var(--sc-e1), var(--sc-edge);
+  transition: transform var(--sc-d-fast) var(--sc-ease-out),
+              box-shadow var(--sc-d-fast) var(--sc-ease-out);
 }
+/* Der Knopf gehoert einer gezeigten Website und ist per tabIndex -1 aus der
+   Tastaturfolge genommen. Antworten darf er trotzdem: dass die neu gebaute
+   Fassung auf den Zeiger reagiert und die alte danebensteht, ist genau das
+   Argument dieses Akts. Eingezaeunt wie jeder Hoverzustand hier. */
+@media (hover: hover) and (pointer: fine) {
+  .demo-track--good .dg-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--sc-e2), var(--sc-edge);
+  }
+}
+.demo-track--good .dg-cta:active { transform: translateY(0) scale(0.99); }
 /* DIE ZAHL AUF DEM SCHILD "Contrast 5.9:1" HAENGT AN DIESER ZEILE (und an
    .dg-hero p, gleiche Farbe, gleicher Grund). Methode wie oben bei
    .db-hero p beschrieben: die zusammengesetzte Flaeche, nicht das Stylesheet.
@@ -336,17 +504,60 @@
    var(--sc-accent), und selbst reines Schwarz kaeme darauf nur auf 5,45. Die
    4,5:1 fuer kleine Schrift haelt er mit Abstand. Das Schild vergleicht auf
    beiden Seiten dasselbe Bauteil, den Lauftext, sonst vergliche es nichts. */
-.demo-track--good .dg-copy {
-  padding: var(--sc-5); font-size: 0.88rem; line-height: 1.6; color: var(--sc-ink-soft);
-  max-width: 42ch;
+/* Die Bildplatte ist bewusst kein aufgehelltes Rechteck mit Rahmen, sondern
+   Seitenverhaeltnis, Lichteinfall und Kante: 16:10 wie ein Kopfbild, ein
+   Lichtkegel oben links, ein Verlauf, der nach unten in den Grund faellt, dazu
+   die Lichtkante --sc-edge. Ein erfundener Screenshot kaeme hier nicht in
+   Frage (den Betrieb gibt es nicht), gezeichnet werden darf aber, WO ein Bild
+   sitzt und WIE es dort sitzt.
+   Der Deckel in der Hoehe haengt an vh und damit an derselben Groesse, aus der
+   auch der Rahmen seine Hoehe zieht (clamp(19rem, 46vh, 27rem)): ohne ihn
+   nahm die Platte bei 928px Rahmenbreite 250px und damit fast den ganzen
+   Ausschnitt ein, nachgemessen in Chrome 151. */
+.demo-track--good .dg-plate {
+  aspect-ratio: 16 / 10;
+  max-height: clamp(5.5rem, 17vh, 9.5rem);
+  justify-self: end; width: 100%;
+  border-radius: var(--sc-r-sm);
+  border: 1px solid var(--sc-hairline);
+  box-shadow: var(--sc-edge);
+  background:
+    radial-gradient(120% 95% at 22% 8%,
+      color-mix(in oklab, var(--sc-ink) 13%, transparent), transparent 62%),
+    radial-gradient(100% 70% at 78% 100%,
+      color-mix(in oklab, var(--sc-canvas) 55%, transparent), transparent 70%),
+    linear-gradient(158deg,
+      color-mix(in oklab, var(--sc-ink) 4%, var(--sc-surface)) 0%,
+      color-mix(in oklab, var(--sc-canvas) 60%, var(--sc-surface)) 100%);
 }
-.demo-track--good .dg-block {
-  height: 90px; margin: var(--sc-5); border-radius: var(--sc-r-sm);
-  background: var(--sc-surface); border: 1px solid var(--sc-hairline);
-}
-.demo-track--good .dg-foot {
-  padding: var(--sc-5); font-size: 0.72rem; color: var(--sc-ink-soft);
+
+/* Zwei Textspalten, weil zwei gleichrangige Absaetze nebeneinander gehoeren
+   und nicht untereinander, sobald der Platz da ist. Der Deckel bei 46ch bleibt
+   an jeder Spalte stehen: nicht die Spalte bestimmt die Zeilenlaenge, sondern
+   die Lesbarkeit, und ueber 46 Zeichen findet das Auge den Zeilenanfang nicht
+   mehr sicher. Die Haarlinie darueber trennt Kopf und Inhalt, ohne dass dafuer
+   ein weiterer Abstand noetig waere. */
+.demo-track--good .dg-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: calc(var(--dg-step) * 2);
+  margin: calc(var(--dg-step) * 4) var(--dg-pad) 0;
+  padding-top: calc(var(--dg-step) * 2);
   border-top: 1px solid var(--sc-hairline);
+}
+.demo-track--good .dg-copy {
+  margin: 0;
+  font-size: clamp(0.8rem, 1.6%, 0.95rem);
+  line-height: var(--sc-leading-body);
+  color: var(--sc-ink-soft);
+  max-width: 46ch; text-wrap: pretty;
+}
+
+.demo-track--good .dg-foot {
+  margin: calc(var(--dg-step) * 4) var(--dg-pad) 0;
+  padding: var(--dg-step) 0 calc(var(--dg-step) * 4);
+  border-top: 1px solid var(--sc-hairline);
+  font-size: 0.72rem; color: var(--sc-ink-soft);
 }
 
 /* max-width: die Schilder sind absolut gesetzt und schrumpfen auf ihren
@@ -355,35 +566,83 @@
    Gegenkante. Der Text kommt aus content/start.ts und wird redaktionell
    ueberarbeitet: ein Wort mehr, und das Schild klebte am Rand. Mit dem Deckel
    bricht es stattdessen um und behaelt beidseitig seine 12px. */
+/* UNTEN RECHTS, nicht mehr oben rechts. Seit die Navigation der neuen Fassung
+   ihre Links an die rechte Kante schiebt (siehe .dg-nav strong), lagen die
+   beiden uebereinander: nachgesehen in Chrome 151 bei 1440x900 verdeckte das
+   Zustandsschild die Links vollstaendig. Unten rechts ist ausserdem die
+   wahrere Stelle, dort steht in einem Browser die Statuszeile, und das Schild
+   bildet mit dem Messschild unten links eine Zeile statt in der Gegenecke zu
+   schweben. Fuer schmale Rahmen stapeln sich die beiden, siehe Mobilblock. */
 .demo-status {
-  position: absolute; top: var(--sc-2); right: var(--sc-3); z-index: 4;
+  position: absolute; bottom: var(--sc-3); right: var(--sc-3); z-index: 4;
   max-width: calc(100% - 2 * var(--sc-3));
-  font-family: var(--sc-font-mono); font-size: 0.62rem;
+  /* War 0.62rem, also 9,9px. Die Messschilder sind der Kommentar dieser Seite
+     zu dem, was im Rahmen passiert, und damit ihre eigene Stimme: sie muessen
+     im Vorbeiscrollen zu lesen sein. --sc-t-xs ist die kleinste Stufe, die
+     diese Seite ueberhaupt fuehrt (12 bis 13,1px). Gilt genauso fuer
+     .demo-callout darunter und fuer .fictional. */
+  font-family: var(--sc-font-mono); font-size: var(--sc-t-xs);
   letter-spacing: var(--sc-track-wide); text-transform: uppercase;
   padding: 0.3em 0.6em; border-radius: var(--sc-r-sm);
   background: color-mix(in oklab, var(--sc-canvas) 70%, transparent);
   border: 1px solid var(--sc-hairline-strong);
   color: var(--sc-ink-soft);
-  opacity: 0; transition: opacity var(--sc-d-base) var(--sc-ease-out);
+  /* Der Zustandswechsel liegt bei 0,5 Aktfortschritt und ist die Stelle, an
+     der die Seite von der alten auf die neue Fassung umschaltet. Er hatte
+     bisher nur eine Blende. Dieselben 3px Anhebung wie beim Messschild
+     darunter, damit die Seite fuer "ein Zustand kommt an" EINE Bewegung hat
+     und nicht zwei.
+     Aus- und Einblenden sind absichtlich verschieden lang: raus mit
+     --sc-d-fast, rein mit --sc-d-base. Das Verschwinden ist die Aufraeumarbeit
+     des Systems, das Ankommen die Aussage. */
+  opacity: 0; transform: translateY(3px);
+  transition: opacity var(--sc-d-fast) var(--sc-ease-out),
+              transform var(--sc-d-fast) var(--sc-ease-out),
+              color var(--sc-d-fast) var(--sc-ease-out);
 }
-.demo-status.is-active { opacity: 1; }
+.demo-status.is-active {
+  opacity: 1; transform: translateY(0);
+  transition-duration: var(--sc-d-base);
+}
 .demo-status--bad.is-active { color: #d99a6e; }
 .demo-status--good.is-active { color: var(--sc-accent); }
 
-/* Deckel wie bei .demo-status, aus demselben Grund. */
+/* Deckel wie bei .demo-status, aus demselben Grund. Der Abzug von 12rem haelt
+   die Bahn des Zustandsschildes rechts daneben frei: beide sitzen jetzt in
+   derselben Zeile, und ein Messschild, das ohne Deckel bis zur Gegenkante
+   liefe, schoebe sich darunter. */
 .demo-callout {
   position: absolute; left: var(--sc-3); bottom: var(--sc-3); z-index: 4;
-  max-width: calc(100% - 2 * var(--sc-3));
-  font-family: var(--sc-font-mono); font-size: 0.68rem;
+  max-width: calc(100% - 2 * var(--sc-3) - 12rem);
+  font-family: var(--sc-font-mono); font-size: var(--sc-t-xs);
   letter-spacing: var(--sc-track-wide); text-transform: uppercase;
   color: var(--sc-ink);
   padding: 0.4em 0.7em; border-radius: var(--sc-r-sm);
   background: color-mix(in oklab, var(--sc-canvas) 82%, transparent);
-  border-left: 2px solid var(--sc-accent);
+  /* 1px, nicht 2px. Zwei Gruende, und der zweite ist der bessere:
+     Der farbige Balken an der Seite einer Sprechblase ist ein bekanntes
+     Erkennungszeichen zusammengeklickter Oberflaechen (der Design-Detektor von
+     impeccable meldet ihn ab 2px).
+     Vor allem aber war das die einzige 2px-Linie der ganzen Seite. Alles
+     andere hier, jede Trennung, jede Kante, jeder Rahmen, ist eine Haarlinie.
+     Eine Ausnahme, die nichts begruendet, ist keine Betonung, sondern ein
+     Ausrutscher. */
+  border-left: 1px solid var(--sc-accent);
+  /* Gleiche Asymmetrie wie beim Zustandsschild: raus schneller als rein.
+     KEIN clip-path-Wisch, obwohl er zum Gegenstand passen wuerde (ein
+     Messschild, das aufgezogen wird wie ein Bandmass). Dieser Akt faehrt
+     zwei Bahnen in einer rAF-Schleife aus public/scrollcraft/page.js, und
+     clip-path ist nicht zuverlaessig auf dem Kompositor. Eine Seite, deren
+     Beweis darin besteht, dass sie nicht ruckelt, verwettet dafuer keine
+     Bilder. */
   opacity: 0; transform: translateY(4px);
-  transition: opacity var(--sc-d-base) var(--sc-ease-out), transform var(--sc-d-base) var(--sc-ease-out);
+  transition: opacity var(--sc-d-fast) var(--sc-ease-out),
+              transform var(--sc-d-fast) var(--sc-ease-out);
 }
-.demo-callout.is-active { opacity: 1; transform: translateY(0); }
+.demo-callout.is-active {
+  opacity: 1; transform: translateY(0);
+  transition-duration: var(--sc-d-base);
+}
 
 .peak__caption {
   font-family: var(--sc-font-mono); font-size: var(--sc-t-xs);
@@ -402,6 +661,10 @@
 .rail { gap: var(--sc-9); align-items: stretch; padding-inline: var(--sc-gutter); }
 .range__lead { flex: none; width: clamp(18rem, 28vw, 26rem); padding-right: var(--sc-6); align-self: center; }
 .range__lead .sc-label { color: var(--sc-accent); }
+/* Spalte, damit das Kennzeichen unten anschlaegt: die Karten stehen in einer
+   Schiene mit align-items: stretch und sind deshalb gleich hoch, ihre Fuesse
+   standen bisher trotzdem auf verschiedenen Hoehen, weil der Kartentext
+   unterschiedlich lang ist. margin-top: auto am Kennzeichen richtet sie aus. */
 .case-card {
   position: relative;
   width: clamp(20rem, 42vw, 30rem);
@@ -410,43 +673,193 @@
   border: 1px solid var(--sc-hairline);
   background: var(--sc-surface);
   flex: none;
+  display: flex; flex-direction: column;
 }
-.case-card__split { height: 12rem; display: grid; grid-template-rows: 1fr 1fr; }
-.case-card__before, .case-card__after { position: relative; overflow: clip; padding: var(--sc-3); }
-.case-card__before { background: #454b53; }
-.case-card__after { background: var(--sc-canvas); border-top: 1px solid var(--sc-hairline-strong); }
-.case-card__before span, .case-card__after span {
-  font-family: var(--sc-font-mono); font-size: 0.6rem;
+
+/* ── die zwei Miniaturen ───────────────────────────────────────────────────
+   Vorher standen hier vier graue Balken von 6px Hoehe, zwei oben, zwei unten,
+   und sie sollten "Vorher" und "Nachher" andeuten. Sie deuteten nichts an. Auf
+   einer Seite, die Gestaltung verkauft, war das die schwaechste Flaeche
+   ueberhaupt: der Beleg gegen die eigene Behauptung.
+
+   Jetzt steht in jeder Haelfte eine gezeichnete Miniatur einer ganzen Seite,
+   beide aus DEMSELBEN Markup (siehe Miniatur() in
+   components/start/akt-5-weitere-faelle.tsx). Was den Unterschied traegt, ist
+   nur das hier, und es sind genau die Griffe, die eine gebaute Seite von einer
+   zusammengesetzten unterscheiden:
+     Rand      alt: 2 Prozent, praktisch keiner. neu: 6 Prozent.
+     Rhythmus  alt: 3px zwischen allem. neu: gestufte Abstaende.
+     Achse     alt: alles zentriert. neu: eine linke Kante.
+     Rand      alt: rechtwinklig, flach. neu: Radius, Lichtkante, Schatten.
+     Handlung  alt: der Knopf per `order` ans Ende geschoben, grau in grau.
+               neu: an zweiter Stelle, in der einzigen Akzentfarbe der Seite.
+     Satz      alt: fuenf gleich lange Zeilen, kein Ausgang. neu: drei Zeilen
+               mit ausgehendem Rand.
+   Das ist auf Daumennagelgroesse ohne Beschriftung zu lesen, und es ist
+   dieselbe Aussage wie in Akt 4, nur ohne Ton und ohne Bewegung.
+
+   Nebeneinander statt uebereinander, weil der Vorher/Nachher-Griff dieser
+   Seite waagerecht laeuft (Akt 4 zieht die neue Fassung per clip-path von
+   links auf). Ein gestapeltes Paar waere derselbe Gedanke in einer zweiten
+   Sprache. */
+.case-card__split {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: var(--sc-4);
+  padding: var(--sc-4) var(--sc-4) 0;
+}
+.case-card__before,
+.case-card__after { display: grid; gap: var(--sc-2); align-content: start; }
+.case-card__before span,
+.case-card__after span {
+  font-family: var(--sc-font-mono); font-size: var(--sc-t-xs);
   letter-spacing: var(--sc-track-wide); text-transform: uppercase;
 }
-/* "Before" ist kein Teil der gezeigten schlechten Fassung, sondern die eigene
-   Beschriftung dieser Seite: sie sagt dem Leser, welche Haelfte er ansieht,
-   und muss deshalb lesbar sein. Die Andeutung der alten Website sind die
-   .cc-line darunter, die tragen keinen Text. Nachgemessen in Chrome kam
-   #9aa0a8 auf dem Feld #454b53 auf 3,2:1, bei 9,6px gesperrter Monoschrift
-   also unter der 4,5:1 fuer Fliesstext. #c2c8d0 misst 5,1:1 und bleibt in
-   derselben kuehlen Graufamilie. */
-.case-card__before span { color: #c2c8d0; }
+/* Die Beschriftungen sitzen jetzt auf der Karte (--sc-surface) und nicht mehr
+   im grauen Feld, der alte Messwert (#c2c8d0 auf #454b53, 5,1:1) gilt also
+   nicht mehr. Nachgerechnet auf #15171b: --sc-ink-soft (#93949c) kommt auf
+   5,9:1, --sc-accent (#e2542a) auf 4,7:1, beide ueber der 4,5:1 fuer kleine
+   Schrift. Der Kartengrund driftet nicht mit, --sc-surface ist keine der
+   Farben, die data-sc-drift umfaerbt. */
+.case-card__before span { color: var(--sc-ink-soft); }
 .case-card__after span { color: var(--sc-accent); }
-.case-card__before .cc-line { height: 6px; background: #767d85; border-radius: 2px; margin-top: 6px; opacity: 0.6; }
-.case-card__before .cc-line + .cc-line { width: 60%; }
-.case-card__after .cc-line { height: 6px; background: var(--sc-ink-soft); border-radius: 2px; margin-top: 8px; opacity: 0.5; }
-.case-card__after .cc-line + .cc-line { width: 55%; }
-.case-card__body { padding: var(--sc-4); }
-.case-card__body h3 { margin: 0 0 var(--sc-1); font-family: var(--sc-font-display); font-size: var(--sc-t-lg); }
-.case-card__body p { margin: 0; color: var(--sc-ink-soft); font-size: 0.85rem; }
-.case-card__flag {
-  font-family: var(--sc-font-mono); font-size: 0.6rem; letter-spacing: var(--sc-track-wide);
-  text-transform: uppercase; color: var(--sc-ink-soft);
-  padding: var(--sc-1) var(--sc-3) var(--sc-4);
+
+.cc-site {
+  height: clamp(8.75rem, 18vh, 10.5rem);
+  display: flex; flex-direction: column;
+  overflow: clip;
+}
+.cc-site i { display: block; flex: none; }
+.cc-site .cc-top { display: flex; align-items: center; flex: none; }
+/* Der eine Griff, den beide Fassungen teilen: die Marke schiebt die
+   Navigation an die Gegenkante. Nur die alte Fassung nimmt ihn zurueck. */
+.cc-site .cc-brand { margin-right: auto; }
+
+/* ---- alt: randlos, zentriert, eine Wand ---- */
+.cc-site--alt {
+  padding: 2%; gap: 3px;
+  background: linear-gradient(160deg, #5b6470 0%, #454c56 55%, #383d45 100%);
+}
+.cc-site--alt .cc-top {
+  margin: -2% -2% 2px; padding: 3px; gap: 4px;
+  background: #40454d;
+}
+/* Marke und Navigation kleben links aneinander, wie in jedem von Hand
+   gebauten Kopf aus der Tabellenzeit. */
+.cc-site--alt .cc-brand { margin-right: 0; width: 30%; height: 4px; background: #9aa0a8; }
+.cc-site--alt .cc-navlink { width: 13%; height: 3px; background: #767d85; }
+.cc-site--alt .cc-head { width: 90%; height: 6px; background: #aeb4bb; margin-inline: auto; }
+.cc-site--alt .cc-head--sub { width: 66%; height: 4px; background: #838a92; }
+.cc-site--alt .cc-media {
+  flex: none; height: 30%;
+  background: repeating-linear-gradient(45deg, #4b515a 0 4px, #454b53 4px 8px);
+}
+.cc-site--alt .cc-text { height: 3px; background: #838a92; }
+/* Keine kurze Schlusszeile: fuenf gleich lange Balken sind das Bild von
+   Blocksatz, und Blocksatz ist genau das, was in der grossen Demo daneben
+   unter .demo-track--bad .db-copy steht. */
+.cc-site--alt .cc-text--end { width: 100%; }
+/* order: 9 schiebt den Knopf ans Ende, margin-top: auto zusaetzlich an die
+   Unterkante. Er steht damit woertlich dort, wo der Kartentext ihn beschreibt:
+   ganz unten, hinter allem, und in einem Grau, das sich vom Grund kaum
+   abhebt. Das auto nimmt nebenbei den Rest der Hoehe auf, den die alte
+   Fassung sonst als Luft am Fuss haette, und Luft haette sie nie. */
+.cc-site--alt .cc-cta {
+  order: 9; margin-top: auto;
+  width: 42%; height: 7px; background: #4a5058;
+}
+
+/* ---- neu: Rand, Rhythmus, eine Handlung ---- */
+/* Der Grund ist eine Stufe HELLER als die Karte. Waere er var(--sc-canvas) wie
+   bisher, verschwaende die Miniatur in der Karte, sobald der Akt den
+   Seitengrund per data-sc-drift nach #101215 zieht: #101215 gegen
+   --sc-surface #15171b ist kein sichtbarer Unterschied mehr. Ein gezeigter
+   Bildschirm ist ausserdem das leuchtende Ding im Raum und nicht das Loch. */
+.cc-site--neu {
+  padding: clamp(8px, 6%, 15px); gap: 6px;
+  border-radius: var(--sc-r-sm);
+  border: 1px solid var(--sc-hairline);
+  background: color-mix(in oklab, var(--sc-ink) 5%, var(--sc-surface));
+  box-shadow: var(--sc-e1), var(--sc-edge);
+}
+.cc-site--neu .cc-top {
+  gap: 4px; padding-bottom: 6px; margin-bottom: 1px;
+  border-bottom: 1px solid var(--sc-hairline);
+}
+.cc-site--neu .cc-brand { width: 30%; height: 5px; border-radius: 1px; background: var(--sc-ink); }
+.cc-site--neu .cc-navlink {
+  width: 14%; height: 3px; border-radius: 1px;
+  background: color-mix(in oklab, var(--sc-ink-soft) 65%, transparent);
+}
+.cc-site--neu .cc-head { width: 72%; height: 7px; border-radius: 2px; background: var(--sc-ink); }
+.cc-site--neu .cc-head--sub { width: 48%; height: 3px; background: var(--sc-ink-soft); }
+.cc-site--neu .cc-cta {
+  width: 44%; height: 13px; border-radius: 3px;
+  background: var(--sc-accent); box-shadow: var(--sc-edge);
+  margin-block: 2px 1px;
+}
+/* Derselbe Lichteinfall wie an der grossen Bildplatte in Akt 4 (.dg-plate),
+   damit die Seite fuer "hier sitzt ein Bild" eine Zeichnung hat und nicht
+   zwei. */
+.cc-site--neu .cc-media {
+  flex: 1 1 auto; min-height: 22px; max-height: 46px;
+  border-radius: 4px; border: 1px solid var(--sc-hairline);
+  box-shadow: var(--sc-edge);
+  background:
+    radial-gradient(120% 95% at 22% 8%,
+      color-mix(in oklab, var(--sc-ink) 12%, transparent), transparent 62%),
+    linear-gradient(158deg,
+      color-mix(in oklab, var(--sc-ink) 4%, var(--sc-surface)) 0%,
+      color-mix(in oklab, var(--sc-canvas) 55%, var(--sc-surface)) 100%);
+}
+.cc-site--neu .cc-text {
+  height: 3px; border-radius: 1px;
+  background: color-mix(in oklab, var(--sc-ink-soft) 78%, transparent);
+}
+.cc-site--neu .cc-text--end { width: 46%; }
+/* Drei Zeilen statt fuenf. Die zwei zuviel bleiben im Markup stehen, weil
+   beide Fassungen dasselbe Markup haben muessen: das Weglassen ist selbst Teil
+   der Aussage, und es steht hier, wo alle anderen Entscheidungen der neuen
+   Fassung auch stehen. Weggenommen werden die Kinder 8 und 9, nicht die
+   letzten zwei: Kind 10 ist die kurze Ausgangszeile, und ohne sie endete auch
+   die neue Fassung auf einer vollen Breite. */
+.cc-site--neu .cc-text:nth-child(8),
+.cc-site--neu .cc-text:nth-child(9) { display: none; }
+
+.case-card__body { padding: var(--sc-5) var(--sc-4) 0; }
+.case-card__body h3 { margin: 0 0 var(--sc-2); font-family: var(--sc-font-display); font-size: var(--sc-t-lg); }
+/* 0.85rem waren 13,6px. Das ist Fliesstext auf einer Verkaufsseite und keine
+   Beschriftung, also gilt dafuer die Grundstufe der Seite (--sc-t-base, 16 bis
+   18px) und nicht der naechstkleinere Wert, der gerade noch passte. */
+.case-card__body p {
+  margin: 0; color: var(--sc-ink-soft);
+  font-size: var(--sc-t-base); text-wrap: pretty;
+}
+/* Zwei Klassen, .case-card__flag und .fictional, und .fictional steht spaeter
+   in dieser Datei. Es gewann deshalb bisher mit padding: 0.25em 0.6em ueber
+   das padding, das hier stand, und das Kennzeichen klebte am linken Rand der
+   Karte statt eingerueckt zu stehen. Die zwei Klassen als Selektor
+   (.case-card > .case-card__flag) heben das auf, ohne .fictional anzufassen:
+   die Klasse ist ein Chip, ihre Polsterung gehoert ihr, die Einrueckung
+   gehoert der Karte. margin-top: auto schiebt den Chip an den Fuss,
+   align-self: start haelt ihn auf seiner Inhaltsbreite. */
+.case-card > .case-card__flag {
+  margin: auto var(--sc-4) var(--sc-4);
+  align-self: start;
 }
 .range__note { flex: none; width: clamp(18rem, 28vw, 26rem); align-self: center; }
 .range__note p { color: var(--sc-ink-soft); }
 
 /* ---------------------------------------------------------- leistungen -- */
 .offer__grid { display: grid; gap: 0; max-width: 56rem; }
+/* 6rem waren 96px Spalte fuer zwei Ziffern, dazu var(--sc-6) Abstand: die
+   Zahl stand allein auf weitem Feld und band sich an nichts. 3.5rem plus
+   derselbe Abstand haelt sie am Text. Dazu align-items: baseline, damit die
+   Ziffer auf derselben Grundlinie sitzt wie die erste Zeile der Ueberschrift
+   daneben. Ohne das steht sie auf der Oberkante ihrer eigenen Zeile, also
+   je nach Schriftstufe zwei bis fuenf Pixel zu hoch. */
 .offer__item {
-  display: grid; grid-template-columns: 6rem 1fr; gap: var(--sc-6);
+  display: grid; grid-template-columns: 3.5rem 1fr; gap: var(--sc-6);
+  align-items: baseline;
   padding-block: var(--sc-7);
   border-top: 1px solid var(--sc-hairline);
 }
@@ -458,28 +871,56 @@
 .offer__item h3 { margin: 0 0 var(--sc-2); font-family: var(--sc-font-display); font-size: var(--sc-t-xl); }
 .offer__item p { margin: 0; color: var(--sc-ink-soft); max-width: 46ch; }
 
-/* -------------------------------------------------------------- prozess -- */
-.timeline { display: flex; align-items: stretch; gap: var(--sc-9); position: relative; padding-inline: var(--sc-gutter); }
+/* -------------------------------------------------------------- prozess --
+   DIE ACHSE UND DIE PUNKTE TRAFEN SICH NICHT. Die gestrichelte Linie stand auf
+   top: 3.6rem (57,6px), der Mittelpunkt eines Teilstrichs lag bei
+   var(--sc-2) + 4,5px = 12,5px unter der Oberkante der Schiene. Die vier
+   Punkte schwebten also 45px ueber ihrer eigenen Zeitachse, und die Linie lief
+   quer durch die Ziffern darunter. Auf einer Seite, die Genauigkeit verkauft,
+   ist das die teuerste Sorte Fehler: sie ist von jedem zu sehen und von
+   niemandem zu benennen.
+
+   Beide Werte kommen jetzt aus einer Zahl. --timeline-axis ist der Abstand der
+   Achse von der Oberkante, der Teilstrich wird um seinen halben Durchmesser
+   nach oben versetzt, und die Fuehrung des Akts beginnt eine Stufe darunter.
+   Wer die Achse verschiebt, verschiebt alles drei zusammen. */
+.timeline {
+  --timeline-axis: 1.25rem;
+  --timeline-tick: 9px;
+  display: flex; align-items: stretch; gap: var(--sc-9); position: relative;
+  padding-inline: var(--sc-gutter);
+}
 .timeline::before {
-  content: ""; position: absolute; left: 0; right: 0; top: 3.6rem; height: 1px;
+  content: ""; position: absolute; left: 0; right: 0; height: 1px;
+  top: var(--timeline-axis);
   background: repeating-linear-gradient(to right, var(--sc-hairline-strong) 0 6px, transparent 6px 14px);
 }
-.timeline__lead { flex: none; width: clamp(15rem, 22vw, 21rem); padding-top: 2.4rem; }
-.step {
-  flex: none; width: clamp(15rem, 24vw, 20rem); position: relative;
-  padding-top: var(--sc-2);
+.timeline__lead {
+  flex: none; width: clamp(15rem, 22vw, 21rem);
+  padding-top: calc(var(--timeline-axis) + var(--sc-6));
 }
+.step {
+  flex: none; width: clamp(16rem, 26vw, 22rem); position: relative;
+  padding-top: calc(var(--timeline-axis) - var(--timeline-tick) / 2);
+}
+/* Der zweite Ring hat die Farbe des Seitengrunds, nicht die des Akzents: er
+   schneidet die gestrichelte Linie sauber ab, damit sie am Punkt endet statt
+   hinter ihm durchzulaufen. Der Akzentring aussen bleibt der Halo. */
 .step__tick {
-  width: 9px; height: 9px; border-radius: 50%;
+  width: var(--timeline-tick); height: var(--timeline-tick); border-radius: 50%;
   background: var(--sc-accent); margin-bottom: var(--sc-6);
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--sc-accent) 20%, transparent);
+  box-shadow:
+    0 0 0 3px var(--sc-canvas),
+    0 0 0 7px color-mix(in oklab, var(--sc-accent) 20%, transparent);
 }
 .step__mark { font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: var(--sc-ink-soft); letter-spacing: var(--sc-track-wide); }
-.step h3 { margin: var(--sc-2) 0 var(--sc-2); font-family: var(--sc-font-display); font-size: var(--sc-t-lg); }
-.step p { margin: 0; color: var(--sc-ink-soft); font-size: 0.9rem; }
+.step h3 { margin: var(--sc-2) 0 var(--sc-3); font-family: var(--sc-font-display); font-size: var(--sc-t-lg); }
+/* War 0.9rem (14,4px). Ein ganzer Satz Fliesstext, also die Grundstufe. Die
+   Spalte waechst dafuer von hoechstens 20rem auf 22rem, sonst stuenden bei
+   18px vier statt zwei Zeilen und der Schritt waere hoeher als breit. */
+.step p { margin: 0; color: var(--sc-ink-soft); font-size: var(--sc-t-base); text-wrap: pretty; }
 
 /* ------------------------------------------------------------------ about -- */
-.about { }
 .about__wrap { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--sc-9); align-items: center; }
 .about__figure { margin: 0; border-radius: var(--sc-r-md); overflow: clip; }
 .about__figure img { width: 100%; height: auto; }
@@ -496,27 +937,55 @@
 }
 .close__inner { text-align: left; max-width: 40rem; }
 .close__inner .sc-label { color: var(--sc-accent); display: block; margin-bottom: var(--sc-4); }
+/* DER EINE KNOPF DER SEITE, und er hatte keinen Hoverzustand. Auf jeder
+   anderen Flaeche waere das eine Nachlaessigkeit, hier ist es der Widerspruch
+   zum Angebot: der letzte Griff der Seite antwortete nicht.
+   Bewegung auf Hoverhoehe gehoert in die unauffaellige Stufe, also 1px und
+   --sc-d-fast, nie mehr. Der Schatten waechst mit, weil ein Knopf, der sich
+   hebt, ohne dass sein Schatten weicher wird, nur verrutscht.
+   Die Abfrage (hover: hover) and (pointer: fine) haelt das Ganze vom Telefon
+   fern: dort setzt eine Beruehrung einen Hoverzustand, der danach haengen
+   bleibt. --sc-t-sm waren 14 bis 15,2px, fuer den wichtigsten Knopf der Seite
+   zu wenig; --sc-t-base ist die Grundstufe. */
 .cta {
   display: inline-flex; align-items: center; gap: var(--sc-3);
   margin-top: var(--sc-7);
   padding: 0.9em 1.6em;
   border-radius: var(--sc-r-sm);
   background: var(--sc-accent); color: var(--sc-accent-ink);
-  font-family: var(--sc-font-mono); font-size: var(--sc-t-sm);
+  font-family: var(--sc-font-mono); font-size: var(--sc-t-base);
   letter-spacing: var(--sc-track-wide); text-transform: uppercase;
   text-decoration: none;
   min-height: 48px;
+  box-shadow: var(--sc-e1), var(--sc-edge);
+  transition: transform var(--sc-d-fast) var(--sc-ease-out),
+              box-shadow var(--sc-d-fast) var(--sc-ease-out);
 }
+@media (hover: hover) and (pointer: fine) {
+  .cta:hover { transform: translateY(-1px); box-shadow: var(--sc-e2), var(--sc-edge); }
+}
+.cta:active { transform: translateY(0) scale(0.985); box-shadow: var(--sc-e1), var(--sc-edge); }
+
 .foot {
   margin-top: var(--sc-11);
   padding-top: var(--sc-5);
   border-top: 1px solid var(--sc-hairline);
   display: flex; justify-content: space-between; gap: var(--sc-4);
-  font-family: var(--sc-font-mono); font-size: 0.7rem;
+  font-family: var(--sc-font-mono); font-size: var(--sc-t-xs);
   color: var(--sc-ink-soft); letter-spacing: var(--sc-track-wide);
   max-width: 40rem;
 }
-.foot a { color: inherit; }
+/* Die Adresse im Fuss war ein Link ohne jedes Anzeichen davon: gleiche Farbe,
+   gleiche Schrift, keine Unterstreichung, keine Antwort auf den Zeiger. Der
+   Unterstrich kommt beim Hover und beim Tastaturfokus, die Farbe geht dabei
+   auf --sc-ink, damit die Antwort auch ohne Zeiger zu sehen ist. */
+.foot a {
+  color: inherit; text-decoration: none;
+  transition: color var(--sc-d-fast) var(--sc-ease-out);
+}
+.foot a:hover, .foot a:focus-visible {
+  color: var(--sc-ink); text-decoration: underline;
+}
 
 /* -------------------------------------------------------- shared helpers -- */
 /* Administrative content (services, credentials) is information, not
@@ -526,7 +995,7 @@
 
 .fictional {
   display: inline-block;
-  font-family: var(--sc-font-mono); font-size: 0.62rem;
+  font-family: var(--sc-font-mono); font-size: var(--sc-t-xs);
   letter-spacing: var(--sc-track-wide); text-transform: uppercase;
   color: var(--sc-ink-soft);
   border: 1px solid var(--sc-hairline-strong);
@@ -595,8 +1064,27 @@
      Weg von 124px. */
   .demo-track--bad .db-block { height: 140px; }
 
+  /* Zwei Spalten in einem 92vw breiten Rahmen sind zwei zu enge Spalten. Der
+     Kopf stapelt sich, das Bild kommt dabei UEBER den Text (order: -1), so wie
+     ein Kopfbild auf einem Telefon steht, und wechselt auf den breiteren
+     Ausschnitt: 16:10 ueber die volle Breite waere hier ein 200px hoher Block,
+     den man erst wegscrollen muss. Die Textspalten faltet das auto-fit-Raster
+     von selbst zusammen. */
+  .demo-track--good .dg-hero { grid-template-columns: 1fr; }
+  .demo-track--good .dg-plate { order: -1; aspect-ratio: 16 / 7; max-height: 9rem; }
+
+  /* Nebeneinander passen die zwei Schilder in einen 92vw breiten Rahmen nicht:
+     allein "Response: immediate" misst gesperrt rund 170px. Sie stapeln sich
+     deshalb an der linken unteren Ecke, das Zustandsschild oben. Der Deckel am
+     Messschild darf dabei wieder auf die volle Breite, weil rechts nichts mehr
+     steht. */
+  .demo-status {
+    right: auto; left: var(--sc-3);
+    bottom: calc(var(--sc-3) + 2.4rem);
+  }
+  .demo-callout { max-width: calc(100% - 2 * var(--sc-3)); }
+
   .offer__item { grid-template-columns: 1fr; gap: var(--sc-2); }
-  .site-bar__mark { font-size: 0.62rem; }
 }
 
 /* ------------------------------------------------------- flache Fenster --
@@ -633,9 +1121,26 @@
    Block zieht ("Opacity still carries the reveal"): ohne sie waeren alle sechs
    Messschilder gleichzeitig zu sehen, und der Akt verloere seine Aussage. */
 @media (prefers-reduced-motion: reduce) {
-  .site-bar__cta { transition: none; }
+  .site-bar__cta,
+  .cta,
+  .demo-track--good .dg-cta { transition: none; }
   .site-bar__cta:hover,
-  .site-bar__cta:active { transform: none; }
-  .demo-callout { transform: none; transition: opacity var(--sc-d-base) var(--sc-ease-out); }
-  .demo-callout.is-active { transform: none; }
+  .site-bar__cta:active,
+  .cta:hover,
+  .cta:active,
+  .demo-track--good .dg-cta:hover,
+  .demo-track--good .dg-cta:active { transform: none; }
+
+  .demo-callout { transform: none; transition: opacity var(--sc-d-fast) var(--sc-ease-out); }
+  .demo-callout.is-active { transform: none; transition-duration: var(--sc-d-base); }
+
+  /* Wie beim Messschild: die 3px Anhebung faellt weg, die Blende bleibt. Ohne
+     sie stuenden beide Zustandsschilder gleichzeitig da, und der Akt sagte
+     nicht mehr, welche Fassung gerade laeuft. */
+  .demo-status {
+    transform: none;
+    transition: opacity var(--sc-d-fast) var(--sc-ease-out),
+                color var(--sc-d-fast) var(--sc-ease-out);
+  }
+  .demo-status.is-active { transform: none; transition-duration: var(--sc-d-base); }
 }
