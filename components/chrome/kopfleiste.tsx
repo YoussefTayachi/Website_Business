@@ -61,14 +61,12 @@ export default function SiteHeader() {
             min-w-0 und truncate sind die Notbremse fuer sehr schmale Geraete:
             bei 390 Pixeln (Zielbreite) passt die Zeile mit rund 50 Pixeln
             Luft, darunter gibt die Marke nach, statt die Leiste zu sprengen. */}
-        {/* Bewusst ein <a> und kein <Link>: jeder Weg zurueck zur Startseite
-            muss ein vollstaendiger Seitenaufbau sein. Die Startseite wird von
-            zwei Skripten ausserhalb von React getragen
-            (public/scrollcraft/scrollcraft.js und page.js). Bei einem
-            Client-Wechsel liegen beide im Cache und laufen nicht erneut: die
-            Engine bliebe an das alte, inzwischen verworfene DOM gebunden, und
-            der Signature Move in Akt 4 waere tot. Dasselbe gilt fuer die zwei
-            Ankerlinks darunter. */}
+        {/* Ein <a> statt <Link>: der urspruengliche Grund (die Scroll-Engine
+            der alten Startseite lief ausserhalb von React) ist mit dem
+            Redesign vom 2026-08-26 entfallen. Der volle Seitenaufbau bleibt
+            trotzdem, weil die Startseite eigene Stylesheets und eine eigene
+            Chrome mitbringt und der Wechsel dorthin ohnehin ein Kontextwechsel
+            ist. Wer hier auf <Link> umstellt, gewinnt nichts Sichtbares. */}
         <a
           href="/"
           className="min-w-0 truncate font-display text-small text-ink transition-colors hover:text-accent sm:text-body"

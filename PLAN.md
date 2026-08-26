@@ -1,6 +1,13 @@
 # Implementierungsplan: Portfolio-Website Webdesign
 
-Stand: 2026-08-23, teilweise überholt am 2026-08-25.
+> **HISTORISCH.** Dieser Plan beschreibt den ersten Entwurf und dessen
+> Scroll-Redesign. Am 2026-08-26 wurde die Startseite komplett neu gebaut,
+> als heller One-Pager nach dem Vorbild designatives.com; das dunkle
+> Scroll-Erlebnis samt Engine ist aus dem Code entfernt. Was weiter gilt
+> (keine erfundenen Referenzen, Demo-Kennzeichen, Sprachregeln), steht in
+> `CLAUDE.md`. Dieser Text bleibt als Begruendungsarchiv liegen.
+
+Stand: 2026-08-23, teilweise überholt am 2026-08-25, verworfen am 2026-08-26.
 Zielordner: `C:\Users\Youssef Tayachi\Desktop\Website Business`.
 Eigenständiges Next.js-Projekt. Später als Branch in das frostbreaker.app-Repo
 übernehmbar, deshalb technisch identische Basis (Next.js 15 App Router,

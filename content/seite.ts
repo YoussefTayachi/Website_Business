@@ -36,12 +36,10 @@ export const seite = {
    * Datenschutz, /arbeit/[slug]). Die Wortmarke selbst ist bereits der Weg
    * zurueck zur Startseite (href="/" in kopfleiste.tsx), darum bleibt hier
    * nur der eine Sprung, den eine Unterseite sonst nicht bietet: der Kontakt.
-   * "#kontakt" ist ein echtes Ziel auf der neuen Startseite (id="kontakt" in
-   * components/start/akt-9-kontakt.tsx). Ein fruehered zweiter Eintrag zeigte
-   * auf "#showcase", das es seit dem Umbau der Startseite nicht mehr gibt,
-   * und ist deshalb ersatzlos entfernt statt auf ein neues Ziel umgebogen:
-   * PLAN.md Abschnitt 5 ("keine Navigation über sieben Punkte") gilt auch in
-   * die andere Richtung, ein Punkt ohne echtes Ziel ist keiner wert.
+   * "#kontakt" ist ein echtes Ziel auf der neuen Startseite (id="kontakt"
+   * am Mint-Fuss in components/start/fuss.tsx). Ein fruehered zweiter Eintrag
+   * zeigte auf "#showcase", das es seit dem Umbau nicht mehr gibt, und ist
+   * ersatzlos entfernt: ein Punkt ohne echtes Ziel ist keiner wert.
    *
    * Englisch, nicht Deutsch: die Leiste erscheint auch auf den jetzt
    * englischen Seiten /impressum und /datenschutz, eine deutsche
@@ -78,8 +76,10 @@ export const seite = {
    * Deutsch mehr enthalten (siehe PLAN.md Abschnitt 10).
    */
   fallstudie: {
-    zurueckLabel: "Zurück zu allen Vergleichen",
-    zurueckHref: "/#showcase",
+    // "/#work" ist die Fallkarten-Sektion der neuen Startseite
+    // (id="work" in components/start/arbeiten.tsx).
+    zurueckLabel: "Zurück zur Übersicht",
+    zurueckHref: "/#work",
     abschnitte: {
       ausgangslage: "Ausgangslage",
       entscheidungen: "Entscheidungen",

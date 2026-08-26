@@ -1,52 +1,44 @@
 /* ============================================================================
-   DIE STARTSEITE. Neun Akte, die beim Scrollen ablaufen.
+   DIE STARTSEITE. Ein heller Portfolio-One-Pager.
 
-   WARUM DIE IMPORTE HIER STEHEN UND NICHT IM LAYOUT, und das ist der heikelste
-   Punkt der ganzen Seite: components/start/page.css benutzt sehr allgemeine
-   Klassennamen (.hero, .cta, .step, .foot, .rail), und
-   components/start/scrollcraft.css setzt Grundregeln auf html, body, * und
-   :root. Stuende auch nur eine dieser Dateien in app/layout.tsx, faerbte sie
-   /impressum, /datenschutz und /arbeit/[slug] mit ein. Als Import aus DIESEM
-   Modul legt Next sie in das CSS-Buendel genau dieser Route.
+   WARUM DIE STYLESHEET-IMPORTE HIER STEHEN UND NICHT IM LAYOUT, und das ist
+   der heikelste Punkt der ganzen Seite: components/start/start.css setzt
+   Regeln auf html und body und nimmt mehrere Grundregeln aus
+   app/globals.css zurueck (Schrift, Silbentrennung, Fokusfarbe,
+   Bildlaufleiste). Stuende auch nur eine der beiden Dateien in
+   app/layout.tsx, traefe das /impressum, /datenschutz und /arbeit/[slug]
+   mit. Als Import aus DIESEM Modul legt Next sie in das CSS-Buendel genau
+   dieser Route.
 
    DIE REIHENFOLGE IST BEDINGUNG:
      app/globals.css  (aus app/layout.tsx, kommt vor der Seite)
-       -> scrollcraft.css   Grundregeln der Engine, gewinnt ueber globals
-       -> page.css          die Stile dieser Seite
-       -> tokens.css        Marke und die Gegenregeln gegen globals
-   Alles davon ist ungeschichtet und schlaegt damit die @layer-Regeln von
-   Tailwind, unabhaengig von der Position im Dokument. Innerhalb der
-   ungeschichteten Regeln entscheidet die Reihenfolge, deshalb steht tokens.css
-   zuletzt.
+       -> tokens.css   Farbe, Schrift, Groesse, Rhythmus, Kurven
+       -> start.css    das Layout und die Gegenregeln, braucht die Tokens
+   Beide Dateien sind ungeschichtet und schlagen damit die @layer-Regeln von
+   Tailwind, unabhaengig von ihrer Position im Dokument. Innerhalb der
+   ungeschichteten Regeln entscheidet die Reihenfolge.
 
-   Die Schriften der Startseite kommen ebenfalls von hier und nicht aus dem
-   Layout: Fraunces und Archivo braucht nur diese Seite, die deutschen
-   Unterseiten laufen weiter auf Inter und Newsreader.
+   ALLE KLASSEN DIESER SEITE TRAGEN DAS PRAEFIX .st-. Die Vorgaengerfassung
+   benutzte generische Namen (.hero, .cta, .step, .foot) und faerbte damit
+   das Impressum ein. Mit Praefix ist der Fehler strukturell erledigt.
+
+   ARCHIVO KOMMT EBENFALLS VON HIER und nicht aus dem Layout: die deutschen
+   Unterseiten laufen weiter auf Inter und Newsreader und sollen keine
+   Schrift laden, die sie nicht setzen.
    ========================================================================== */
 
-// Fraunces: der Einstieg opsz.css statt index.css, damit die Schrift ihre
-// optische Achse traegt (dasselbe Muster wie bei Newsreader in
-// app/layout.tsx). Die kursive Fassung wird gebraucht, siehe .befund__close
-// und .hinge p in components/start/page.css.
-import "@fontsource-variable/fraunces/opsz.css";
-import "@fontsource-variable/fraunces/opsz-italic.css";
 import "@fontsource-variable/archivo";
-import "@/components/start/scrollcraft.css";
-import "@/components/start/page.css";
 import "@/components/start/tokens.css";
+import "@/components/start/start.css";
 
 import type { Metadata } from "next";
 import StartLeiste from "@/components/start/leiste";
-import AktHero from "@/components/start/akt-1-hero";
-import AktBefund from "@/components/start/akt-2-befund";
-import AktScharnier from "@/components/start/akt-3-scharnier";
-import AktVergleich from "@/components/start/akt-4-vergleich";
-import AktWeitereFaelle from "@/components/start/akt-5-weitere-faelle";
-import AktLeistungen from "@/components/start/akt-6-leistungen";
-import AktProzess from "@/components/start/akt-7-prozess";
-import AktUeber from "@/components/start/akt-8-ueber";
-import AktKontakt from "@/components/start/akt-9-kontakt";
-import StartSkripte from "@/components/start/skripte";
+import StartHero from "@/components/start/hero";
+import StartStatement from "@/components/start/statement";
+import StartLeistungen from "@/components/start/leistungen";
+import StartArbeiten from "@/components/start/arbeiten";
+import StartUeber from "@/components/start/ueber";
+import StartFuss from "@/components/start/fuss";
 import { start } from "@/content/start";
 
 // Der Titel der Startseite darf die Marke nicht noch einmal angehaengt
@@ -59,32 +51,26 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <>
-      {/* Der Fortschrittsbalken der Engine. Muss VOR den Akten stehen: die
-          Engine sucht ihn mit querySelector unter der Mount-Wurzel, und der
-          Balken selbst liegt fixiert am oberen Rand. */}
-      <span data-sc-progress="" />
-      <div className="sc-grain" aria-hidden="true" />
-
+    // .st-page haelt zwei Dinge zusammen: den Platz fuer die fixierte Leiste
+    // und das Beschneiden nach den Seiten. Die Riesentypografie laeuft in
+    // schmalen Fenstern gern ueber den Rand, und die Seite selbst darf nie
+    // waagerecht scrollen.
+    <div className="st-page">
       <StartLeiste />
 
-      {/* id="top" ist das Ziel der Sprungmarke aus app/layout.tsx UND das Ziel
-          der Wortmarke in der Leiste. Das Gegenstueck fuer die deutschen
+      {/* id="top" ist das Ziel der Sprungmarke aus app/layout.tsx UND das
+          Ziel der Wortmarke in der Leiste. Das Gegenstueck fuer die deutschen
           Unterseiten steht in app/(mit-chrome)/layout.tsx und traegt dasselbe
           id, damit die Sprungmarke auf jeder Route ein Ziel hat. */}
       <main id="top">
-        <AktHero />
-        <AktBefund />
-        <AktScharnier />
-        <AktVergleich />
-        <AktWeitereFaelle />
-        <AktLeistungen />
-        <AktProzess />
-        <AktUeber />
-        <AktKontakt />
+        <StartHero />
+        <StartStatement />
+        <StartLeistungen />
+        <StartArbeiten />
+        <StartUeber />
       </main>
 
-      <StartSkripte />
-    </>
+      <StartFuss />
+    </div>
   );
 }

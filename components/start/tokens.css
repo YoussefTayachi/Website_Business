@@ -1,74 +1,128 @@
 /* ============================================================================
-   Marken-Tokens und Kollisionsschutz fuer die Startseite.
+   TOKENS DER STARTSEITE. Farbe, Schrift, Groesse, Rhythmus, Kurven.
 
-   HERKUNFT: der Inline-<style>-Block aus dem <head> von
-   scrollcraft/builds/casefile/index.html. Er steht hier und nicht in
-   app/globals.css, weil er sonst auch /impressum, /datenschutz und
-   /arbeit/[slug] tiefdunkel einfaerben wuerde. Diese Datei wird ausschliesslich
-   aus app/page.tsx importiert und landet damit nur im CSS-Buendel der
-   Startseite.
+   Diese Datei wird AUSSCHLIESSLICH aus app/page.tsx importiert und landet
+   damit nur im CSS-Buendel der Route "/". Das ist keine Stilfrage: die Seite
+   setzt eigene Regeln auf html und body, und im Layout stehend faerbte sie
+   /impressum, /datenschutz und /arbeit/[slug] mit ein.
 
    REIHENFOLGE, und sie ist Bedingung:
-       globals.css  ->  scrollcraft.css  ->  page.css  ->  DIESE DATEI
-   scrollcraft.css setzt dieselben --sc-*-Namen mit anderen Werten. Wandert
-   diese Datei nach vorn, gewinnen die Vorgabewerte der Engine und die Seite
-   verliert ihre Farbe.
+       app/globals.css (aus dem Layout)  ->  DIESE DATEI  ->  start.css
+   globals.css setzt body, h1..h3, :focus-visible und die Bildlaufleiste fuer
+   helles Papier in Inter/Newsreader. start.css nimmt genau diese Regeln
+   zurueck und braucht die Tokens von hier, also stehen sie davor.
+
+   ALLE KLASSEN DIESER SEITE TRAGEN DAS PRAEFIX .st-. Die Vorgaengerfassung
+   benutzte generische Namen (.hero, .cta, .step, .foot) und hat damit die
+   Rechtsseiten eingefaerbt. Mit Praefix ist der Fehler strukturell erledigt.
    ========================================================================== */
 
 :root {
-  --sc-canvas: #0a0b0d;
-  --sc-surface: #15171b;
-  --sc-ink: #efece4;
-  --sc-ink-soft: #93949c;
-  --sc-accent: #e2542a;
-  --sc-accent-ink: #150b07;
+  /* ── FARBE ───────────────────────────────────────────────────────────────
+     Am 2026-08-26 aus den Referenz-Screenshots gemessen (Modus je Flaeche,
+     nicht ein einzelner Pixel, damit Kantenglaettung nicht mitzaehlt).
+     Die gemessenen Kontraste stehen dabei, damit niemand sie neu schaetzt. */
 
-  /* ABWEICHUNG VOM BUILD, und sie ist noetig. Im Build kamen die drei
-     Schriften vom Google-CDN und hiessen dort "Fraunces", "Archivo" und
-     "JetBrains Mono". Hier kommen sie als @fontsource-variable-Paket, und
-     diese Pakete registrieren ihre Familien mit dem Zusatz "Variable"
-     (nachgesehen am 2026-08-25 in der index.css der beiden Pakete unter
-     node_modules). Stuende hier weiter "Fraunces", faende der Browser nichts
-     und fiele auf Georgia zurueck: die Seite saehe kaputt aus, ohne dass
-     irgendetwas einen Fehler meldet.
-     Der Rest der Stapel ist unveraendert aus dem Build uebernommen. */
-  --sc-font-display: "Fraunces Variable", Georgia, serif;
-  --sc-font-text: "Archivo Variable", system-ui, sans-serif;
-  --sc-font-mono: "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", monospace;
-}
+  /* Grund. Gemessen als reines Weiss, nicht als gebrochenes. */
+  --st-paper: #ffffff;
+  /* Schrift und Zeichnung. Gemessen als reines Schwarz. 21:1 auf Papier. */
+  --st-ink: #000000;
+  /* Akzent, gemessen am Cookie-Knopf der Referenz. 8,83:1 auf Weiss,
+     6,72:1 auf Mint. Traegt Fokusringe und die erste Fallkarte. */
+  --st-blue: #1032cf;
+  /* Der Fuss. Schwarz darauf misst 15,98:1, also weit ueber jedem Grenzwert. */
+  --st-mint: #2affaa;
+  /* Grund der Tag-Kapseln. */
+  --st-chip: #f4f4f4;
 
-/* ── Kollisionen mit app/globals.css ──────────────────────────────────────
-   globals.css liegt im selben Dokument und ist nicht wegzudenken: es traegt
-   Tailwind, und das Wurzel-Layout braucht es. Zwei seiner Grundregeln zielen
-   aber auf helles Papier und deutschen Satz, und beide treffen hier daneben.
-   Beide Gegenregeln stehen NUR in dieser Datei, wirken also nur auf der
-   Startseite. */
+  /* Haarlinie der Leistungsliste, gemessen als 1px in genau diesem Grau.
+     2,27:1 gegen Papier: sichtbar genug als Struktur, leise genug, um nicht
+     als Rahmen zu lesen. Traegt keine Information, nur Rhythmus. */
+  --st-line: #ababab;
+  /* Die noch leisere Kante, fuer Kapseln und Rahmen auf Weiss. */
+  --st-line-soft: #e6e6e6;
+  /* Zweite Textordnung: Kennzeichen, Copyright. 8,86:1 auf Papier. */
+  --st-ink-soft: #4a4a4a;
 
-/* 1. globals.css setzt h1, h2, h3 auf die Newsreader-Displayschrift und auf
-      hyphens: auto. Die Ueberschriften dieser Seite tragen ihre Schrift
-      selbst (.sc-display, .step h3, .offer__item h3 und so weiter), die
-      gewinnen ueber die Klasse. Wo aber KEINE Klasse steht, greift globals
-      durch, und das trifft ausgerechnet die absichtlich schlechte Demo:
-      .demo-track--bad .db-hero h2 setzt bewusst keine Familie, weil die
-      Ueberschrift die Times New Roman ihres Rahmens erben soll. Ohne diese
-      Zeile stuende die Schlagzeile der schlechten Demo in einer gut
-      gezeichneten Bildschirmserife, und der Vergleich verloere seinen Punkt.
-      hyphens gleich mit zurueck: die Trennung ist fuer deutschen Satz
-      eingeschaltet worden, die Seite ist englisch. */
-h1,
-h2,
-h3 {
-  font-family: inherit;
-  hyphens: manual;
-}
+  /* Die drei Stimmungen der Fallkarten. Bewusst aus derselben gemessenen
+     Palette und nicht aus einer zweiten: drei Karten in Blau, Tiefschwarz und
+     Mint sind unterscheidbar, ohne dass die Seite eine neue Farbe lernt. */
+  --st-fall-a: var(--st-blue);
+  --st-fall-b: #0a0a0a;
+  --st-fall-c: var(--st-mint);
 
-/* 2. globals.css faerbt die Bildlaufleiste fuer Papier ein, unter anderem mit
-      border: 3px solid var(--c-paper). Auf dieser Seite ist der Grund fast
-      schwarz, und weil in Chromium eigene ::-webkit-scrollbar-Regeln die
-      Standardeigenschaft scrollbar-color aus scrollcraft.css ausser Kraft
-      setzen, bliebe eine helle Leiste stehen. Dieselben Regeln, in den Farben
-      dieser Seite. */
-*::-webkit-scrollbar-thumb {
-  background: color-mix(in oklab, var(--sc-ink) 26%, transparent);
-  border: 3px solid var(--sc-canvas);
+  /* Zwei Neutralwerte, die es NUR in den Zeichnungen gibt: die Bildflaeche und
+     die Textzeile innerhalb einer gezeichneten Miniaturseite. Sie stehen hier
+     und nicht in den Komponenten, weil sonst zwei Dutzend Hex-Werte im JSX
+     staenden und niemand sie mehr zusammen aendern koennte. */
+  --st-draw-media: #eceae6;
+  --st-draw-line: #d9d9d9;
+
+  /* ── SCHRIFT ─────────────────────────────────────────────────────────────
+     Archivo, sehr gross und sehr fett. Der Zusatz "Variable" im Namen ist
+     kein Vertipper: @fontsource-variable registriert seine Familien so
+     (nachgesehen in node_modules/@fontsource-variable/archivo/index.css).
+     Ohne den Zusatz faende der Browser nichts und fiele auf Arial zurueck.
+
+     Der Rueckfallstapel ist Absicht eine Grotesk mit aehnlicher Breite:
+     Archivo laedt mit font-display:swap, und ein zu schmaler Ersatz liesse
+     die Riesenzeile beim Tausch springen. */
+  --st-font: "Archivo Variable", "Helvetica Neue", Arial, system-ui, sans-serif;
+
+  /* ── GROESSEN ────────────────────────────────────────────────────────────
+     Fluid, und die Untergrenzen sind an 390px Fensterbreite nachgerechnet:
+     dort bleiben 350px Satzbreite, und die laengste Zeile ("customers
+     online", 16 Zeichen) passt bei 37,6px noch hinein.
+
+     Fliesstext nicht unter 17px, Kleinlabels nicht unter 13px. Das ist die
+     Vorgabe fuer Verkaufsseiten und keine Empfehlung. */
+
+  /* Hero und Fuss-Headline. 1440px -> 129,6px. */
+  --st-fs-hero: clamp(2.35rem, 9vw, 8.25rem);
+  /* Statement und Abschnittsueberschriften. 1440px -> 106,6px. */
+  --st-fs-display: clamp(2rem, 7.4vw, 6.75rem);
+  /* Die vier Leistungstitel. 1440px -> 74,9px. */
+  --st-fs-service: clamp(1.9rem, 5.2vw, 4.75rem);
+  /* Name eines Falls. 1440px -> 30,2px. */
+  --st-fs-name: clamp(1.5rem, 2.1vw, 2rem);
+  /* Die Wortmarke im Fuss, seitenfuellend. Wird in start.css beschnitten,
+     nicht umgebrochen, siehe Begruendung dort. */
+  --st-fs-mark: clamp(2.75rem, 11.6vw, 10.5rem);
+  /* Die Wortmarke in der Leiste. */
+  /* Untergrenze an 390px nachgerechnet: zwischen Pill und Plus bleiben dort
+     169px, die Marke braucht mit ihrer Flaeche 137px davon. */
+  --st-fs-barmark: clamp(0.9375rem, 1.5vw, 1.375rem);
+
+  /* Fliesstext. 17px, in den herausgehobenen Absaetzen bis 19px. */
+  --st-fs-lead: clamp(1.0625rem, 1.15vw, 1.1875rem);
+  --st-fs-body: 1.0625rem;
+  /* Kleinlabels und Kapseln. 15px und 14px, beide ueber der 13px-Grenze. */
+  --st-fs-label: 0.9375rem;
+  --st-fs-tag: 0.875rem;
+
+  /* ── RHYTHMUS ────────────────────────────────────────────────────────────
+     Der Rand ist an der Referenz gemessen: bei 1440px Fenster beginnt der
+     Inhalt bei 118px, das sind rund 8vw. */
+  --st-gutter: clamp(1.25rem, 8vw, 8rem);
+  --st-max: 1500px;
+  --st-gap: clamp(1.5rem, 3.5vw, 3.5rem);
+  /* Abstand zwischen zwei Abschnitten. Weissraum ist hier das Hauptmittel
+     der Hierarchie, deshalb faellt er gross aus. */
+  --st-block: clamp(5rem, 12vw, 11rem);
+  --st-bar-h: clamp(4.5rem, 6vw, 5.75rem);
+
+  --st-radius-card: clamp(1rem, 1.9vw, 1.75rem);
+  --st-radius-pill: 0.875rem;
+  --st-radius-tag: 0.625rem;
+
+  /* ── BEWEGUNG ────────────────────────────────────────────────────────────
+     Eine Kurve fuer alles, was hereinkommt (stark ausklingend, kein
+     Ueberschwingen), eine kurze fuer alles, was auf den Zeiger antwortet.
+     Beides sind gaengige Standardkurven, keine erfundenen Werte. */
+  --st-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --st-ease-fast: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --st-dur-in: 0.85s;
+  --st-dur-tap: 0.28s;
+  /* Versatz zwischen zwei Zeilen derselben Ueberschrift. */
+  --st-stagger: 90ms;
 }

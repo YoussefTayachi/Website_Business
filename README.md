@@ -1,18 +1,20 @@
 # Webdesign-Portfolio
 
-Scroll-Erlebnis-Seite plus drei Fallstudien für Youssefs Webdesign-Angebot.
-Zielgruppe sind Handwerksbetriebe (Bauunternehmen, Elektriker, Dachdecker), die
-aus einer Kaltakquise-Mail kommen. **Der sichtbare Seitentext ist Englisch**,
-Kommentare, Commits und Doku bleiben deutsch.
+Heller Portfolio-One-Pager plus drei Fallstudien für Youssefs
+Webdesign-Angebot. Zielgruppe sind Handwerksbetriebe (Bauunternehmen,
+Elektriker, Dachdecker), die aus einer Kaltakquise-Mail kommen. **Der
+sichtbare Seitentext ist Englisch**, Kommentare, Commits und Doku bleiben
+deutsch.
 
-Die Startseite ist in neun Akte gegliedert, die beim Scrollen ablaufen. Ihr
-Kern steht in Akt 4: zwei Mini-Websites im selben Rahmen, die schlechte ruckelt
-beim Scrollen wirklich, die neue folgt dem Rad ohne Verzug. Der Besucher fühlt
-den Unterschied, bevor er einen Satz darüber liest.
+Die Startseite folgt seit dem Redesign vom 2026-08-26 dem Vorbild
+designatives.com: weißer Grund, riesige fette Grotesk-Headlines, Königsblau
+als Akzent, nummerierte Leistungen, große Fallkarten mit Tag-Pills, mintgrüner
+Schlussblock. Das frühere dunkle Scroll-Erlebnis (neun Akte,
+scrollcraft-Engine) wurde verworfen und ist aus dem Code entfernt; sein Build
+liegt als Referenz in `scrollcraft/`.
 
-Der Plan mit allen Entscheidungen steht in `PLAN.md`, die Arbeitsregeln in
-`CLAUDE.md`, das Interview und die Begründung der neun Akte in
-`scrollcraft/builds/casefile/BRIEF.md`.
+Die Arbeitsregeln stehen in `CLAUDE.md`. `PLAN.md` ist der Plan des ersten
+Entwurfs und inzwischen Geschichte.
 
 Eigenständiges Projekt, technisch auf derselben Basis wie `apps/web` im
 Frostbreaker-Repo: Next.js 15 (App Router), React 19, Tailwind v4 über
@@ -33,8 +35,8 @@ npm run dev -- -p 3200
 ```
 
 Tailwind v4 löst seine Pfade gegen das aktuelle Arbeitsverzeichnis auf. Die
-Befehle deshalb immer aus diesem Projektordner heraus aufrufen, nicht aus einem
-übergeordneten.
+Befehle deshalb immer aus diesem Projektordner heraus aufrufen, nicht aus
+einem übergeordneten.
 
 ## Weitere Befehle
 
@@ -45,26 +47,26 @@ npm start            # gebaute Fassung ausliefern
 ```
 
 Es gibt keine Tests: das Projekt enthält keine Logik, die man sinnvoll testen
-könnte. Kein Supabase, kein Stripe, keine Auth, keine Middleware.
-
-Zur Animationsbibliothek gilt eine einzige Ausnahme: die scrollcraft-Engine,
-die die Startseite trägt. Sie ist eigenes Vanilla JS und CSS ohne
-Abhängigkeiten, liegt als statische Datei in `public/scrollcraft/` und lädt nur
-auf `/`. Begründung in `CLAUDE.md`, Abschnitt „Was hier bewusst fehlt".
+könnte. Kein Supabase, kein Stripe, keine Auth, keine Middleware, keine
+Animationsbibliothek. Bewegung läuft über CSS und einen IntersectionObserver
+(`components/start/reveal.tsx`).
 
 ## Aufbau
 
 ```
 app/
   layout.tsx            Wurzel: html, body, Schriften, Theme-Skript
-  page.tsx              Startseite, setzt die neun Akte zusammen
+  page.tsx              Startseite, setzt die sieben Abschnitte zusammen
+  not-found.tsx         globales 404, englisch
   globals.css           Tokens der Rechts- und Fallstudienseiten
   (mit-chrome)/         Route Group mit Kopfleiste, main und Fuß:
                         impressum, datenschutz, arbeit/[slug]
 components/
-  start/                die neun Akte, Leiste, Skriptlader,
-                        scrollcraft.css, page.css, tokens.css
-  chrome/               Kopfleiste, Fuß, Nachtmodus-Schalter
+  start/                die sieben Abschnitte: leiste, hero, statement,
+                        leistungen, arbeiten, ueber, fuss; dazu reveal.tsx,
+                        zeichnungen.tsx (alle SVG-Bildflächen),
+                        tokens.css, start.css
+  chrome/               Kopfleiste, Fuß, Nachtmodus-Schalter (Unterseiten)
   showcase/             Vorher/Nachher-Mechanik, Befund-Marker,
                         sechs Demo-Fassungen (nur noch /arbeit)
 content/
@@ -72,52 +74,48 @@ content/
   seite.ts              Kopfleiste, Fuß, Impressum, Datenschutz
   projekte.ts           die drei Fallstudien, noch deutsch
 lib/                    cn.ts, reveal.ts, media.ts, demo-fassungen.ts
-public/scrollcraft/     Engine, Signature Move, zwei Stills
-scrollcraft/            der Herkunfts-Build samt BRIEF.md
+scrollcraft/            der Build des verworfenen Scroll-Designs, Referenz
 ```
 
-Die Startseite bringt eigene Kopfleiste, eigenes `<main>` und einen in den
-Schlussakt eingefalteten Fuß mit. Deshalb trägt das Wurzel-Layout keine Chrome
-mehr, und die drei übrigen Routen holen sie sich aus der Route Group
-`(mit-chrome)`. Die URLs haben sich dabei nicht geändert.
+Die Startseite bringt eigene Kopfleiste, eigenes `<main>` und eigenen Fuß
+mit. Deshalb trägt das Wurzel-Layout keine Chrome, und die drei übrigen
+Routen holen sie sich aus der Route Group `(mit-chrome)`.
 
-Farben und Schriftgrößen kommen als Tokens: für die Rechts- und
-Fallstudienseiten aus `app/globals.css`, für die Startseite aus
-`components/start/tokens.css`. Keine Hex-Werte in Komponenten.
+Farben und Schriftgrößen kommen als Tokens: für die Startseite aus
+`components/start/tokens.css` (Präfix `--st-`), für die übrigen Seiten aus
+`app/globals.css`. Keine Hex-Werte in Komponenten.
 
-Schriften liegen lokal als `@fontsource-variable`-Pakete (Fraunces, Archivo,
-JetBrains Mono für die Startseite, Inter und Newsreader für die übrigen). Die
-Seite stellt **keine Anfrage an eine fremde Domain**, und der Datenschutztext
-behauptet genau das.
+Schriften liegen lokal als `@fontsource-variable`-Pakete. Die Seite stellt
+**keine Anfrage an eine fremde Domain**, und der Datenschutztext behauptet
+genau das.
 
 ## Offene Platzhalter vor einem Livegang
 
-- `/impressum` und `/datenschutz` tragen einen Hinweisbalken und leere Felder.
-  Sie sind englisch. Ob zusätzlich eine deutsche Fassung nötig ist, muss
-  Youssef vor dem Livegang klären: seine Kunden sind deutsche Betriebe.
+- `/impressum` und `/datenschutz` tragen einen Hinweisbalken und leere
+  Felder. Sie sind englisch. Ob zusätzlich eine deutsche Fassung nötig ist,
+  muss Youssef vor dem Livegang klären: seine Kunden sind deutsche Betriebe.
 - Die drei Demo-Projekte sind fiktiv und als solche gekennzeichnet. Das
   Kennzeichen bleibt stehen.
 - Kontakt läuft über `mailto:`, es gibt kein Formular und keinen Empfänger.
-- `/arbeit/[slug]` ist noch deutsch und trägt deshalb `robots: { index: false }`.
-  Von der Startseite führt kein Link dorthin. Übersetzen oder entfernen ist
-  eine offene Entscheidung.
-- Die Kopfleiste der Route Group verlinkt noch auf `/#showcase`. Diesen Anker
-  gibt es auf der neuen Startseite nicht mehr, im Code als `OFFEN` markiert.
+- `/arbeit/[slug]` ist noch deutsch und trägt deshalb
+  `robots: { index: false }`. Von der Startseite führt kein Link dorthin.
+  Übersetzen oder entfernen ist eine offene Entscheidung.
 
 ## Später als Branch ins frostbreaker.app-Repo
 
-Das Projekt hat inzwischen ein eigenes Git
-(`github.com/YoussefTayachi/Website_Business`). Zum Übernehmen im
-Frostbreaker-Repo einen Branch anlegen, den Inhalt dieses Ordners dort ablegen
-(zum Beispiel als `apps/portfolio`) und die Abhängigkeiten aus der hiesigen
-`package.json` in die Zielanwendung übernehmen. Weil Next-, React- und Tailwind-Version identisch
-gewählt sind, ist das ein Verschieben von Dateien und kein Portieren.
+Das Projekt hat ein eigenes Git (`github.com/YoussefTayachi/Website_Business`).
+Zum Übernehmen im Frostbreaker-Repo einen Branch anlegen, den Inhalt dieses
+Ordners dort ablegen (zum Beispiel als `apps/portfolio`) und die
+Abhängigkeiten aus der hiesigen `package.json` in die Zielanwendung
+übernehmen. Weil Next-, React- und Tailwind-Version identisch gewählt sind,
+ist das ein Verschieben von Dateien und kein Portieren.
 
 Zu prüfen ist dabei nur dreierlei:
 
 1. Die `@fontsource-variable`-Pakete müssen im Ziel installiert sein.
-2. `app/globals.css` bringt eigene Tokens mit. Sie dürfen die Tokens des
-   Hauptprojekts nicht überschreiben, wenn beide im selben Dokument landen.
+2. `app/globals.css` und `components/start/tokens.css` bringen eigene Tokens
+   mit. Sie dürfen die Tokens des Hauptprojekts nicht überschreiben, wenn
+   beide im selben Dokument landen.
 3. Das Hauptprojekt hat eine Auth-Middleware. Wird das Portfolio dort
    eingehängt, müssen seine Routen im Matcher ausgenommen werden, sonst
    schiebt sie jeden Besucher auf `/login`.
