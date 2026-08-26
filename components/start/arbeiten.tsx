@@ -20,8 +20,28 @@ import { FallAngebot, FallTelefon, FallTempo } from "./zeichnungen";
  * Text ist englisch und darf umformuliert werden; die Reihenfolge der drei
  * Faelle ist dagegen die Dramaturgie (Anruf, Angebot, Tempo) und aendert sich
  * nicht, ohne dass jemand hier nachsieht.
+ *
+ * WARUM EINE SWITCH-ANWEISUNG UND KEINE KOMPONENTENLISTE: seit die Karten
+ * fertige Seiten zeigen, bekommt jede Zeichnung ihren eigenen Mock-Text aus
+ * content/start.ts, und die drei Mocks haben verschiedene Felder (Fall B hat
+ * Projektbilder, Fall C eine feste Leiste). Eine Liste [A, B, C] waere fuer
+ * TypeScript eine Vereinigung von drei Komponenten, und keine davon liesse
+ * sich mehr mit ihren eigenen Prop-Typen aufrufen. Der switch bindet Index
+ * und Mock an genau einer Stelle zusammen, sichtbar und geprueft.
  */
-const SZENEN = [FallTelefon, FallAngebot, FallTempo] as const;
+function szene(i: number, titel: string) {
+  const { faelle } = start.arbeiten;
+
+  switch (i) {
+    case 1:
+      return <FallAngebot titel={titel} mock={faelle[1].mock} />;
+    case 2:
+      return <FallTempo titel={titel} mock={faelle[2].mock} />;
+    default:
+      return <FallTelefon titel={titel} mock={faelle[0].mock} />;
+  }
+}
+
 const GRUENDE = ["st-card--a", "st-card--b", "st-card--c"] as const;
 /** Nur der mittlere Fall ist quadratisch. Drei gleich hohe Karten waeren
  *  drei gleich laute, und das Raster verloere seinen Rhythmus. */
@@ -51,13 +71,11 @@ export default function StartArbeiten() {
       <div className="st-works">
         <div className="st-works__grid">
           {faelle.map((fall, i) => {
-            const Szene = SZENEN[i] ?? FallTelefon;
-
             return (
               <Reveal key={fall.name} as="article" className="st-work">
                 <div className="st-work__frame st-fade">
                   <div className={`st-card st-card--work ${GRUENDE[i] ?? ""} ${FORMATE[i] ?? ""}`}>
-                    <Szene titel={fall.bildAlt} />
+                    {szene(i, fall.bildAlt)}
                     {/* Innerhalb der Karte, nicht daneben: beim Anheben auf
                         Hover soll das Kennzeichen mitgehen. Danebenstehend
                         blieb es liegen, waehrend die Karte sich hob. */}

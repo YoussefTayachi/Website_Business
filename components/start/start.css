@@ -270,6 +270,11 @@ h4 {
   fill: none;
   stroke: var(--st-line-soft);
 }
+/* Nur fuer die Ziegelreihen im Dachmotiv: helle Linien auf schwarzer Flaeche. */
+.st-stroke-paper {
+  fill: none;
+  stroke: var(--st-paper);
+}
 
 .st-stop-blue {
   stop-color: var(--st-blue);

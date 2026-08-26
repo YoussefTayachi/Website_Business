@@ -1,11 +1,24 @@
 /* ============================================================================
    DIE ZEICHNUNGEN. Vier Szenen: die Hero-Collage und drei Fallkarten.
 
-   ES GIBT KEIN EINZIGES BILD AUF DIESER SEITE, und das ist eine Entscheidung,
+   ES GIBT KEIN EINZIGES FOTO AUF DIESER SEITE, und das ist eine Entscheidung,
    keine Einschraenkung. Die drei Betriebe sind erfunden. Ein Screenshot waere
    damit eine erfundene Referenz, und ein generiertes Still waere ein Portfolio,
    das genau das widerlegt, was es verkauft: dass hier jemand Dinge selbst
-   baut. Gezeichnet wird deshalb die STRUKTUR einer Website, nie ihr Aussehen.
+   baut. Gezeichnet wird deshalb, und zwar mit den Mitteln, mit denen auch die
+   echte Seite gebaut wuerde.
+
+   DIE DREI FALLKARTEN ZEIGEN SEIT DEM 2026-08-26 FERTIGE SEITEN, keine leeren
+   Huellen mehr. Vorher standen dort graue Balken: die Struktur einer Website,
+   nie ihr Inhalt. Das war ehrlich und hat trotzdem nichts bewiesen, denn ein
+   Drahtgitter sieht aus wie ein Entwurf und nicht wie eine Lieferung. Jetzt
+   traegt jede Karte die Navigation, die Schlagzeile, den Knopf und die Nummer
+   des jeweiligen Betriebs, gesetzt als echte <text>-Elemente. Sie sind scharf
+   auf jeder Aufloesung, markierbar, und sie kosten keine einzige Anfrage.
+
+   DER TEXT DARIN STEHT IN content/start.ts, unter faelle[n].mock. Kein
+   sichtbarer String gehoert in diese Datei, auch kein zweizeiliger in einem
+   gezeichneten Knopf. Die Zeichnung bekommt ihn als Prop.
 
    WARUM SVG UND NICHT CSS-KAESTEN: eine viewBox skaliert exakt, auf jeder
    Fensterbreite, ohne einen einzigen Umbruchpunkt. Und sie kennt ihre eigenen
@@ -14,10 +27,21 @@
    Hoehe ueber aspect-ratio, der Inhalt braucht dafuer keine Datei.
 
    FARBEN KOMMEN ALS KLASSE, nicht als Attribut. fill="var(--x)" wirkt in SVG
-   nicht, die Begruendung steht bei der Zeichenpalette in start.css.
+   nicht, die Begruendung steht bei der Zeichenpalette in start.css. Groesse,
+   Fettung und Laufweite duerfen dagegen als Attribut dastehen: sie loesen
+   keine Variable auf. Die Schriftfamilie erbt vom body, die Mockups sind
+   deshalb in derselben Archivo gesetzt wie die Seite.
 
-   Jede Szene ist role="img" mit aria-label aus content/start.ts. Die einzelnen
-   Rechtecke darin sind fuer einen Screenreader bedeutungslos und bleiben es.
+   Jede Szene ist role="img" mit aria-label aus content/start.ts, und das
+   bleibt so, obwohl darin jetzt Text steht: role="img" macht den Inhalt fuer
+   Hilfsmittel zu einem einzigen Bild, sodass niemand eine Navigation
+   vorgelesen bekommt, die keine ist. aria-hidden waere die schlechtere Wahl,
+   die Karte haette dann gar keine Beschreibung mehr.
+
+   ALLE MASSE SIND viewBox-EINHEITEN. Bei 1440px Fensterbreite ist eine
+   Fallkarte rund 580px breit, eine Einheit also rund 0,58px: Schriftgrad 26
+   steht dort mit rund 15px im Bild. Wer eine Groesse aendert, rechnet mit
+   diesem Faktor, sonst verschwindet die Zeile auf dem Handy.
    ========================================================================== */
 
 /** Vier graue Textzeilen absteigender Laenge, wie sie in jeder Miniaturseite
@@ -49,6 +73,84 @@ function Textzeilen({
         />
       ))}
     </>
+  );
+}
+
+/* ── BAUSTEINE DER MOCKUPS ────────────────────────────────────────────────
+   Drei Gesten, die in mehr als einer Fallkarte vorkommen. Sie stehen hier
+   oben, damit dieselbe Navigation nicht dreimal leicht verschieden aussieht:
+   eine Serie erkennt man an den Wiederholungen, nicht an den Einfaellen. */
+
+/** Die Navigationspunkte einer Miniaturseite.
+ *
+ *  SIE STEHEN ALS EIN EINZIGER TEXTKNOTEN DA, die Punkte als tspan mit dx.
+ *  Nur so richtet textAnchor="end" die ganze Reihe an ihrem rechten Ende aus,
+ *  ohne dass hier jemand Zeichenbreiten schaetzen muesste (der Browser kennt
+ *  sie, wir nicht). Getrennte <text>-Knoten mit geratenen x-Werten waeren beim
+ *  ersten Schriftwechsel schief. */
+function MockNav({
+  x,
+  y,
+  punkte,
+  groesse,
+  abstand,
+  anker = "start",
+}: {
+  x: number;
+  y: number;
+  punkte: readonly string[];
+  groesse: number;
+  abstand: number;
+  anker?: "start" | "end";
+}) {
+  return (
+    <text
+      className="st-fill-ink"
+      x={x}
+      y={y}
+      fontSize={groesse}
+      fontWeight={600}
+      fillOpacity={0.66}
+      textAnchor={anker}
+    >
+      {punkte.map((punkt, i) => (
+        <tspan key={punkt} dx={i === 0 ? 0 : abstand}>
+          {punkt}
+        </tspan>
+      ))}
+    </text>
+  );
+}
+
+/** Das Menuezeichen einer Handy-Ansicht: drei Striche, rechts oben. */
+function MockMenue({ x, y, breite }: { x: number; y: number; breite: number }) {
+  return (
+    <>
+      {[0, 1, 2].map((i) => (
+        <rect
+          key={i}
+          className="st-fill-ink"
+          x={x}
+          y={y + i * 11}
+          width={breite}
+          height={4}
+          rx={2}
+        />
+      ))}
+    </>
+  );
+}
+
+/** Der Hoerer im Anrufknopf. Der Pfad ist in einem 24er Raster gezeichnet und
+ *  wird skaliert, damit er in Fall A und Fall C exakt dieselbe Form hat. */
+function MockHoerer({ x, y, groesse }: { x: number; y: number; groesse: number }) {
+  return (
+    <g transform={`translate(${x} ${y}) scale(${groesse / 24})`}>
+      <path
+        className="st-fill-ink"
+        d="M4.2 3h4.3l1.7 4.3-2.6 1.9a12.5 12.5 0 0 0 5.2 5.2l1.9-2.6 4.3 1.7v4.3a1.2 1.2 0 0 1-1.3 1.2A17 17 0 0 1 3 4.3 1.2 1.2 0 0 1 4.2 3z"
+      />
+    </g>
   );
 }
 
@@ -212,11 +314,36 @@ export function HeroCollage({ titel }: { titel: string }) {
   );
 }
 
-/* ── FALL A: der Anrufbalken ──────────────────────────────────────────────
-   Blau. Ein Telefon, ganz gross, und darauf die eine Zeile, die vorher keine
-   war. Der mintgruene Balken sitzt oben, nicht unten: genau das ist der Satz
-   unter der Karte. */
-export function FallTelefon({ titel }: { titel: string }) {
+/* ── FALL A: Elektro Musterhaus ───────────────────────────────────────────
+   Blau. Die Handy-Ansicht eines Elektrikers, gross und unten angeschnitten.
+
+   WARUM ANGESCHNITTEN: ein vollstaendig sichtbares Telefon muesste in dieser
+   Karte rund 350 Einheiten breit sein, und der Anrufbalken darin waere auf
+   einem echten Bildschirm keine 9 Pixel hoch. Angeschnitten sind es 500
+   Einheiten, die Nummer ist lesbar, und der Schnitt sagt nebenbei das
+   Richtige: die Seite geht weiter, das Wichtige steht trotzdem oben.
+
+   WARUM DAS GERAET ERST BEI y=136 BEGINNT: darueber liegt das Fiktiv-
+   Kennzeichen, und das ist eine CSS-Kapsel in fester Pixelgroesse ueber einer
+   Zeichnung, die mitskaliert. Bei 390px Fensterbreite reicht sie gemessen bis
+   rund 125 viewBox-Einheiten hinunter, bei 1440px nur bis 82. Beginnt der
+   Schirm hoeher, deckt die Kapsel auf dem Handy die Wortmarke des Betriebs zu,
+   also genau das, was die Karte beweisen soll. Die 136 sind der gemessene
+   Sicherheitsabstand, keine Geschmacksfrage.
+
+   DIE REIHENFOLGE IM SCHIRM IST DAS ARGUMENT DER KARTE. Marke, Navigation,
+   dann sofort der Anrufbalken mit der Nummer, mit einem mintgruenen Ring
+   darum. Erst danach die Schlagzeile. Genau das behauptet die Zeile unter der
+   Karte, und wer die Zeile aendert, ordnet hier um. */
+type MockElektro = {
+  readonly marke: string;
+  readonly nav: readonly string[];
+  readonly ruf: { readonly label: string; readonly zusatz: string };
+  readonly headline: readonly string[];
+  readonly kacheln: readonly string[];
+};
+
+export function FallTelefon({ titel, mock }: { titel: string; mock: MockElektro }) {
   return (
     <svg viewBox="0 0 1000 800" role="img" aria-label={titel}>
       <defs>
@@ -229,89 +356,181 @@ export function FallTelefon({ titel }: { titel: string }) {
       <rect className="st-fill-a" width="1000" height="800" />
       <rect width="1000" height="800" fill="url(#st-a-licht)" />
 
-      {/* Der Bogen von links auf den Balken. Er zeigt, wohin der Daumen
+      {/* Das Gewerk als Zeichen, gross und leise, am rechten Rand
+          angeschnitten. Es traegt keine Information, nur die Nische. */}
+      <path
+        className="st-stroke-mint"
+        d="M902 92 788 424h100l-70 320 198-372H902z"
+        strokeWidth="13"
+        strokeLinejoin="round"
+        strokeOpacity="0.28"
+      />
+
+      {/* Der Bogen von links auf den Anrufbalken. Er zeigt, wohin der Daumen
           geht, ohne dass irgendwo ein Wort stehen muss. */}
       <path
         className="st-stroke-mint"
-        d="M96 566C96 400 168 296 318 254"
+        d="M74 700C74 520 96 420 178 372"
         strokeWidth="9"
         strokeLinecap="round"
         strokeDasharray="2 26"
       />
       <path
         className="st-stroke-mint"
-        d="M292 226l40 26-30 34"
+        d="M148 340l36 30-28 34"
         strokeWidth="9"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
 
       <g>
-        <rect className="st-fill-paper" x="340" y="86" width="324" height="690" rx="50" />
-        <rect className="st-fill-line" x="472" y="108" width="60" height="8" rx="4" />
+        {/* Das Geraet. Hoehe 1000 bei Breite 500, also echtes Telefonformat;
+            sichtbar ist davon der obere Bildschirm. */}
+        <rect className="st-fill-paper" x="190" y="136" width="500" height="1000" rx="64" />
+        <rect className="st-fill-line" x="400" y="152" width="80" height="10" rx="5" />
         <rect
           className="st-stroke-soft"
-          x="356"
-          y="132"
-          width="292"
-          height="606"
-          rx="30"
+          x="206"
+          y="172"
+          width="468"
+          height="948"
+          rx="46"
           strokeWidth="2"
         />
 
-        <rect className="st-fill-ink" x="376" y="152" width="92" height="12" rx="6" />
-        {[556, 594, 620].map((x, i) => (
-          <rect
-            key={x}
-            className="st-fill-line"
-            x={x}
-            y="153"
-            width={[28, 18, 18][i]}
-            height="10"
-            rx="5"
-          />
-        ))}
-
-        <rect className="st-fill-mint" x="374" y="186" width="256" height="66" rx="18" />
-        <path
+        {/* Kopfzeile: Marke links, Menue rechts. */}
+        <text
           className="st-fill-ink"
-          d="M400 206c-3 0-6 3-6 6 0 16 13 29 29 29 3 0 6-3 6-6v-9c0-3-2-5-5-6l-7-1c-2 0-4 1-5 3l-2 3a22 22 0 0 1-9-9l3-2c2-1 3-4 3-6l-2-6c0-3-2-5-5-5z"
-        />
-        <rect className="st-fill-ink" x="442" y="204" width="124" height="16" rx="8" />
-        <rect className="st-fill-ink" x="442" y="228" width="80" height="10" rx="5" fillOpacity="0.45" />
+          x="228"
+          y="216"
+          fontSize="20"
+          fontWeight="800"
+          letterSpacing="1.4"
+        >
+          {mock.marke}
+        </text>
+        <MockMenue x={616} y={196} breite={36} />
+        <MockNav x={228} y={264} punkte={mock.nav} groesse={18} abstand={22} />
+        <path className="st-stroke-soft" d="M228 284H652" strokeWidth="1.5" />
+
+        {/* DIE EINE HANDLUNG. Ring, Balken, Hoerer, Nummer, Erreichbarkeit. */}
         <rect
           className="st-stroke-mint"
-          x="364"
-          y="176"
-          width="276"
-          height="86"
-          rx="26"
+          x="218"
+          y="292"
+          width="444"
+          height="98"
+          rx="30"
           strokeWidth="3"
-          strokeOpacity="0.6"
+          strokeOpacity="0.55"
         />
+        <rect className="st-fill-mint" x="228" y="302" width="424" height="78" rx="22" />
+        <MockHoerer x={252} y={322} groesse={34} />
+        <text className="st-fill-ink" x="300" y="340" fontSize="26" fontWeight="700">
+          {mock.ruf.label}
+        </text>
+        <text
+          className="st-fill-ink"
+          x="300"
+          y="366"
+          fontSize="15"
+          fontWeight="500"
+          fillOpacity="0.62"
+        >
+          {mock.ruf.zusatz}
+        </text>
 
-        <rect className="st-fill-ink" x="374" y="288" width="206" height="24" rx="5" />
-        <rect className="st-fill-ink" x="374" y="322" width="152" height="24" rx="5" />
-        <rect className="st-fill-media" x="374" y="370" width="256" height="146" rx="14" />
-        <path className="st-fill-mint" d="M374 482l68-56 50 40 72-58v94a14 14 0 0 1-14 14H388a14 14 0 0 1-14-14z" />
-        <Textzeilen x={374} y={544} breiten={[256, 224, 240, 160]} />
+        {mock.headline.map((zeile, i) => (
+          <text
+            key={zeile}
+            className="st-fill-ink"
+            x="228"
+            y={440 + i * 44}
+            fontSize="42"
+            fontWeight="800"
+            letterSpacing="-1"
+          >
+            {zeile}
+          </text>
+        ))}
 
-        <rect className="st-fill-ink" x="374" y="662" width="256" height="56" rx="16" />
-        <rect className="st-fill-paper" x="398" y="682" width="112" height="14" rx="7" />
-        <rect className="st-fill-mint" x="536" y="678" width="70" height="24" rx="12" />
+        {/* Das Bildmotiv: ein Zaehlerschrank mit zwei Reihen Sicherungen, eine
+            davon mintgruen. Kein Foto, sondern dieselbe Geometrie, aus der
+            auch der Rest der Seite besteht. */}
+        <rect className="st-fill-media" x="228" y="504" width="424" height="110" rx="16" />
+        <rect className="st-fill-ink" x="262" y="522" width="356" height="74" rx="10" />
+        <circle className="st-fill-mint" cx="604" cy="527" r="4" />
+        {[532, 564].map((railY) => (
+          <g key={railY}>
+            <rect className="st-fill-paper" x="278" y={railY} width="324" height="26" rx="5" />
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <rect
+                key={i}
+                className={railY === 532 && i === 5 ? "st-fill-mint" : "st-fill-ink"}
+                x={288 + i * 34}
+                y={railY + 6}
+                width="20"
+                height="14"
+                rx="3"
+              />
+            ))}
+          </g>
+        ))}
+
+        {/* Die Leistungen als Kacheln, zwei mal zwei. */}
+        {mock.kacheln.map((kachel, i) => {
+          const kx = 228 + (i % 2) * 220;
+          const ky = 626 + Math.floor(i / 2) * 78;
+
+          return (
+            <g key={kachel}>
+              <rect className="st-fill-chip" x={kx} y={ky} width="204" height="72" rx="14" />
+              <rect className="st-fill-mint" x={kx + 16} y={ky + 12} width="24" height="24" rx="8" />
+              <text
+                className="st-fill-ink"
+                x={kx + 16}
+                y={ky + 58}
+                fontSize="17"
+                fontWeight="600"
+              >
+                {kachel}
+              </text>
+            </g>
+          );
+        })}
       </g>
     </svg>
   );
 }
 
-/* ── FALL B: die eine Handlung ────────────────────────────────────────────
-   Tiefschwarz, quadratisch. Hinter dem fertigen Fenster liegen zwei
-   Textwaende, halb verdeckt und halb abgedunkelt: die Seite, die es vorher
-   war. Davor eine einzige mintgruene Zeile.
+/* ── FALL B: Bau Mustergrund ──────────────────────────────────────────────
+   Tiefschwarz, quadratisch. Ein Browserfenster mit der fertigen Seite eines
+   Bauunternehmens, und dahinter zwei Textwaende: die Seite, die es vorher war.
 
-   DIE KOMPOSITION IST DAS ARGUMENT. Was hinten liegt, ist grau und viel. Was
-   vorne liegt, ist wenig und farbig. */
-export function FallAngebot({ titel }: { titel: string }) {
+   DIE KOMPOSITION IST DAS ARGUMENT. Was hinten liegt, ist grau und viel und
+   traegt bewusst keine Struktur, keine Ueberschrift, keinen Knopf, nur Zeile
+   um Zeile. Was vorne liegt, ist geordnet, und die Anfrage steht zweimal weit
+   oben: einmal als Knopf in der Kopfleiste, einmal unter der Schlagzeile. Wer
+   die Textwaende entfernt, nimmt der Karte ihre Haelfte des Satzes.
+
+   Die drei Projektbilder sind gezeichnet, nicht fotografiert: Kran, Rohbau,
+   Fassadengeruest. Ein Stockfoto waere hier eine erfundene Referenz. */
+type MockBau = {
+  readonly marke: string;
+  readonly adresse: string;
+  readonly nav: readonly string[];
+  readonly cta: string;
+  readonly zweitCta: string;
+  readonly headline: readonly string[];
+  readonly lead: string;
+  readonly leistungen: readonly string[];
+  readonly projekte: readonly string[];
+};
+
+export function FallAngebot({ titel, mock }: { titel: string; mock: MockBau }) {
+  /* Drei Projektkacheln auf der Satzbreite 134..866, Fuge 22. */
+  const kachelBreite = 229;
+
   return (
     <svg viewBox="0 0 1000 1000" role="img" aria-label={titel}>
       <defs>
@@ -324,96 +543,270 @@ export function FallAngebot({ titel }: { titel: string }) {
       <rect className="st-fill-b" width="1000" height="1000" />
       <rect width="1000" height="1000" fill="url(#st-b-licht)" />
 
-      {/* Die zwei Textwaende dahinter. Sie tragen bewusst keine Struktur:
-          keine Ueberschrift, kein Knopf, nur Zeile um Zeile. */}
-      <g opacity="0.34">
-        <g transform="rotate(-7 250 300)">
-          <rect className="st-fill-paper" x="66" y="118" width="330" height="470" rx="14" />
+      {/* Die zwei Textwaende dahinter, in den beiden freien Ecken. */}
+      <g opacity="0.3">
+        <g transform="rotate(-8 190 240)">
+          <rect className="st-fill-paper" x="14" y="8" width="310" height="470" rx="14" />
           <Textzeilen
-            x={96}
-            y={150}
-            breiten={[270, 244, 262, 208, 270, 232, 256, 190, 268, 240, 254, 176]}
+            x={44}
+            y={40}
+            breiten={[250, 218, 242, 186, 250, 212, 234, 168, 246, 206, 238, 180]}
             hoehe={9}
-            abstand={36}
+            abstand={35}
           />
         </g>
-        <g transform="rotate(6 780 760)">
-          <rect className="st-fill-paper" x="640" y="600" width="300" height="400" rx="14" />
+        <g transform="rotate(7 810 790)">
+          <rect className="st-fill-paper" x="676" y="556" width="310" height="450" rx="14" />
           <Textzeilen
-            x={668}
-            y={630}
-            breiten={[244, 212, 236, 180, 244, 206, 228, 162, 240]}
+            x={706}
+            y={588}
+            breiten={[250, 218, 242, 186, 250, 212, 234, 168, 246, 206, 238]}
             hoehe={9}
-            abstand={36}
+            abstand={35}
           />
         </g>
       </g>
 
       {/* Das fertige Fenster */}
       <g>
-        <rect className="st-fill-paper" x="112" y="238" width="790" height="600" rx="22" />
-        <rect className="st-fill-chip" x="112" y="238" width="790" height="50" rx="22" />
-        <rect className="st-fill-chip" x="112" y="266" width="790" height="22" />
-        <path className="st-stroke-soft" d="M112 288H902" strokeWidth="1.5" />
-        {[146, 172, 198].map((cx) => (
-          <circle key={cx} className="st-fill-line" cx={cx} cy="263" r="6" />
+        <rect className="st-fill-paper" x="90" y="150" width="820" height="720" rx="24" />
+        <rect className="st-fill-chip" x="90" y="150" width="820" height="52" rx="24" />
+        <rect className="st-fill-chip" x="90" y="180" width="820" height="22" />
+        <path className="st-stroke-soft" d="M90 202H910" strokeWidth="1.5" />
+        {[124, 150, 176].map((cx) => (
+          <circle key={cx} className="st-fill-line" cx={cx} cy="176" r="6" />
         ))}
+        <rect className="st-fill-paper" x="300" y="162" width="400" height="28" rx="14" />
+        <text
+          className="st-fill-ink"
+          x="500"
+          y="182"
+          fontSize="16"
+          fontWeight="500"
+          /* 0,6 und nicht weniger: schwarz auf Weiss sind das 5,7:1, unter 0,55
+             faellt die Adresszeile unter den Grenzwert fuer Fliesstext. */
+          fillOpacity="0.6"
+          textAnchor="middle"
+        >
+          {mock.adresse}
+        </text>
 
-        <rect className="st-fill-ink" x="156" y="330" width="100" height="14" rx="7" />
-        {[694, 762, 818].map((x, i) => (
-          <rect
-            key={x}
-            className="st-fill-line"
-            x={x}
-            y="332"
-            width={[52, 40, 38][i]}
-            height="10"
-            rx="5"
-          />
+        {/* Kopfleiste: Marke, Navigation, und der Anfrageknopf ganz rechts. */}
+        <text
+          className="st-fill-ink"
+          x="134"
+          y="252"
+          fontSize="21"
+          fontWeight="800"
+          letterSpacing="1.5"
+        >
+          {mock.marke}
+        </text>
+        <MockNav x={646} y={252} punkte={mock.nav} groesse={18} abstand={26} anker="end" />
+        <rect className="st-fill-mint" x="674" y="222" width="192" height="56" rx="18" />
+        <text
+          className="st-fill-ink"
+          x="770"
+          y="257"
+          fontSize="20"
+          fontWeight="700"
+          textAnchor="middle"
+        >
+          {mock.cta}
+        </text>
+        <path className="st-stroke-soft" d="M134 306H866" strokeWidth="1.5" />
+
+        {mock.headline.map((zeile, i) => (
+          <text
+            key={zeile}
+            className="st-fill-ink"
+            x="134"
+            y={392 + i * 66}
+            fontSize="62"
+            fontWeight="800"
+            letterSpacing="-1.6"
+          >
+            {zeile}
+          </text>
         ))}
+        <text
+          className="st-fill-ink"
+          x="134"
+          y="504"
+          fontSize="21"
+          fontWeight="500"
+          fillOpacity="0.7"
+        >
+          {mock.lead}
+        </text>
 
-        <rect className="st-fill-ink" x="156" y="392" width="440" height="38" rx="6" />
-        <rect className="st-fill-ink" x="156" y="444" width="318" height="38" rx="6" />
-
-        {/* Die eine Zeile, ganz oben, nicht am Ende einer Textwand. */}
-        <rect className="st-fill-mint" x="156" y="514" width="300" height="62" rx="31" />
-        <rect className="st-fill-ink" x="192" y="536" width="164" height="18" rx="9" />
+        {/* Die eine Handlung, gross, dazu der leise Zweitweg daneben. */}
+        <rect className="st-fill-mint" x="134" y="534" width="286" height="64" rx="32" />
+        <text className="st-fill-ink" x="166" y="573" fontSize="24" fontWeight="700">
+          {mock.cta}
+        </text>
         <path
           className="st-stroke-ink"
-          d="M374 545h34m0 0-11-11m11 11-11 11"
-          strokeWidth="6"
+          d="M354 566h32m0 0-11-11m11 11-11 11"
+          strokeWidth="5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
+        <rect
+          className="st-stroke-soft"
+          x="444"
+          y="534"
+          width="252"
+          height="64"
+          rx="32"
+          strokeWidth="2"
+        />
+        <text
+          className="st-fill-ink"
+          x="570"
+          y="573"
+          fontSize="22"
+          fontWeight="600"
+          fillOpacity="0.78"
+          textAnchor="middle"
+        >
+          {mock.zweitCta}
+        </text>
 
-        <rect className="st-fill-media" x="620" y="392" width="282" height="212" rx="14" />
-        <path className="st-fill-mint" d="M620 556l70-58 52 42 160-130v180a14 14 0 0 1-14 14H634a14 14 0 0 1-14-14z" />
-        <circle className="st-fill-paper" cx="686" cy="452" r="24" />
+        {/* Die Leistungen als eine Zeile, nicht als drittes Kartengitter. */}
+        <path className="st-stroke-soft" d="M134 630H866" strokeWidth="1.5" />
+        {mock.leistungen.map((leistung, i) => {
+          const lx = 134 + i * 244;
 
-        <Textzeilen x={156} y={614} breiten={[300, 262]} hoehe={11} abstand={26} />
+          return (
+            <g key={leistung}>
+              <circle className="st-fill-mint" cx={lx + 7} cy="661" r="7" />
+              <text className="st-fill-ink" x={lx + 26} y="668" fontSize="19" fontWeight="600">
+                {leistung}
+              </text>
+            </g>
+          );
+        })}
 
-        {[156, 412, 668].map((x) => (
-          <g key={x}>
-            <rect className="st-fill-chip" x={x} y="676" width="234" height="126" rx="12" />
-            <rect className="st-fill-mint" x={x + 22} y="698" width="32" height="32" rx="10" />
-            <Textzeilen x={x + 22} y={748} breiten={[190, 134]} abstand={22} />
-          </g>
-        ))}
+        {/* Drei Projektbilder mit Bildunterschrift. */}
+        {mock.projekte.map((projekt, i) => {
+          const px = 134 + i * (kachelBreite + 22);
+
+          return (
+            <g key={projekt}>
+              <rect
+                className="st-fill-media"
+                x={px}
+                y="686"
+                width={kachelBreite}
+                height="142"
+                rx="12"
+              />
+              {i === 0 && (
+                /* Kran: Turm, Ausleger, Gegengewicht, Haken. */
+                <g>
+                  <rect className="st-fill-ink" x={px + 34} y="768" width="66" height="36" fillOpacity="0.28" />
+                  <rect className="st-fill-ink" x={px + 104} y="720" width="12" height="84" />
+                  <rect className="st-fill-ink" x={px + 48} y="716" width="140" height="9" />
+                  <rect className="st-fill-ink" x={px + 40} y="708" width="22" height="24" />
+                  <path className="st-stroke-ink" d={`M${px + 164} 725V760`} strokeWidth="3" />
+                  <rect className="st-fill-ink" x={px + 156} y="760" width="16" height="12" rx="2" />
+                </g>
+              )}
+              {i === 1 && (
+                /* Rohbau: Giebel im Schnitt, eine Geschossdecke, zwei Staender. */
+                <g>
+                  <path
+                    className="st-stroke-ink"
+                    d={`M${px + 44} 804V758l70-38 70 38v46`}
+                    strokeWidth="6"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    className="st-stroke-ink"
+                    d={`M${px + 44} 778h140M${px + 80} 778v26M${px + 148} 778v26`}
+                    strokeWidth="4"
+                    strokeOpacity="0.45"
+                  />
+                  <path
+                    className="st-stroke-mint"
+                    d={`M${px + 44} 758l70-38 70 38`}
+                    strokeWidth="6"
+                    strokeLinejoin="round"
+                  />
+                </g>
+              )}
+              {i === 2 && (
+                /* Fassade mit Geruest: Haus, Fenster, mintgruene Rohre. */
+                <g>
+                  <rect className="st-fill-ink" x={px + 52} y="712" width="126" height="92" fillOpacity="0.9" />
+                  {[0, 1, 2].map((r) =>
+                    [0, 1, 2].map((c) => (
+                      <rect
+                        key={`${r}-${c}`}
+                        className="st-fill-paper"
+                        x={px + 66 + c * 38}
+                        y={724 + r * 24}
+                        width="22"
+                        height="14"
+                        fillOpacity="0.85"
+                      />
+                    )),
+                  )}
+                  <path
+                    className="st-stroke-mint"
+                    d={`M${px + 58} 706v100M${px + 172} 706v100M${px + 52} 730h126M${px + 52} 764h126M${px + 52} 798h126`}
+                    strokeWidth="3"
+                    strokeOpacity="0.85"
+                  />
+                </g>
+              )}
+              <rect className="st-fill-ink" x={px + 20} y="804" width={kachelBreite - 40} height="6" rx="3" />
+              <text className="st-fill-ink" x={px} y="854" fontSize="18" fontWeight="600">
+                {projekt}
+              </text>
+            </g>
+          );
+        })}
       </g>
     </svg>
   );
 }
 
-/* ── FALL C: schnell und ganz ─────────────────────────────────────────────
+/* ── FALL C: Dach Musterhoehe ─────────────────────────────────────────────
    Mint. Ein schwarzes Telefon vor einer schwarzen Dachkante, dazu ein
-   Ladebalken, der ganz durch ist.
+   Ladebalken, der ganz durch ist, und drei Winkel als Fahrtrichtung.
 
-   Der Dachschnitt am unteren Rand ist die einzige Stelle der Seite, die
-   ueberhaupt auf ein Gewerk anspielt. Er ist eine Silhouette, kein Bild: eine
-   gezeichnete Kante, mehr nicht. */
-export function FallTempo({ titel }: { titel: string }) {
+   DIE KARTE BEHAUPTET TEMPO UND HANDY, also ist sie die einzige der drei mit
+   einem vollstaendig sichtbaren Geraet: nichts haengt unten heraus, nichts
+   wartet. Der Kontakt steht zweimal in Sichtweite, oben als Anrufknopf mit
+   Nummer und unten als feste Leiste, die beim Scrollen stehen bleibt.
+
+   Die Dachkante am unteren Rand ist eine Silhouette, kein Bild: eine
+   gezeichnete Kante, mehr nicht. Das Dach im Schirm wiederholt sie als
+   Ziegelmuster. */
+type MockDach = {
+  readonly marke: string;
+  readonly nav: readonly string[];
+  readonly headline: readonly string[];
+  readonly lead: string;
+  readonly ruf: string;
+  readonly leistungen: readonly string[];
+  readonly leiste: { readonly ruf: string; readonly weg: string };
+};
+
+export function FallTempo({ titel, mock }: { titel: string; mock: MockDach }) {
   return (
     <svg viewBox="0 0 1000 800" role="img" aria-label={titel}>
+      <defs>
+        {/* Der Ziegelschnitt wird beschnitten, nicht gerechnet: seine Grundlinie
+            liegt auf der Bildkante, und ohne Maske stiessen seine spitzen Ecken
+            aus der abgerundeten Bildflaeche heraus. */}
+        <clipPath id="st-c-bild">
+          <rect x="348" y="452" width="306" height="140" rx="14" />
+        </clipPath>
+      </defs>
+
       <rect className="st-fill-c" width="1000" height="800" />
 
       {/* Die Dachkante */}
@@ -424,18 +817,26 @@ export function FallTempo({ titel }: { titel: string }) {
       />
       <path className="st-fill-ink" d="M0 800v-56l248-150 168 104 214-146 186 128 184-96v216z" />
 
-      {/* Der Ladebalken, ganz durch, und drei Fahrtlinien darunter. */}
-      <g>
-        <rect className="st-fill-ink" x="86" y="286" width="188" height="14" rx="7" fillOpacity="0.22" />
-        <rect className="st-fill-ink" x="86" y="286" width="188" height="14" rx="7" />
-        {[
-          [86, 330, 148],
-          [86, 360, 108],
-          [86, 390, 62],
-        ].map(([x, y, w]) => (
-          <rect key={y} className="st-fill-ink" x={x} y={y} width={w} height="10" rx="5" />
-        ))}
-      </g>
+      {/* Drei Schleifspuren links, die auf das Geraet zulaufen: kuerzer und
+          blasser nach unten. Vorher stand hier ein gefuellter Ladebalken, und
+          der war das Gegenteil eines Arguments: ein Balken, der voll ist,
+          sieht aus wie ein Balken, der laedt. */}
+      {[
+        [70, 330, 200, 1],
+        [130, 372, 140, 0.55],
+        [180, 414, 90, 0.3],
+      ].map(([x, y, w, o]) => (
+        <rect
+          key={y}
+          className="st-fill-ink"
+          x={x}
+          y={y}
+          width={w}
+          height="12"
+          rx="6"
+          fillOpacity={o}
+        />
+      ))}
 
       {/* Drei Winkel als Fahrtrichtung, rechts oben. */}
       <g>
@@ -452,38 +853,125 @@ export function FallTempo({ titel }: { titel: string }) {
         ))}
       </g>
 
-      {/* Das Telefon */}
+      {/* Das Telefon. Es beginnt bei y=74, damit das Fiktiv-Kennzeichen auf
+          dem Handy nicht die Wortmarke im Schirm verdeckt (die Rechnung dazu
+          steht bei Fall A). Unten laeuft nur der schwarze Rahmen aus dem Bild,
+          der Schirm bleibt ganz sichtbar: diese Karte behauptet, dass nichts
+          abgeschnitten ist. */}
       <g>
-        <rect className="st-fill-ink" x="352" y="76" width="300" height="620" rx="46" />
-        <rect className="st-fill-paper" x="370" y="120" width="264" height="532" rx="26" />
+        <rect className="st-fill-ink" x="306" y="74" width="390" height="744" rx="54" />
+        <rect className="st-fill-paper" x="322" y="108" width="358" height="676" rx="38" />
 
-        <rect className="st-fill-ink" x="390" y="140" width="84" height="12" rx="6" />
-        {[540, 574, 598].map((x, i) => (
-          <rect
-            key={x}
-            className="st-fill-line"
-            x={x}
-            y="141"
-            width={[26, 16, 16][i]}
-            height="10"
-            rx="5"
+        <text
+          className="st-fill-ink"
+          x="348"
+          y="160"
+          fontSize="17"
+          fontWeight="800"
+          letterSpacing="1.2"
+        >
+          {mock.marke}
+        </text>
+        <MockMenue x={622} y={144} breite={32} />
+        <MockNav x={348} y={202} punkte={mock.nav} groesse={16} abstand={20} />
+        <path className="st-stroke-soft" d="M348 222H654" strokeWidth="1.5" />
+
+        {mock.headline.map((zeile, i) => (
+          <text
+            key={zeile}
+            className="st-fill-ink"
+            x="348"
+            y={278 + i * 42}
+            fontSize="36"
+            fontWeight="800"
+            letterSpacing="-0.8"
+          >
+            {zeile}
+          </text>
+        ))}
+        <text
+          className="st-fill-ink"
+          x="348"
+          y="354"
+          fontSize="16"
+          fontWeight="500"
+          fillOpacity="0.68"
+        >
+          {mock.lead}
+        </text>
+
+        <rect className="st-fill-mint" x="348" y="374" width="306" height="60" rx="20" />
+        <MockHoerer x={372} y={388} groesse={30} />
+        <text className="st-fill-ink" x="414" y="413" fontSize="22" fontWeight="700">
+          {mock.ruf}
+        </text>
+
+        {/* Das Bildmotiv: ein Dach im Schnitt, mit Ziegelreihen und einer
+            mintgruenen Kante. */}
+        <rect className="st-fill-media" x="348" y="452" width="306" height="140" rx="14" />
+        <g clipPath="url(#st-c-bild)">
+          <path className="st-fill-ink" d="M348 592 501 488 654 592z" />
+          {[514, 536, 558, 580].map((y) => {
+            const halb = (y - 488) * 1.4712;
+
+            return (
+              <path
+                key={y}
+                className="st-stroke-paper"
+                d={`M${501 - halb} ${y}H${501 + halb}`}
+                strokeWidth="3"
+                strokeOpacity="0.32"
+              />
+            );
+          })}
+          <path
+            className="st-stroke-mint"
+            d="M348 592 501 488 654 592"
+            strokeWidth="6"
+            strokeLinejoin="round"
           />
+        </g>
+
+        {/* Drei Leistungszeilen mit Haarlinie, wie auf der echten Seite. */}
+        <path className="st-stroke-soft" d="M348 606H654M348 642H654M348 678H654" strokeWidth="1.5" />
+        {mock.leistungen.map((leistung, i) => (
+          <g key={leistung}>
+            <text
+              className="st-fill-ink"
+              x="348"
+              y={630 + i * 36}
+              fontSize="17"
+              fontWeight="600"
+            >
+              {leistung}
+            </text>
+            <path
+              className="st-stroke-ink"
+              d={`M642 ${618 + i * 36}l8 7-8 7`}
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeOpacity="0.5"
+            />
+          </g>
         ))}
 
-        <rect className="st-fill-ink" x="390" y="180" width="190" height="24" rx="5" />
-        <rect className="st-fill-ink" x="390" y="214" width="140" height="24" rx="5" />
-
-        <rect className="st-fill-mint" x="390" y="262" width="208" height="52" rx="26" />
-        <rect className="st-fill-ink" x="418" y="280" width="132" height="16" rx="8" />
-
-        <rect className="st-fill-media" x="390" y="336" width="224" height="132" rx="14" />
-        <path className="st-fill-mint" d="M390 438l58-50 44 36 66-52v82a14 14 0 0 1-14 14H404a14 14 0 0 1-14-14z" />
-
-        <Textzeilen x={390} y={494} breiten={[224, 196, 210, 142]} />
-
-        <rect className="st-fill-ink" x="390" y="588" width="224" height="46" rx="14" />
-        <rect className="st-fill-paper" x="410" y="604" width="96" height="14" rx="7" />
-        <rect className="st-fill-mint" x="528" y="601" width="62" height="20" rx="10" />
+        {/* Die feste Leiste am unteren Rand: anrufen oder hinfahren. */}
+        <rect className="st-fill-ink" x="348" y="720" width="306" height="46" rx="14" />
+        <text className="st-fill-paper" x="372" y="749" fontSize="17" fontWeight="700">
+          {mock.leiste.ruf}
+        </text>
+        <rect className="st-fill-mint" x="524" y="730" width="110" height="26" rx="13" />
+        <text
+          className="st-fill-ink"
+          x="579"
+          y="748"
+          fontSize="14"
+          fontWeight="600"
+          textAnchor="middle"
+        >
+          {mock.leiste.weg}
+        </text>
       </g>
     </svg>
   );

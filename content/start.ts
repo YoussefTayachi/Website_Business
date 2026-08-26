@@ -135,6 +135,25 @@ export const start = {
   /**
    * Drei fiktive Fallbeispiele. Jede Zeile beschreibt in einem Satz, was
    * kaputt war und was jetzt anders ist, statt Adjektive zu haeufen.
+   *
+   * DAS FELD `mock` IST DER TEXT IN DER ZEICHNUNG. Die Fallkarten zeigen seit
+   * dem 2026-08-26 keine leeren Balkenmuster mehr, sondern die fertige Website
+   * des jeweiligen Betriebs: Navigation, Schlagzeile, Knopfbeschriftung,
+   * Telefonnummer. Das ist sichtbarer Seitentext und steht deshalb hier, nicht
+   * in components/start/zeichnungen.tsx. Wer ihn dort hineinschreibt, versteckt
+   * ihn vor dem naechsten, der die Texte durchgeht.
+   *
+   * JEDE ZEICHNUNG MUSS GENAU DAS ZEIGEN, WAS `zeile` DARUEBER BEHAUPTET.
+   * Fall 1 behauptet einen tippbaren Anruf, also traegt der Mock oben einen
+   * Anrufbalken mit Nummer. Fall 2 behauptet die Anfrage ganz oben, also steht
+   * `cta` zweimal weit oben. Fall 3 behauptet Tempo auf dem Handy, also ist es
+   * eine Handy-Ansicht mit Kontakt in Sichtweite. Wer eine Zeile umschreibt,
+   * schreibt den Mock mit um.
+   *
+   * DIE TELEFONNUMMERN SIND MUSTER, kein Anschluss: Ortsvorwahl plus eine
+   * durchgezaehlte Ziffernfolge, wie sie in jedem Formularbeispiel steht.
+   * Erfundene Kennzahlen, Sterne oder Kundenzahlen stehen hier nicht, auch
+   * nicht als Zierde in einem Mock: die Zielgruppe prueft so etwas nach.
    */
   arbeiten: {
     titel: ["Selected", "work"],
@@ -145,14 +164,32 @@ export const start = {
         zeile: "The phone number wasn't a link. Now it's the first thing you can tap.",
         tags: ["WEB DESIGN", "MOBILE FIRST", "ELECTRICIAN"],
         bildAlt:
-          "A sketched mockup of the Elektro Musterhaus website on a phone screen, with the phone number highlighted at the top.",
+          "The Elektro Musterhaus website on a phone: a green call bar with the number 030 1234567 sits above the headline 24/7 emergency electrician, followed by a fuse box photo and service tiles for wiring, fuse boxes, EV chargers and fault finding.",
+        mock: {
+          marke: "ELEKTRO MUSTERHAUS",
+          nav: ["Services", "Emergency", "Contact"],
+          ruf: { label: "Call 030 1234567", zusatz: "24 hours, 7 days a week" },
+          headline: ["24/7 emergency", "electrician"],
+          kacheln: ["Wiring", "Fuse boxes", "EV chargers", "Fault finding"],
+        },
       },
       {
         name: "Bau Mustergrund",
         zeile: "The quote request was buried in a wall of text. Now it's one line, at the top.",
         tags: ["WEB DESIGN", "COPY", "CONSTRUCTION"],
         bildAlt:
-          "A sketched mockup of the Bau Mustergrund homepage with a single quote request button at the top.",
+          "The Bau Mustergrund homepage on a laptop: a green Get a quote button sits in the header and again under the headline Building work you can plan around, above a row of site photos.",
+        mock: {
+          marke: "BAU MUSTERGRUND",
+          adresse: "bau-mustergrund.example",
+          nav: ["Projects", "Services", "About"],
+          cta: "Get a quote",
+          zweitCta: "See projects",
+          headline: ["Building work", "you can plan around"],
+          lead: "Tell me what you need. You get a written price.",
+          leistungen: ["New builds", "Extensions", "Renovation"],
+          projekte: ["Hall extension", "Family home", "Facade work"],
+        },
       },
       {
         name: "Dach Musterhoehe",
@@ -160,7 +197,16 @@ export const start = {
           "The old site loaded slow and looked broken on a phone. The new one loads fast and looks like a real business.",
         tags: ["WEB DESIGN", "SPEED", "ROOFING"],
         bildAlt:
-          "A sketched mockup of the Dach Musterhoehe website shown fast and clear on a phone screen.",
+          "The Dach Musterhoehe website on a phone: the headline Roof repairs done right, a green call button with the number 030 7654321, a roof photo and a bar at the bottom with Call now and Directions.",
+        mock: {
+          marke: "DACH MUSTERHOEHE",
+          nav: ["Roofs", "Repairs", "Contact"],
+          headline: ["Roof repairs", "done right"],
+          lead: "Leaks, tiles and gutters.",
+          ruf: "Call 030 7654321",
+          leistungen: ["New roofs", "Leak repair", "Gutters"],
+          leiste: { ruf: "Call now", weg: "Directions" },
+        },
       },
     ],
   },
