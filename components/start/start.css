@@ -806,9 +806,23 @@
   border-block: 1px solid var(--c-line);
 }
 
+/* ZWEISPALTIG AB 62rem: links der Text, rechts der Vergleich. Der Vergleich
+   ist seit dem 2026-08-31 eine TELEFONANSICHT und damit hochkant; ueber die
+   volle Breite gestellt saesse er als schmale Saeule in viel Weissraum. */
+.st-gegen__in {
+  display: grid;
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: center;
+}
+
+@media (min-width: 62rem) {
+  .st-gegen__in {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  }
+}
+
 .st-gegen__kopf {
   max-width: 42ch;
-  margin-bottom: clamp(2rem, 3.5vw, 3rem);
 }
 
 .st-gegen__kopf h2 {
@@ -845,6 +859,8 @@
    echte: die Betriebe sind fiktiv, und eine erfundene Domain, die es
    wirklich gibt, waere ein Fund, den die Zielgruppe macht. */
 .st-rahmen {
+  margin-inline: auto;
+  max-width: 26rem;
   border-radius: var(--st-r-card);
   overflow: hidden;
   background: var(--c-wash);
@@ -890,26 +906,18 @@
   position: relative;
   overflow: hidden;
   background: var(--c-sheet);
-  /* AUF DEM TELEFON HOEHER ALS DIE AUFNAHME. Bei 390px waere das
-     Fenstermass der Aufnahme (1440 zu 800) nur 190 Pixel hoch, und zwei
-     Websites nebeneinander in 190 Pixeln zeigen nichts, was man lesen
-     koennte. 3 zu 4 gibt dem Vergleich dort 460 Pixel; object-position: top
-     haelt dabei den Kopf beider Seiten im Bild, und das ist der Teil,
-     ueber den geurteilt wird.
+  /* Genau das Fenstermass der Aufnahme (scripts/aufnahmen.mjs, 390 zu 640).
+     Steht das Verhaeltnis hier, ist der Platz vor dem Bild reserviert und
+     beim Laden springt nichts.
 
-     Das ist KEINE Bildregie und braucht kein zweites Bild: es ist derselbe
-     Aufnahmesatz, nur anders beschnitten. */
-  aspect-ratio: 3 / 4;
-}
-
-/* Ab 48rem passt das echte Fenstermass der Aufnahme, und dann gilt es auch:
-   1440 zu 800. Beide Bilder eines Paares haben identische Masse, das
-   erzwingt scripts/aufnahmen.mjs. Steht das Verhaeltnis hier, ist der Platz
-   schon vor dem Bild reserviert und beim Laden springt nichts. */
-@media (min-width: 48rem) {
-  .st-vgl {
-    aspect-ratio: 1200 / 760;
-  }
+     BIS ZUM 2026-08-31 STAND HIER 1200 zu 760, also Breitbild, und darunter
+     eine Sonderregel, die auf dem Telefon auf 3 zu 4 umstellte. Das war der
+     Fehler: `object-fit: cover` schnitt aus jeder Breitbildseite einen
+     senkrechten Streifen aus der Mitte, und der Vergleich zeigte einen
+     halben Satz gegen eine halbe Schaltflaeche. Jetzt ist die Aufnahme
+     selbst hochkant, und es gibt nur noch EIN Verhaeltnis fuer alle
+     Breiten. */
+  aspect-ratio: 390 / 640;
 }
 
 .st-vgl__bild {
@@ -1130,6 +1138,84 @@
   [data-st-in] .st-ablauf__linie {
     width: 44px;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   WER DAHINTERSTECKT
+   ═══════════════════════════════════════════════════════════════════════
+   Portraet links, zwei Saetze rechts. Auf dem Telefon steht das Bild oben
+   und ist bewusst NICHT ueber die volle Breite: ein formatfuellendes
+   Portraet auf einem Telefon wirkt wie eine Bewerbung, nicht wie eine
+   Vorstellung. 60 Prozent, linksbuendig, ist die richtige Dosis. */
+.st-person__in {
+  display: grid;
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: center;
+}
+
+@media (min-width: 62rem) {
+  .st-person__in {
+    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+  }
+}
+
+.st-person__bild {
+  max-width: 60%;
+}
+
+@media (min-width: 62rem) {
+  .st-person__bild {
+    max-width: none;
+  }
+}
+
+.st-person__bild img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--st-r-card);
+  /* Das Foto ist im Original hochkant 3 zu 4. Der Beschnitt haelt es dabei,
+     falls je ein anderes eingesetzt wird, und verhindert, dass die Zeile
+     daneben mit dem Bild wandert. */
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: center top;
+  box-shadow: var(--sh-lift);
+}
+
+.st-person__titel {
+  margin-top: 0.75rem;
+  max-width: 20ch;
+  font-size: var(--st-fs-h2);
+  line-height: 1.06;
+}
+
+.st-person__text {
+  margin-top: 1.125rem;
+  max-width: 46ch;
+  font-size: var(--st-fs-lead);
+  line-height: 1.6;
+  color: var(--c-soft);
+}
+
+.st-person__name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.875rem;
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--c-line);
+  font-family: var(--st-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.st-person__rolle {
+  font-family: var(--st-sans);
+  font-size: var(--st-fs-tag);
+  font-weight: 400;
+  color: var(--c-faint);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════

@@ -26,7 +26,7 @@ export default function StartGegenueber() {
 
   return (
     <Reveal as="section" className="st-sect st-gegen">
-      <div className="st-wrap">
+      <div className="st-wrap st-gegen__in">
         <div className="st-gegen__kopf">
           <p className="st-eyebrow st-rise" style={{ ["--i" as string]: 0 }}>
             {v.augenbraue}

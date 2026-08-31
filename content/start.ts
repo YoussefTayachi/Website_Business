@@ -161,6 +161,30 @@ export const start = {
     ],
   },
 
+  /**
+   * WER DAHINTERSTECKT. Ein echtes Foto und zwei Saetze.
+   *
+   * WARUM DAS AUF DIESE SEITE GEHOERT: die Zielgruppe kauft von einer Person,
+   * nicht von einer Marke. Ein Betrieb, der eine Kaltakquise-Mail bekommt,
+   * will als Erstes wissen, wer da schreibt. Ein Gesicht beantwortet das in
+   * einer Sekunde, und es beantwortet nebenbei die Frage, ob hier eine
+   * Agentur mit Kundenbetreuern sitzt oder ein Mensch.
+   *
+   * KEIN STOCKFOTO. Es ist sein eigenes Portraet, dasselbe wie auf
+   * frostbreaker.app.
+   */
+  person: {
+    augenbraue: "Who builds it",
+    titel: "You deal with the person who does the work.",
+    absaetze: [
+      "I'm Youssef. I design the page, I build it, and I am the one who answers when you write back.",
+      "No account manager, no handover, no team you never meet. If something is wrong with your site a year from now, you email me.",
+    ],
+    name: "Youssef Tayachi",
+    rolle: "Frostbreaker Marketing",
+    bildAlt: "Youssef Tayachi, portrait.",
+  },
+
   /** DER SCHLUSS. Eine Zeile, ein Knopf. */
   schluss: {
     titel: "Let's look at your site together.",

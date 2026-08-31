@@ -39,6 +39,7 @@ import StartGalerie from "@/components/start/galerie";
 import StartGegenueber from "@/components/start/gegenueber";
 import StartHero from "@/components/start/hero";
 import StartLeiste from "@/components/start/leiste";
+import StartPerson from "@/components/start/person";
 import StartSchluss from "@/components/start/schluss";
 import { start } from "@/content/start";
 
@@ -67,7 +68,8 @@ export default function Home() {
           3. Galerie   was moeglich ist, gezeigt statt beschrieben
           4. Vergleich warum es sich lohnt
           5. Ablauf    was auf dich zukommt
-          6. Schluss   die Frage
+          6. Person    wer das macht, mit Gesicht
+          7. Schluss   die Frage
           Die Galerie steht VOR dem Vergleich: "was ist moeglich" kommt vor
           "warum sollte ich", weil die zweite Frage sich erst stellt, wenn
           die erste beantwortet ist. */}
@@ -77,6 +79,7 @@ export default function Home() {
         <StartGalerie />
         <StartGegenueber />
         <StartAblauf />
+        <StartPerson />
         <StartSchluss />
       </main>
 

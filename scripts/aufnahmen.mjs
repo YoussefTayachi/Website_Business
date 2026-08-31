@@ -69,12 +69,26 @@ const AUFNAHMEN = [
   // verkleinerte Breitbildseite.
   { fall: "entwurf/voltas", datei: "hero-telefon", breite: 420, hoehe: 1400, platz: "Telefonrahmen im Hero" },
 
-  // Der Vergleich. Die alte Fassung ist die absichtlich schlechte Seite aus
-  // components/showcase/demos/, die neue ist der Entwurf desselben Betriebs.
-  // Dieselbe Breite wie die Galerie, damit die alte Fassung nicht in einem
-  // anderen Massstab neben den Entwuerfen steht.
-  { fall: "elektro-alt", datei: "vergleich-vorher", breite: 1200, hoehe: 760, platz: "Vergleich, vorher" },
-  { fall: "entwurf/voltas", datei: "vergleich-nachher", breite: 1200, hoehe: 760, platz: "Vergleich, nachher" },
+  // Der Vergleich, ALS TELEFONANSICHT und nicht als Breitbild.
+  //
+  // WARUM DAS UMGESTELLT WURDE: der Vergleich lief bis zum 2026-08-31 auf
+  // zwei 1200px-Aufnahmen. Auf einem Telefon steht der Rahmen dann hochkant,
+  // und `object-fit: cover` schneidet aus jeder Breitbildseite einen
+  // senkrechten Streifen aus der Mitte heraus. Zu sehen war ein halber Satz
+  // links und eine halbe Schaltflaeche rechts: es sah kaputt aus, und es war
+  // auch kaputt.
+  //
+  // Zwei Telefonansichten loesen das an der Wurzel und sind zugleich das
+  // bessere Argument. Der Satz der Seite lautet "dein Kunde sucht dich auf
+  // dem Handy"; dann gehoert genau das in den Vergleich. Die alte Fassung
+  // ist eine Seite mit fester Breite aus den 2010ern, sie quetscht sich bei
+  // 390px zusammen, und man sieht ohne einen Satz Erklaerung, warum das ein
+  // Problem ist.
+  //
+  // FESTES FENSTERMASS statt elementweiser Aufnahme: beide Seiten eines
+  // Paares muessen exakt gleich gross sein, sonst springt der Regler.
+  { fall: "elektro-alt", datei: "vergleich-vorher", breite: 390, hoehe: 640, platz: "Vergleich, vorher" },
+  { fall: "entwurf/voltas", datei: "vergleich-nachher", breite: 390, hoehe: 640, platz: "Vergleich, nachher" },
 
   // Die Metadaten-Bilder. Sie landen NICHT in public/arbeiten/, sondern
   // neben app/layout.tsx: Next findet opengraph-image.png und apple-icon.png
@@ -148,7 +162,11 @@ try {
     // Die BREITBILDAUFNAHMEN zeigen den ersten Bildschirm in einem festen
     // Fenstermass, weil genau der im Vergleich verglichen wird und beide
     // Seiten eines Paares dieselben Masse brauchen.
-    const elementweise = a.breite < 500 || a.fall.startsWith("og");
+    // Elementweise nur, wo die Datei so hoch sein soll wie ihr Inhalt: beim
+    // Hero-Telefon (es wandert im Rahmen) und bei den Metadaten-Bildern. Die
+    // Vergleichsaufnahmen brauchen dagegen ein FESTES Fenstermass, damit
+    // beide Seiten des Paares exakt gleich gross sind.
+    const elementweise = a.datei === "hero-telefon" || a.fall.startsWith("og");
     // DAS ELEMENT MIT DER MARKIERUNG, nicht sein erstes Kind. Die
     // Vorgaengerfassung nahm `[data-erfassung] > *`, weil bei den Demos ein
     // Wrapper die Markierung trug. Beim OG-Bild sitzt sie direkt auf der
