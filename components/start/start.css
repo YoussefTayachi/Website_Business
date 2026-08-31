@@ -23,16 +23,22 @@
 
 .st-page {
   /* ── SCHRIFT ─────────────────────────────────────────────────────────────
-     Die Paarung von frostbreaker.app: Fraunces traegt die Displaystufen,
-     Space Grotesk alles darunter. Der Zusatz "Variable" im Namen ist kein
-     Vertipper, so registriert @fontsource-variable seine Familien.
+     Wix Madefor, seit dem 2026-08-31. Davor stand hier die Paarung von
+     frostbreaker.app (Fraunces und Space Grotesk); der Nutzer wollte
+     ausdruecklich weg davon und hin zu dem, was auf wix.com/website/templates
+     gesetzt ist. Genau das ist Madefor, die Hausschrift von Wix, und sie ist
+     offen lizenziert und liegt als lokales Paket vor.
 
-     Fraunces ERST AB 24px. Eine Display-Serife in 17px liest sich als
-     Fachtext, nicht als Marke. Die Serife markiert Ueberschriften, sonst
-     nichts. Das ist dieselbe Regel wie auf frostbreaker.app, und sie steht
-     dort mit derselben Begruendung. */
-  --st-display: "Fraunces Variable", ui-serif, Georgia, "Times New Roman", serif;
-  --st-sans: "Space Grotesk Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+     Zwei Schnitte, und der Unterschied ist nicht kosmetisch: "Display" hat
+     engere Laufweiten und straffere Formen fuer grosse Groessen, "Text" ist
+     fuer Lesegroessen gezeichnet und haelt bei 17px die Punzen offen. Display
+     erst ab 24px, darunter Text.
+
+     Der Zusatz "Variable" im Namen ist kein Vertipper, so registriert
+     @fontsource-variable seine Familien. Ohne ihn faende der Browser nichts
+     und fiele auf die Systemschrift zurueck. */
+  --st-display: "Wix Madefor Display Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --st-sans: "Wix Madefor Text Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   /* ── GROESSEN ────────────────────────────────────────────────────────────
      Untergrenzen sind an 390px Fensterbreite nachgerechnet, nicht geschaetzt:
@@ -88,8 +94,11 @@
 .st-page :where(h1, h2, h3) {
   font-family: var(--st-display);
   font-optical-sizing: auto;
-  font-weight: 500;
-  letter-spacing: -0.025em;
+  /* 700 und nicht 500. Fraunces trug die grossen Stufen bei 500, weil eine
+     Serife durch ihre Formen wirkt. Eine Grotesk braucht dafuer Gewicht,
+     sonst liest sich eine 72px-Zeile duenn und unentschlossen. */
+  font-weight: 700;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 
@@ -214,11 +223,18 @@
   text-decoration: none;
 }
 
+/* --c-faint und NICHT --c-mute. Der Unterschied ist keine Feinheit: --c-mute
+   ist im Dunkelmodus ausdruecklich unterhalb des Grenzwerts und in
+   app/globals.css als "NIE Inhalt" gekennzeichnet, also fuer Zierde und
+   deaktivierte Zustaende. Beim Umbau am 2026-08-31 stand es an acht Stellen
+   auf echtem Inhalt (Markenzusatz, Kartenbeschriftung, Schrittnummer,
+   Fusszeile), und die waren im Dunklen nicht mehr sicher lesbar.
+   --c-faint misst 5,95:1 hell und 4,63:1 dunkel und traegt Kleintext. */
 .st-marke__zusatz {
   font-size: var(--st-fs-tag);
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: var(--c-mute);
+  color: var(--c-faint);
 }
 
 .st-bar__nav {
@@ -405,7 +421,7 @@
   border-radius: var(--st-r-pill);
   font-size: var(--st-fs-tag);
   font-weight: 500;
-  color: var(--c-mute);
+  color: var(--c-faint);
   cursor: pointer;
   transition:
     background 0.18s var(--st-ease),
@@ -472,11 +488,13 @@
   line-height: 1.02;
 }
 
-/* Das eine kursive Akzentwort, wie auf frostbreaker.app. Es sitzt auf dem
-   Satzteil, der die Aussage traegt, nicht auf einem Fuellwort. */
+/* Das Akzentwort. Es sitzt auf dem Satzteil, der die Aussage traegt, nicht
+   auf einem Fuellwort.
+   KEIN Kursiv mehr: die kursive Serife war die Signatur von frostbreaker.app,
+   und genau davon soll diese Seite weg. Bei einer Grotesk wirkt Kursiv
+   ohnehin wie eine Schraegstellung und nicht wie ein eigener Schnitt. */
 .st-akzent {
   color: var(--c-accent);
-  font-style: italic;
 }
 
 .st-hero__lead {
@@ -641,7 +659,7 @@
 }
 
 .st-chip__zusatz {
-  color: var(--c-mute);
+  color: var(--c-faint);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -652,81 +670,149 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   ARBEITEN
-   ═══════════════════════════════════════════════════════════════════════ */
-.st-arb__kopf {
-  max-width: 32ch;
+   GALERIE
+   ═══════════════════════════════════════════════════════════════════════
+   Sechs Gestaltungen als Karten, drei Spalten. Die Bauform ist von der
+   Vorlagengalerie auf wix.com/website/templates uebernommen, weil sie fuer
+   genau diese Aufgabe die richtige ist: viele Entwuerfe nebeneinander,
+   jeder in einem Fensterrahmen, Beschriftung darunter. Wer sechs Seiten
+   nebeneinander sieht, versteht ohne einen Satz, dass hier gestaltet wird
+   und nicht eine Vorlage ausgefuellt.
+
+   DER FENSTERRAHMEN IST NICHT ZIERDE. Ohne ihn liest sich eine Aufnahme mit
+   hellem Rand als Bild mit Fehler, mit ihm als Website. Er ist derselbe wie
+   am Vergleich weiter unten, nur ohne Adresszeile: bei Kartengroesse waere
+   die Adresse nicht mehr lesbar und damit nur Rauschen. */
+.st-galerie__kopf {
+  max-width: 46ch;
 }
 
-.st-arb__kopf h2 {
+.st-galerie__kopf h2 {
   margin-top: 0.75rem;
   font-size: var(--st-fs-h2);
-  line-height: 1.06;
+  line-height: 1.05;
 }
 
-.st-fall {
-  margin-top: clamp(2rem, 4vw, 3.5rem);
+.st-galerie__kopf .st-lead {
+  margin-top: 1.125rem;
 }
 
-.st-fall__meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.5rem 1rem;
-  margin-bottom: 1rem;
-}
-
-.st-fall__name {
-  font-family: var(--st-display);
-  font-optical-sizing: auto;
-  font-size: var(--st-fs-h3);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-.st-fall__gewerk {
-  font-size: var(--st-fs-tag);
-  color: var(--c-mute);
-}
-
-.st-fall__zeile {
-  font-size: var(--st-fs-lead);
-  color: var(--c-soft);
-  max-width: 52ch;
-  margin-bottom: 1.25rem;
-}
-
-.st-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+.st-galerie__raster {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.5rem, 2.6vw, 2.25rem);
   list-style: none;
-  margin: 1.25rem 0 0;
+  margin: clamp(2.5rem, 4vw, 3.5rem) 0 0;
   padding: 0;
 }
 
-.st-tag {
-  padding: 0.3rem 0.65rem;
-  border-radius: var(--st-r-tag);
-  background: var(--c-wash);
-  font-size: var(--st-fs-tag);
-  color: var(--c-soft);
+@media (min-width: 40rem) {
+  .st-galerie__raster {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-/* Das Kennzeichen. Es steht als TEXT auf der Karte und nicht im Bild: ein
-   Kennzeichen, das nur im Screenshot steht, ist fuer einen Screenreader
-   nicht vorhanden. */
-.st-fiktiv {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-top: 1rem;
-  padding: 0.3rem 0.6rem;
-  border: 1px solid var(--c-coral-line);
-  border-radius: var(--st-r-tag);
-  background: var(--c-coral-wash);
+@media (min-width: 64rem) {
+  .st-galerie__raster {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.st-karte__rahmen {
+  overflow: hidden;
+  border: 1px solid var(--c-line2);
+  border-radius: var(--st-r-card);
+  background: var(--c-wash);
+  box-shadow: var(--sh-lift);
+  transition:
+    transform 0.28s var(--st-ease),
+    border-color 0.28s var(--st-ease);
+}
+
+.st-karte__punkte {
+  display: flex;
+  gap: 0.3125rem;
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid var(--c-line);
+}
+
+.st-karte__punkte span {
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 50%;
+  background: var(--c-line2);
+}
+
+.st-karte__bild {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Genau das Fenstermass der Aufnahme (scripts/aufnahmen.mjs, 1440 zu 900).
+     Steht es hier, ist der Platz vor dem Bild reserviert und das Raster
+     springt beim Laden nicht. */
+  aspect-ratio: 1440 / 900;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.5s var(--st-ease);
+}
+
+/* Beim Ueberfahren hebt sich die Karte und das Bild wandert ein Stueck nach
+   oben, zeigt also mehr von der Seite. Das ist der Sinn: eine Galeriekarte,
+   die auf Zeigen mehr zeigt, ist ein Versprechen, kein Effekt.
+   Nur bei feinem Zeiger: auf dem Telefon gibt es kein Ueberfahren, und ein
+   Bild, das beim Tippen springt, stoert. */
+@media (hover: hover) and (pointer: fine) {
+  .st-karte:hover .st-karte__rahmen {
+    transform: translateY(-4px);
+    border-color: var(--c-line3);
+  }
+
+  .st-karte:hover .st-karte__bild {
+    transform: translateY(-4%);
+  }
+}
+
+.st-karte__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+  margin: 0.875rem 0 0;
+}
+
+.st-karte__name {
+  font-family: var(--st-display);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.st-karte__art {
   font-size: var(--st-fs-tag);
-  color: var(--c-coral-ink);
+  color: var(--c-faint);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   GEGENUEBERSTELLUNG
+   ═══════════════════════════════════════════════════════════════════════ */
+.st-gegen {
+  background: var(--c-band);
+  border-block: 1px solid var(--c-line);
+}
+
+.st-gegen__kopf {
+  max-width: 42ch;
+  margin-bottom: clamp(2rem, 3.5vw, 3rem);
+}
+
+.st-gegen__kopf h2 {
+  margin-top: 0.75rem;
+  font-size: var(--st-fs-h2);
+  line-height: 1.05;
+}
+
+.st-gegen__kopf .st-lead {
+  margin-top: 1rem;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -787,7 +873,7 @@
   border-radius: var(--st-r-pill);
   background: var(--c-sheet);
   font-size: var(--st-fs-tag);
-  color: var(--c-mute);
+  color: var(--c-faint);
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -953,13 +1039,143 @@
 .st-vgl-ohne figcaption {
   margin-top: 0.5rem;
   font-size: var(--st-fs-tag);
-  color: var(--c-mute);
+  color: var(--c-faint);
 }
 
 @media (min-width: 48rem) {
   .st-vgl-ohne {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ABLAUF
+   ═══════════════════════════════════════════════════════════════════════
+   Drei Schritte, ein Satz je Schritt. Die Haarlinie ueber jedem Schritt
+   zeichnet sich beim Eintreten von links nach rechts.
+
+   WARUM HIER BEWEGUNG STEHT UND SONST FAST NIRGENDS: die drei Schritte sind
+   eine REIHENFOLGE, und eine Linie, die von links nach rechts waechst, sagt
+   genau das. Ein Standbild koennte die Reihenfolge nur behaupten. Wo
+   Bewegung nur huebsch waere, steht auf dieser Seite keine. */
+.st-ablauf__titel {
+  margin-top: 0.75rem;
+  max-width: 20ch;
+  font-size: var(--st-fs-h2);
+  line-height: 1.05;
+}
+
+.st-ablauf__liste {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2rem, 3vw, 2.5rem);
+  list-style: none;
+  margin: clamp(2.5rem, 4vw, 3.5rem) 0 0;
+  padding: 0;
+  counter-reset: none;
+}
+
+@media (min-width: 48rem) {
+  .st-ablauf__liste {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.st-ablauf__schritt {
+  padding-top: 1.5rem;
+}
+
+.st-ablauf__linie {
+  display: block;
+  height: 2px;
+  background: var(--c-accent);
+  margin-bottom: 1.25rem;
+  /* Ausgangsbreite und Endbreite stehen in derselben Einheit, damit die
+     Transition ueberhaupt laufen kann: von 0 auf 44px, nicht auf auto. */
+  width: 44px;
+}
+
+.st-ablauf__nr {
+  font-size: var(--st-fs-label);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--c-faint);
+}
+
+.st-ablauf__name {
+  margin-top: 0.5rem;
+  font-size: var(--st-fs-h3);
+  line-height: 1.2;
+}
+
+.st-ablauf__text {
+  margin-top: 0.625rem;
+  color: var(--c-soft);
+  max-width: 34ch;
+}
+
+@media (scripting: enabled) {
+  .st-ablauf__linie {
+    width: 0;
+    transition: width 0.6s var(--st-ease);
+    transition-delay: calc((var(--i, 0) + 1) * var(--st-stagger));
+  }
+
+  [data-st-in] .st-ablauf__linie {
+    width: 44px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SCHLUSSBLOCK
+   ═══════════════════════════════════════════════════════════════════════
+   Umgekehrte Flaeche, der einzige Farbwechsel dieser Groesse auf der Seite.
+   Er markiert das Ende: wer bis hierher gescrollt hat, bekommt die Frage.
+
+   --c-solid und --c-solid-ink kippen mit dem Modus (globals.css): hell ist
+   der Block Tinte auf Papier, dunkel Papier auf Tinte. Weiss auf Tinte misst
+   17,21:1, Nacht auf Tag 15,45:1. */
+.st-schluss {
+  background: var(--c-solid);
+  color: var(--c-solid-ink);
+  padding-block: clamp(4rem, 7vw, 7rem);
+}
+
+.st-schluss__in {
+  text-align: center;
+}
+
+.st-schluss h2 {
+  margin-inline: auto;
+  max-width: 18ch;
+  font-size: var(--st-fs-h2);
+  line-height: 1.04;
+  color: var(--c-solid-ink);
+}
+
+.st-schluss__lead {
+  margin: 1.125rem auto 0;
+  max-width: 46ch;
+  font-size: var(--st-fs-lead);
+  /* Nicht --c-soft: das ist eine Textstufe fuer den Seitengrund und waere
+     auf der umgekehrten Flaeche kaum zu sehen. Stattdessen die
+     Schriftfarbe des Blocks, gedaempft. */
+  color: color-mix(in srgb, var(--c-solid-ink) 76%, transparent);
+}
+
+.st-schluss .st-pill {
+  margin-top: 2rem;
+}
+
+/* Der Knopf auf der umgekehrten Flaeche muss sich ebenfalls umkehren, sonst
+   stuende Tinte auf Tinte. */
+.st-pill--um {
+  background: var(--c-solid-ink);
+  color: var(--c-solid);
+}
+
+.st-pill--um:hover {
+  background: color-mix(in srgb, var(--c-solid-ink) 88%, var(--c-accent));
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -977,7 +1193,7 @@
   justify-content: space-between;
   gap: 1rem 1.5rem;
   font-size: var(--st-fs-tag);
-  color: var(--c-mute);
+  color: var(--c-faint);
 }
 
 .st-fuss__links {

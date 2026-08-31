@@ -34,7 +34,7 @@ import { start } from "@/content/start";
  *
  * OHNE JAVASCRIPT wird das hier nicht gerendert (.nur-mit-js in
  * app/layout.tsx), stattdessen stehen beide Aufnahmen als zwei beschriftete
- * Figuren untereinander. Die stehen in arbeiten.tsx, nicht hier: sie sind
+ * Figuren untereinander. Die stehen in gegenueber.tsx, nicht hier: sie sind
  * kein Teil des Reglers, sie sind sein Ersatz.
  */
 export default function Vergleich({
@@ -52,7 +52,7 @@ export default function Vergleich({
   adresse: string;
 }) {
   const [p, setzeP] = useState(50);
-  const t = start.arbeiten.regler;
+  const t = start.vergleich.regler;
 
   const ansage = p <= 0 ? t.ansageVorher : p >= 100 ? t.ansageNachher : t.ansageMitte(p);
 

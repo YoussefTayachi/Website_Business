@@ -10,7 +10,7 @@
       Grundregeln aus app/globals.css zurueck (Schriftfamilie,
       Silbentrennung). Stuende die Datei in app/layout.tsx, traefe das
       /impressum und /datenschutz mit.
-   2. Fraunces und Space Grotesk braucht NUR diese Route. Die deutschen
+   2. Wix Madefor braucht NUR diese Route. Die deutschen
       Rechtsseiten laufen weiter auf Inter und Newsreader, und die kommen
       aus dem Wurzel-Layout. Wer die neuen Schriften dorthin zieht, nimmt
       den Rechtsseiten ihre eigene und laedt auf jeder Route vier Familien
@@ -26,18 +26,20 @@
    benutzte generische Namen und faerbte damit die Rechtsseiten ein.
    ========================================================================== */
 
-import "@fontsource-variable/fraunces/opsz.css";
-import "@fontsource-variable/fraunces/opsz-italic.css";
-import "@fontsource-variable/space-grotesk";
+import "@fontsource-variable/wix-madefor-display";
+import "@fontsource-variable/wix-madefor-text";
 import "@/components/start/start.css";
 
 import type { Metadata } from "next";
 
-import StartArbeiten from "@/components/start/arbeiten";
+import StartAblauf from "@/components/start/ablauf";
 import StartBeweis from "@/components/start/beweis";
 import StartFuss from "@/components/start/fuss";
+import StartGalerie from "@/components/start/galerie";
+import StartGegenueber from "@/components/start/gegenueber";
 import StartHero from "@/components/start/hero";
 import StartLeiste from "@/components/start/leiste";
+import StartSchluss from "@/components/start/schluss";
 import { start } from "@/content/start";
 
 // Der Titel der Startseite darf die Marke nicht noch einmal angehaengt
@@ -59,10 +61,23 @@ export default function Home() {
           deutschen Unterseiten steht in app/(mit-chrome)/layout.tsx und
           traegt dasselbe id, damit die Sprungmarke auf jeder Route ein Ziel
           hat. */}
+      {/* DIE REIHENFOLGE IST DAS ARGUMENT, nicht nur eine Anordnung:
+          1. Hero      was ich mache
+          2. Beweis    wer ich bin, nachpruefbar
+          3. Galerie   was moeglich ist, gezeigt statt beschrieben
+          4. Vergleich warum es sich lohnt
+          5. Ablauf    was auf dich zukommt
+          6. Schluss   die Frage
+          Die Galerie steht VOR dem Vergleich: "was ist moeglich" kommt vor
+          "warum sollte ich", weil die zweite Frage sich erst stellt, wenn
+          die erste beantwortet ist. */}
       <main id={start.sprungmarke.zielId}>
         <StartHero />
         <StartBeweis />
-        <StartArbeiten />
+        <StartGalerie />
+        <StartGegenueber />
+        <StartAblauf />
+        <StartSchluss />
       </main>
 
       <StartFuss />

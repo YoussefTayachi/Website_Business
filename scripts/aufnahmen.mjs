@@ -47,9 +47,28 @@ const ZIEL = "public/arbeiten";
    BEIDE SEITEN DES PAARES MUESSEN DIESELBE HOEHE HABEN, sonst springt der
    Vergleich beim Ziehen. Die Pruefung unten erzwingt das. */
 const AUFNAHMEN = [
-  { fall: "elektro-neu", breite: 390, hoehe: 1400, platz: "Telefonrahmen im Hero" },
-  { fall: "elektro-alt", breite: 1440, hoehe: 800, platz: "Vergleich Fall 1, vorher" },
-  { fall: "elektro-neu", breite: 1440, hoehe: 800, platz: "Vergleich Fall 1, nachher" },
+  // Die Galerie. Sechs Gestaltungen, jede bei 1440 aufgenommen und auf der
+  // Startseite als Karte gezeigt. 900 Pixel hoch, weil genau so viel von
+  // einer Seite in eine Galeriekarte passt, ohne dass sie zur Briefmarke
+  // wird: gezeigt wird der erste Bildschirm, und ueber den wird geurteilt.
+  { fall: "entwurf/northline", datei: "entwurf-northline", breite: 1440, hoehe: 900, platz: "Galerie, Bau" },
+  { fall: "entwurf/voltas", datei: "entwurf-voltas", breite: 1440, hoehe: 900, platz: "Galerie, Elektro" },
+  { fall: "entwurf/ridge", datei: "entwurf-ridge", breite: 1440, hoehe: 900, platz: "Galerie, Dach" },
+  { fall: "entwurf/clearflow", datei: "entwurf-clearflow", breite: 1440, hoehe: 900, platz: "Galerie, Sanitaer" },
+  { fall: "entwurf/stoneleaf", datei: "entwurf-stoneleaf", breite: 1440, hoehe: 900, platz: "Galerie, Garten" },
+  { fall: "entwurf/foxandco", datei: "entwurf-foxandco", breite: 1440, hoehe: 900, platz: "Galerie, Maler" },
+
+  // Der Hero. Dieselbe Gestaltung wie in der Galerie, aber schmal
+  // aufgenommen: im Telefonrahmen steht eine Telefonansicht und keine
+  // verkleinerte Breitbildseite.
+  { fall: "entwurf/voltas", datei: "hero-telefon", breite: 420, hoehe: 1400, platz: "Telefonrahmen im Hero" },
+
+  // Der Vergleich. Die alte Fassung ist die absichtlich schlechte Seite aus
+  // components/showcase/demos/, die neue ist der Entwurf desselben Betriebs.
+  // DIE HOEHE 800 IST GEMESSEN: bei 900 endete der Inhalt der alten Fassung
+  // bei rund 830 Pixeln, und der Rest war leere Flaeche.
+  { fall: "elektro-alt", datei: "vergleich-vorher", breite: 1440, hoehe: 800, platz: "Vergleich, vorher" },
+  { fall: "entwurf/voltas", datei: "vergleich-nachher", breite: 1440, hoehe: 800, platz: "Vergleich, nachher" },
 ];
 
 /** Wartet, bis die Seite wirklich fertig ist, statt eine Zahl abzuwarten. */
@@ -100,7 +119,7 @@ try {
     }
     await ruhe(page);
 
-    const datei = `${a.fall}-${a.breite}.png`;
+    const datei = `${a.datei}.png`;
     const pfad = path.join(ZIEL, datei);
     await mkdir(ZIEL, { recursive: true });
     // ZWEI ARTEN VON AUFNAHME, und der Unterschied ist wichtig:
@@ -151,7 +170,7 @@ try {
   /* PAARE MUESSEN GLEICH GROSS SEIN. Weichen vorher und nachher in ihren
      Massen voneinander ab, springt der Vergleich beim Ziehen, und das faellt
      erst am fertigen Bau auf. Lieber hier abbrechen. */
-  const paare = [["elektro-alt-1440.png", "elektro-neu-1440.png"]];
+  const paare = [["vergleich-vorher.png", "vergleich-nachher.png"]];
   for (const [a, b] of paare) {
     const x = manifest.find((m) => m.datei === a);
     const y = manifest.find((m) => m.datei === b);

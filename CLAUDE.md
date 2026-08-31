@@ -4,31 +4,41 @@ Anleitung fuer Claude Code in diesem Ordner.
 
 ## Was das hier ist
 
-Ein heller Portfolio-One-Pager plus drei Fallstudien fuer Youssefs
+Ein Portfolio-One-Pager fuer Youssefs
 Webdesign-Angebot. Die Leute, die hier ankommen, kommen aus einer
 Kaltakquise-Mail, in der ein konkreter Mangel an ihrer eigenen Website benannt
 wurde. Diese Seite muss in Sekunden zwei Dinge zeigen: der Absender ist
 sichtbar Experte, und der Betrieb versteht sofort, was er davon hat.
 
-Die Startseite folgt seit dem 2026-08-31 der Formensprache von
-frostbreaker.app, weil sie kuenftig auf `marketing.frostbreaker.app` steht
-und dieselbe Marke sein soll: warmes Off-White, Fraunces als Display-Serife
-mit einem kursiven Sky-Wort in der Ueberschrift, Space Grotesk als
-Fliesstext, Coral fuer genau einen Abschnitt, schwarzer Pill-CTA, echte
-Screenshots gebauter Seiten statt Zeichnungen. Sie hat einen Dunkelmodus.
+Die Startseite hat die FARBEN von frostbreaker.app, aber nicht dessen
+Schrift. Gesetzt ist **Wix Madefor** (Display und Text), nach dem Vorbild
+von wix.com/website/templates; der Nutzer wollte ausdruecklich weg von der
+Serifen-Signatur der Produktseite. Coral traegt genau eine Aufgabe, Sky ist
+Leitakzent, es gibt einen Dunkelmodus.
 
-**Stand: Abnahme-Ausschnitt.** Gebaut sind Kopfleiste, Hero,
-Beweisstreifen, ein Fall und ein kleiner Fuss. Es fehlen die Flaechen
-"Was dich Anrufe kostet" (Coral), "Wie es laeuft", "Wer die Arbeit macht",
-der Schlussblock, die Faelle 2 und 3 sowie `app/opengraph-image.tsx`.
-`PLAN.md` beschreibt den Vollausbau und ist vier Runden gegen Codex
-gelaufen; `PLAN-REVIEW-LOG.md` haelt den Streit fest.
+Der Aufbau folgt derselben Idee wie die Vorlagengalerie von Wix: **zeigen
+statt beschreiben**. Sieben Flaechen: Hero, Beweisstreifen, Galerie aus sechs
+Gestaltungen, Vorher/Nachher-Vergleich, drei Schritte, Schlussblock, Fuss.
 
-Davor stand hier ein designatives-Klon (Archivo Black, Mint `#2affaa`,
-Koenigsblau `#1032cf`, `--st-`-Farbtokens, mintgruener Riesenfuss) und davor
-ein neunaktiges Scroll-Erlebnis. Beide sind vom Nutzer verworfen und aus dem
-Code entfernt. Der Ordner `scrollcraft/` bleibt als historische Referenz
-liegen, nichts darin wird geladen.
+**Die Galerie ist der Kern.** Sechs Website-Entwuerfe (`content/entwuerfe.ts`,
+`components/entwuerfe/`) in drei Bauformen, jeder mit eigener Palette und
+eigener Schrift, damit sie wie sechs Betriebe aussehen und nicht sechsmal wie
+diese Seite. Sie werden gerendert, aufgenommen und als Bild eingebunden.
+
+**Keine Wix-Vorlagen im Projekt.** Der Nutzer hatte angeboten, welche zu
+importieren. Abgelehnt, und das soll so bleiben: die Vorlagen gehoeren Wix,
+und auf einer Webdesign-Seite liest jeder Besucher gezeigte Designs als
+eigene Arbeit. Uebernommen ist die BAUFORM der Galerie, nicht ihr Inhalt.
+
+**Kein Kennzeichen auf den Entwuerfen, und das ist Absicht.** Frueher trugen
+die Demo-Karten "Fictional demo. Not a real business." Der Abschnitt heisst
+jetzt "What your page could look like" und behauptet damit keinen Kunden,
+also gibt es nichts klarzustellen. Wer ihn in eine Fallstudie umbaut
+("built for", "our client"), behauptet etwas und muss das neu entscheiden.
+
+Davor stand hier ein designatives-Klon (Archivo Black, Mint, Koenigsblau)
+und davor ein neunaktiges Scroll-Erlebnis. Beide sind verworfen und aus dem
+Code entfernt. `scrollcraft/` bleibt als historische Referenz liegen.
 
 Zwei Dateien ergaenzen das hier:
 
@@ -75,7 +85,8 @@ gestartet kommt die Seite ungestylt hoch.
 |---|---|
 | Sichtbarer Text auf `/` (`content/start.ts`) | Englisch |
 | Impressum, Datenschutz (`content/seite.ts`) | Englisch |
-| Demo-Seiten (`content/projekte.ts`) | **noch Deutsch**, siehe unten |
+| Entwuerfe (`content/entwuerfe.ts`) | Englisch |
+| Alte Vergleichsfassung (`content/projekte.ts`) | Elektro-Eintrag englisch, Bau und Dach noch deutsch (werden nicht aufgenommen) |
 | Kommentare, Commit-Messages, Doku | Deutsch |
 | Bezeichner | Englisch, Dateinamen deutsch |
 
@@ -88,13 +99,8 @@ gestartet kommt die Seite ungestylt hoch.
 - Kein Agentur-Plural. Es ist eine Person, erste Person Singular.
 - **Keine erfundenen Zahlen**, Ladezeiten, Kundenzahlen, Preise, Referenzen,
   Testimonials oder Kundenlogos. Die Zielgruppe prueft so etwas nach.
-- Die drei Demo-Projekte sind fiktiv und tragen auf jeder Karte das
-  Kennzeichen "Fictional demo. Not a real business." **Das bleibt stehen**,
-  und es steht als Text auf der Karte, nie nur im Bild: ein Kennzeichen im
-  Screenshot ist fuer einen Screenreader nicht vorhanden.
-- **Offen:** die Demo-Seiten selbst sind deutsch, die Portfolio-Seite ist
-  englisch. Auf den Screenshots sieht man das. Entweder die Demos werden
-  uebersetzt oder es bleibt so, weil die Zielgruppe deutsch ist.
+- Die Entwuerfe zeigen erfundene Betriebe mit erfundenen Nummern. Sie
+  behaupten keinen Auftrag, deshalb tragen sie kein Kennzeichen (siehe oben).
 - Der einzige ECHTE Beleg ist Frostbreaker selbst. Lead-Entwuerfe duerfen
   ohne Zustimmung nicht als Referenz gezeigt werden
   (`Website_Business/README.md`), CTS Cement hat nicht zugestimmt.
@@ -199,3 +205,26 @@ Haupt-`package.json` geraet.
 
 Stat-Cache von graphify, rein lokal (`.git/info/exclude`). Nicht loeschen:
 er macht den zweiten Lauf schnell.
+
+## Die Bilder der Startseite
+
+Alles Sichtbare in Galerie, Hero und Vergleich sind **Aufnahmen echter,
+gebauter Seiten**, keine Zeichnungen und keine Stockfotos. Der Weg:
+
+```bash
+CAPTURE=1 npm run dev -- -p 3210   # Erfassungsseiten sind nur so Seiten
+node scripts/aufnahmen.mjs         # nimmt auf, schreibt public/arbeiten/manifest.json
+node scripts/pruefbilder.mjs       # Startseite in vier Zustaenden, meldet Ueberlauf
+```
+
+**Nie zwei Dev-Server auf demselben `.next`.** Genau das ist am 2026-08-31
+passiert (3200 zum Ansehen, 3210 zum Erfassen), und der geteilte Build-Cache
+ist zerbrochen: `Cannot find module './331.js'`, danach lieferte die
+Erfassungsseite ihr CSS nicht mehr aus und die Aufnahme zeigte rohes HTML.
+Das faellt nur auf, wenn man das Bild ansieht. Einen Server, oder `.next`
+vorher loeschen.
+
+Die Erfassungsseiten heissen `page.capture.tsx` und stehen nur mit
+`CAPTURE=1` in `pageExtensions` (siehe `next.config.mjs`). Ohne die Variable
+sind sie fuer Next keine Seiten und koennen nicht in einen Produktionsbau
+geraten. Nachgeprueft wird das am Routen-Manifest, nicht geglaubt.

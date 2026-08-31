@@ -1,32 +1,30 @@
 // Aller sichtbare Text der Startseite.
 //
-// STAND 2026-08-31: Die Seite wird auf die Formensprache von frostbreaker.app
-// umgebaut und zieht auf marketing.frostbreaker.app. Der designatives-Klon
-// davor (Archivo Black, Mint, Koenigsblau) ist entfallen. Dies ist der Text
-// des ABNAHME-AUSSCHNITTS: Kopfleiste, Hero, Beweisstreifen und eine
-// Fallkarte. Die uebrigen Flaechen (Problem, Vorgehen, Wer die Arbeit macht,
-// Schluss) kommen nach der Abnahme dazu, der Aufbau dieser Datei ist darauf
-// schon angelegt.
+// STAND 2026-08-31: Die Seite steht auf marketing.frostbreaker.app. Sie hat
+// die Farben von frostbreaker.app, aber NICHT dessen Schrift: gesetzt ist
+// Wix Madefor, nach dem Vorbild von wix.com/website/templates. Der Aufbau
+// folgt derselben Idee wie dort: eine Galerie aus Gestaltungen, damit ein
+// Betrieb sieht, was moeglich ist, statt es zu lesen.
 //
-// SPRACHE: Englisch, wie die ganze Startseite. Die Fallstudien blieben
-// deutsch, sind aber mit dem Umbau entfallen.
+// SPRACHE: Englisch, auch in den Entwuerfen (content/entwuerfe.ts) und in
+// der alten Vergleichsfassung (content/projekte.ts).
 //
 // REGELN, die auch nach einer Ueberarbeitung gelten muessen:
 //   - Keine Gedankenstriche in sichtbarem Text (Doppelpunkt, Komma, Klammer).
 //   - Kein Agentur-Plural. Es ist eine Person, also erste Person Singular.
-//     Die Marke ist Frostbreaker, die Person dahinter ist Youssef, und die
-//     Seite sagt "I", nicht "we".
 //   - Keine erfundenen Zahlen, Ladezeiten, Kundenzahlen oder Referenzen.
-//   - Die Demo-Betriebe sind fiktiv, ihr Kennzeichen bleibt auf jeder Karte.
-//   - Der EINZIGE echte Beleg ist Frostbreaker selbst. Es gibt keinen
-//     zugestimmten Kundenfall (siehe Website_Business/README.md), also wird
-//     auch keiner behauptet.
+//   - WENIG TEXT. Wo ein Satz reicht, stehen nicht drei. Die Seite
+//     argumentiert mit Bildern, nicht mit Absaetzen.
 //
-// Muster wie in content/seite.ts: erst der Inhalt als literales Objekt
-// (`as const`), die Typen danach als `typeof`-Ableitung.
+// WAS HIER BEWUSST NICHT MEHR STEHT: das Kennzeichen "Fictional demo".
+// Der Grund ist keine Nachlaessigkeit, sondern ein geaenderter Aufbau. Die
+// Galerie behauptet keinen Kunden und keinen Auftrag; sie heisst "what your
+// page could look like" und zeigt Gestaltungen. Damit gibt es nichts
+// klarzustellen. Wer den Abschnitt spaeter in eine Fallstudie umbaut ("built
+// for", "our client"), behauptet etwas und muss diese Entscheidung neu
+// treffen.
 
-/** Eine Adresse, ein Weg. Steht als Konstante hier, weil Leiste, Hero und
- *  spaeter der Schlussblock dieselbe brauchen. */
+/** Eine Adresse, ein Weg. Leiste, Hero und Schlussblock brauchen dieselbe. */
 const CALL = "https://calendly.com/youssef-tayachi-frostbreaker/30min";
 const EMAIL = "youtaybusiness@gmail.com";
 
@@ -34,49 +32,28 @@ export const start = {
   meta: {
     title: "Frostbreaker Marketing: websites that get the call",
     description:
-      "I rebuild the one page that gets your business the call, and you see it working, not described.",
+      "I design and build the one page that gets your business the call. See what yours could look like.",
     locale: "en_US",
   },
 
-  /**
-   * Sprungmarke im Wurzel-Layout. Gilt fuer ALLE Routen, auch die deutschen
-   * Rechtsseiten: sie steht im Wurzel-Layout und kann deshalb nur eine
-   * Sprache haben. Englisch, weil die Startseite den Ton setzt.
-   */
-  sprungmarke: {
-    label: "Skip to content",
-    zielId: "top",
-  },
+  sprungmarke: { label: "Skip to content", zielId: "top" },
 
-  /** app/not-found.tsx, das globale 404. */
   notFound: {
     title: "This page doesn't exist.",
     ctaLabel: "Back to the homepage",
   },
 
-  /**
-   * Die Kopfleiste. Ab 768px traegt sie Wortmarke, zwei Ankerlinks, die
-   * Modus-Gruppe und den Pill-CTA. Darunter nur Wortmarke und CTA, die
-   * Modus-Gruppe steht dann im Fuss (Begruendung in PLAN.md, Abschnitt 5:
-   * drei Ziele zu 44px sind allein 132px, und bei 390px stehen insgesamt
-   * rund 350px zur Verfuegung).
-   */
   leiste: {
     marke: "frostbreaker",
     markeZusatz: "marketing",
     markeHref: "#top",
     anker: [
-      { label: "Work", href: "#work" },
+      { label: "Designs", href: "#designs" },
       { label: "How it works", href: "#how" },
     ],
     cta: { label: "Book a call", href: CALL },
   },
 
-  /**
-   * Die Modus-Gruppe. Drei native Radios in einem fieldset, nicht drei
-   * Knoepfe mit ARIA daruebergelegt: der Browser bringt Gruppensemantik,
-   * Pfeiltasten, wandernden Fokus und die Ansage von sich aus mit.
-   */
   modus: {
     legende: "Theme",
     optionen: [
@@ -86,38 +63,23 @@ export const start = {
     ],
   },
 
-  /**
-   * HERO. Die Ueberschrift traegt genau ein kursives Akzentwort, wie auf
-   * frostbreaker.app. Es steht auf dem Teil, der die Aussage traegt, nicht
-   * auf einem Fuellwort: verloren wird der Kunde VOR dem Anruf, und genau
-   * das ist der Satzteil in Sky.
-   */
   hero: {
     augenbraue: "Web design for local businesses",
     headline: { vor: "Stop losing customers ", akzent: "before they call", nach: "." },
-    lead: "I look at your website the way your customer does: on a phone, in a hurry. Then I rebuild the page that brings the call.",
+    lead: "I look at your website the way your customer does: on a phone, in a hurry. Then I design and build the page that brings the call.",
     cta: { label: "Book a call", href: CALL },
-    zweitCta: { label: "See the work", href: "#work" },
-    /** Steht klein unter den Knoepfen, wie auf frostbreaker.app. Nimmt dem
-     *  Klick das Risiko, ohne etwas zu versprechen, das nicht eingehalten
-     *  werden kann. */
+    zweitCta: { label: "See the designs", href: "#designs" },
     ctaZusatz: "30 minutes. We look at your site together and I tell you what I would change.",
     geraet: {
-      /** Das Bild im Telefonrahmen: die fertige Fassung von Elektro
-       *  Musterhaus, aufgenommen bei 390px. */
       bildAlt:
-        "The rebuilt Elektro Musterhaus website on a phone: a call bar with the phone number sits above the headline, followed by the services.",
+        "A rebuilt electrician website on a phone: the phone number sits in a coloured card near the top, above the services.",
       pause: "Pause the preview",
       weiter: "Play the preview",
     },
   },
 
-  /**
-   * BEWEISSTREIFEN. Der einzige Ort auf dieser Seite, an dem etwas
-   * Nachpruefbares steht, deshalb sind beide Adressen echte Links.
-   */
   beweis: {
-    satz: "The site you are on, the app that emailed you and the pages below: I built all of them.",
+    satz: "The site you are on, the app that emailed you and every design below: I built all of them.",
     links: [
       { label: "frostbreaker.app", href: "https://www.frostbreaker.app/", zusatz: "Product site" },
       { label: "app.frostbreaker.app", href: "https://app.frostbreaker.app/", zusatz: "The software" },
@@ -125,49 +87,84 @@ export const start = {
   },
 
   /**
-   * ARBEITEN. Fall 1 von dreien, der Rest kommt nach der Abnahme.
+   * DIE GALERIE. Der Kern der Seite und der Grund fuer ihren Umbau: ein
+   * Betrieb soll sehen, was moeglich ist, und nicht darueber lesen.
    *
-   * DER VERGLEICH IST DAS ARGUMENT dieser Seite, deshalb steht er hier und
-   * nicht in einer Mail. Die Regel "kein Vorher/Nachher-Regler" aus
-   * Lehren/checkliste.md gilt fuer den Entwurf, der an einen LEAD geht, wo
-   * der Prototyp die Website ist. Hier ist es umgekehrt.
+   * Die Karten sind Aufnahmen echter, gebauter Seiten (components/entwuerfe/),
+   * keine Bildschirmfotos fremder Vorlagen. Deshalb steht hier "I built" und
+   * nicht "inspired by", und deshalb braucht keine Karte einen Hinweis.
    */
-  arbeiten: {
-    id: "work",
-    augenbraue: "Selected work",
-    titel: "Same business, one rebuilt page.",
-    kennzeichen: "Fictional demo. Not a real business.",
+  galerie: {
+    id: "designs",
+    augenbraue: "Designs",
+    titel: "What your page could look like.",
+    lead: "Six directions, each one built from scratch. Yours ends up looking like your business, not like a template someone else is also using.",
+    /** Reihenfolge und Beschriftung der Karten. Die Bilder kommen aus dem
+     *  Manifest, die Zuordnung macht components/start/galerie.tsx. */
+    karten: [
+      { slug: "northline", name: "Northline Builders", art: "Construction" },
+      { slug: "voltas", name: "Voltas Electric", art: "Electrician" },
+      { slug: "ridge", name: "Ridge & Eaves", art: "Roofing" },
+      { slug: "clearflow", name: "Clearflow", art: "Plumbing" },
+      { slug: "stoneleaf", name: "Stoneleaf", art: "Landscaping" },
+      { slug: "foxandco", name: "Fox & Co", art: "Painting" },
+    ],
+  },
+
+  /**
+   * DER VERGLEICH. Das eigentliche Verkaufsargument: dieselbe Firma, dieselben
+   * Leistungen, eine neu gebaute Seite. Zwei Aufnahmen, ein Regler.
+   */
+  vergleich: {
+    augenbraue: "Before and after",
+    titel: "Same business. One rebuilt page.",
+    lead: "The old site still loads. It just doesn't get the call.",
+    adresse: "voltas-electric.example",
     regler: {
       label: "Compare the old and the new page",
       vorher: "Before",
       nachher: "After",
-      /** aria-valuetext, damit ein Screenreader den ZUSTAND ansagt und nicht
-       *  eine nackte Zahl. Die Mitte bekommt den Prozentwert eingesetzt. */
       ansageVorher: "Before, the old page",
       ansageNachher: "After, the rebuilt page",
       ansageMitte: (p: number) => `${p} percent of the rebuilt page`,
     },
-    faelle: [
+    bildAltVorher:
+      "The old website: a narrow box of grey text on a plain background, the phone number sitting inside an image, no clear way to get in touch.",
+    bildAltNachher:
+      "The rebuilt website: a bold headline, the phone number in a coloured card, and four services as tiles.",
+  },
+
+  /** DER ABLAUF. Drei Schritte, ein Satz je Schritt. */
+  ablauf: {
+    id: "how",
+    augenbraue: "How it works",
+    titel: "Three steps, no surprises.",
+    schritte: [
       {
-        slug: "elektro",
-        name: "Elektro Musterhaus",
-        gewerk: "Electrician",
-        /** Adresszeile im Browserrahmen. `.example` ist eine reservierte
-         *  Endung und kann niemandem gehoeren: eine erfundene Domain, die es
-         *  wirklich gibt, waere genau der Fund, den diese Zielgruppe macht. */
-        adresse: "elektro-musterhaus.example",
-        zeile: "The phone number was a picture, not a link. Now it is the first thing you can tap.",
-        tags: ["Web design", "Mobile first", "Speed"],
-        bildAltVorher:
-          "The old Elektro Musterhaus website: a wall of grey text, the phone number sits inside an image, no visible way to get in touch.",
-        bildAltNachher:
-          "The rebuilt Elektro Musterhaus website: a tappable call bar with the phone number, a clear headline and the four services as tiles.",
+        nr: "01",
+        titel: "We talk",
+        text: "Thirty minutes on a call. I go through your site with you and say what I would change and why.",
+      },
+      {
+        nr: "02",
+        titel: "You see it before you decide",
+        text: "I design and build the page, then send you the link. You judge the real thing on your own phone, not a sketch.",
+      },
+      {
+        nr: "03",
+        titel: "It goes live and it is yours",
+        text: "You get the files and the logins. Nothing is rented back to you, and you are not tied to me afterwards.",
       },
     ],
   },
 
-  /** Fuss des Ausschnitts. Der vollstaendige Schlussblock kommt mit den
-   *  restlichen Flaechen. */
+  /** DER SCHLUSS. Eine Zeile, ein Knopf. */
+  schluss: {
+    titel: "Let's look at your site together.",
+    lead: "Thirty minutes, no pitch. Worst case you leave with a list of things to fix yourself.",
+    cta: { label: "Book a call", href: CALL },
+  },
+
   fuss: {
     kontaktLabel: "Contact",
     mail: EMAIL,

@@ -1,4 +1,4 @@
-import telefonBild from "@/public/arbeiten/elektro-neu-390.png";
+import telefonBild from "@/public/arbeiten/hero-telefon.png";
 
 import Geraet from "./geraet";
 import Reveal from "./reveal";

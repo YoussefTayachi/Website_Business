@@ -1,0 +1,581 @@
+/* ============================================================================
+   DIE ENTWUERFE. Drei Bauformen fuer die Website-Gestaltungen, die auf der
+   Startseite als Galerie stehen.
+
+   DIESE DATEI IST EINE INSEL. Sie wird ausschliesslich von der
+   Erfassungsroute geladen (app/erfassung/entwurf/[slug]/), niemals von der
+   Startseite. Auf der Startseite stehen nur die fertigen Aufnahmen.
+
+   NICHTS VON AUSSEN WIRKT HINEIN, NICHTS VON INNEN WIRKT HINAUS:
+   - Jede Regel steht unter `.ew`, jede Klasse traegt das Praefix `.ew-`.
+   - Kein einziger Farbwert steht hier. Alle Farben kommen als `--ew-*` und
+     werden von der Komponente je Entwurf gesetzt, aus content/entwuerfe.ts.
+     Die Tokens der Portfolio-Seite (--c-*) haben hier nichts zu suchen: die
+     Entwuerfe sollen aussehen wie sechs verschiedene Betriebe und nicht
+     sechsmal wie diese Seite.
+   - Auch die Schrift kommt je Entwurf, als `--ew-display` und `--ew-text`.
+
+   MASSSTAB: Die Entwuerfe werden bei 1440px aufgenommen und danach als Bild
+   auf ein Drittel verkleinert. Trotzdem gelten hier die gewoehnlichen
+   Groessen und Trefferflaechen, nicht kleinere: es sind vollstaendige
+   Seiten, und wenn Youssef eine davon als Ausgangspunkt fuer einen echten
+   Auftrag nimmt, soll sie stimmen und nicht erst repariert werden muessen.
+   ========================================================================== */
+
+.ew {
+  background: var(--ew-grund);
+  color: var(--ew-tinte);
+  font-family: var(--ew-text);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ew *,
+.ew *::before,
+.ew *::after {
+  box-sizing: border-box;
+}
+
+.ew h1,
+.ew h2,
+.ew h3 {
+  font-family: var(--ew-display);
+  font-optical-sizing: auto;
+  margin: 0;
+  letter-spacing: -0.025em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.ew p {
+  margin: 0;
+}
+
+.ew-wrap {
+  margin-inline: auto;
+  max-width: 1180px;
+  padding-inline: 56px;
+}
+
+/* ── Kopfleiste, in allen drei Bauformen gleich gebaut ──────────────────── */
+.ew-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding-block: 22px;
+}
+
+.ew-marke {
+  font-family: var(--ew-display);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ew-nav {
+  display: flex;
+  gap: 28px;
+  font-size: 15px;
+  color: var(--ew-leise);
+}
+
+.ew-knopf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ew-akzent);
+  color: var(--ew-auf-akzent);
+  font-family: var(--ew-text);
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ew-knopf--leise {
+  background: transparent;
+  color: var(--ew-tinte);
+  border: 1px solid var(--ew-leise);
+}
+
+.ew-augenbraue {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ew-akzent);
+}
+
+.ew-lead {
+  margin-top: 22px;
+  max-width: 46ch;
+  font-size: 19px;
+  color: var(--ew-leise);
+}
+
+.ew-knoepfe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+/* Die Bildflaeche. Kein Foto, sondern Verlauf plus Form. Der Verlauf steht
+   hier, die Formen kommen als SVG aus der Komponente. */
+.ew-bild {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background:
+    radial-gradient(120% 100% at 12% 8%, var(--ew-bild2), transparent 62%),
+    linear-gradient(150deg, var(--ew-bild1), var(--ew-bild2));
+}
+
+.ew-bild svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ══ BAUFORM 1: SPLIT ════════════════════════════════════════════════════
+   Ueberschrift links, Bildflaeche rechts, darunter nummerierte Leistungen
+   an Haarlinien. Die kraeftigste der drei, gedacht fuer dunkle Marken. */
+.ew-split__held {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 56px;
+  align-items: center;
+  /* ENG GESTELLT. Bei 64/88 Innenabstand und einer 4:5-Bildflaeche begann
+     die Ueberschrift erst bei einem Drittel der Seitenhoehe, und die
+     Leistungen fielen aus der 900px-Aufnahme heraus. Eine Galeriekarte zeigt
+     den ersten Bildschirm, und der muss die Leistungen enthalten. */
+  padding-block: 28px 52px;
+}
+
+.ew-split__held h1 {
+  margin-top: 14px;
+  font-size: 62px;
+  font-weight: 700;
+}
+
+.ew-split__bild {
+  /* Quadratisch statt hochkant, aus demselben Grund: hochkant diktierte die
+     Bildflaeche die Hoehe des ganzen Helden. */
+  aspect-ratio: 1 / 1;
+}
+
+.ew-split__liste {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  border-top: 1px solid color-mix(in srgb, var(--ew-leise) 40%, transparent);
+}
+
+.ew-split__punkt {
+  padding: 30px 26px 34px 0;
+  border-right: 1px solid color-mix(in srgb, var(--ew-leise) 40%, transparent);
+}
+
+.ew-split__punkt:last-child {
+  border-right: 0;
+}
+
+.ew-split__nr {
+  font-family: var(--ew-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--ew-akzent);
+}
+
+.ew-split__punkt h3 {
+  margin-top: 10px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.ew-split__punkt p {
+  margin-top: 8px;
+  font-size: 16px;
+  color: var(--ew-leise);
+}
+
+.ew-split__fuss {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 8px;
+  padding-block: 30px;
+  border-top: 1px solid color-mix(in srgb, var(--ew-leise) 40%, transparent);
+  font-size: 16px;
+  color: var(--ew-leise);
+}
+
+.ew-split__tel {
+  font-family: var(--ew-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ew-tinte);
+  letter-spacing: -0.01em;
+}
+
+/* ══ BAUFORM 2: BAND ═════════════════════════════════════════════════════
+   Mittiger Kopf, breites Farbband, darauf eine weisse Karte, die
+   ueberlappt. Die ruhigste der drei, gedacht fuer Serifen-Marken. */
+.ew-band__held {
+  position: relative;
+  margin-top: 8px;
+  padding: 92px 56px 150px;
+  text-align: center;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.ew-band__held h1 {
+  position: relative;
+  margin-top: 16px;
+  font-size: 60px;
+  font-weight: 500;
+  color: var(--ew-auf-akzent);
+}
+
+.ew-band__held .ew-augenbraue {
+  position: relative;
+  color: color-mix(in srgb, var(--ew-auf-akzent) 80%, transparent);
+}
+
+.ew-band__karte {
+  position: relative;
+  z-index: 2;
+  margin: -96px auto 0;
+  max-width: 760px;
+  padding: 38px 42px;
+  border-radius: 20px;
+  background: var(--ew-flaeche);
+  box-shadow: 0 24px 60px -30px rgb(0 0 0 / 0.35);
+  text-align: center;
+}
+
+.ew-band__karte .ew-lead {
+  margin-inline: auto;
+  margin-top: 0;
+}
+
+.ew-band__karte .ew-knoepfe {
+  justify-content: center;
+}
+
+.ew-band__liste {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 40px;
+  padding-block: 76px 20px;
+}
+
+.ew-band__punkt h3 {
+  font-size: 26px;
+  font-weight: 500;
+}
+
+.ew-band__punkt p {
+  margin-top: 10px;
+  font-size: 16px;
+  color: var(--ew-leise);
+}
+
+.ew-band__regel {
+  width: 44px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ew-akzent);
+  margin-bottom: 18px;
+}
+
+.ew-band__fuss {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 14px;
+  padding-block: 26px 40px;
+  font-size: 16px;
+  color: var(--ew-leise);
+}
+
+.ew-band__tel {
+  font-family: var(--ew-display);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ew-tinte);
+}
+
+/* ══ BAUFORM 3: KACHEL ═══════════════════════════════════════════════════
+   Ueberschrift links, farbige Kontaktkarte rechts, darunter vier Kacheln.
+   Die sachlichste der drei, gedacht fuer Betriebe, die vom Anruf leben. */
+.ew-kachel__held {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 48px;
+  align-items: start;
+  padding-block: 56px 68px;
+}
+
+.ew-kachel__held h1 {
+  margin-top: 14px;
+  font-size: 62px;
+  font-weight: 700;
+}
+
+/* Die Kontaktkarte. Sie ist der Grund fuer diese Bauform: die Nummer steht
+   im ersten Bildschirm, gross, und ist ein Ziel und kein Bild. */
+.ew-kachel__karte {
+  padding: 30px;
+  border-radius: 20px;
+  background: var(--ew-akzent);
+  color: var(--ew-auf-akzent);
+}
+
+.ew-kachel__karte .ew-augenbraue {
+  color: color-mix(in srgb, var(--ew-auf-akzent) 82%, transparent);
+}
+
+.ew-kachel__tel {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--ew-display);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ew-auf-akzent);
+}
+
+.ew-kachel__notiz {
+  margin-top: 12px;
+  font-size: 15px;
+  color: color-mix(in srgb, var(--ew-auf-akzent) 84%, transparent);
+}
+
+.ew-kachel__karte .ew-knopf {
+  margin-top: 22px;
+  width: 100%;
+  background: var(--ew-auf-akzent);
+  color: var(--ew-akzent);
+}
+
+.ew-kachel__bild {
+  margin-top: 20px;
+  aspect-ratio: 16 / 7;
+}
+
+.ew-kachel__liste {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  padding-bottom: 56px;
+}
+
+.ew-kachel__punkt {
+  position: relative;
+  padding: 26px 22px 28px;
+  border-radius: 16px;
+  background: var(--ew-flaeche);
+  overflow: hidden;
+}
+
+/* Die farbige Ecke. Ein Zeichen, das die Kacheln zusammenbindet, ohne dass
+   vier Piktogramme erfunden werden muessen, die nichts bedeuten. */
+.ew-kachel__punkt::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 46px;
+  height: 46px;
+  background: var(--ew-akzent);
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+  opacity: 0.16;
+}
+
+.ew-kachel__punkt h3 {
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.ew-kachel__punkt p {
+  margin-top: 8px;
+  font-size: 15px;
+  color: var(--ew-leise);
+}
+
+.ew-kachel__fuss {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-block: 26px 36px;
+  border-top: 1px solid color-mix(in srgb, var(--ew-leise) 34%, transparent);
+  font-size: 15px;
+  color: var(--ew-leise);
+}
+
+/* ══ SCHMALE FENSTER ═════════════════════════════════════════════════════
+   Bis hierher waren die drei Bauformen reine Breitbildraster. Das fiel auf,
+   als die Telefonaufnahme fuer den Hero entstand: bei 420px quetschte das
+   zweispaltige Raster die Ueberschrift in eine Spalte von 180 Pixeln, und
+   "Power back on, same day." brach zu "Pow er back on, sam e day." um.
+
+   Das ist nicht nur ein haessliches Bild. Eine Gestaltung, die auf einem
+   Telefon zerfaellt, waere in einem Angebot ueber mobile Websites die
+   schlechteste denkbare Arbeitsprobe, und Youssef koennte keinen dieser
+   Entwuerfe als Ausgangspunkt fuer einen echten Auftrag nehmen.
+
+   720px als Grenze und nicht 768: die Entwuerfe haben einen breiteren
+   Innenabstand als die Portfolio-Seite, ihre Spalten werden also frueher
+   zu eng. */
+@media (max-width: 720px) {
+  .ew {
+    font-size: 16px;
+  }
+
+  .ew-wrap {
+    padding-inline: 22px;
+  }
+
+  /* Die Navigation entfaellt, die Wortmarke und der Knopf bleiben. Ein
+     Menueknopf waere hier eine Behauptung: die Aufnahme zeigt einen
+     Zustand, kein bedienbares Menue. */
+  .ew-nav {
+    display: none;
+  }
+
+  .ew-bar {
+    padding-block: 16px;
+  }
+
+  .ew-lead {
+    font-size: 17px;
+    margin-top: 16px;
+  }
+
+  .ew-knoepfe {
+    margin-top: 24px;
+  }
+
+  .ew-knopf {
+    flex: 1 1 auto;
+    min-height: 50px;
+  }
+
+  /* Split: einspaltig, Bild unter den Text. */
+  .ew-split__held {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-block: 12px 36px;
+  }
+
+  .ew-split__held h1 {
+    font-size: 40px;
+  }
+
+  .ew-split__bild {
+    aspect-ratio: 16 / 11;
+  }
+
+  .ew-split__liste {
+    grid-template-columns: 1fr;
+  }
+
+  .ew-split__punkt {
+    padding: 20px 0 22px;
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--ew-leise) 40%, transparent);
+  }
+
+  .ew-split__punkt:last-child {
+    border-bottom: 0;
+  }
+
+  .ew-split__fuss {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* Band: flacheres Band, Karte ohne negativen Versatz. */
+  .ew-band__held {
+    padding: 48px 24px 64px;
+    border-radius: 18px;
+  }
+
+  .ew-band__held h1 {
+    font-size: 36px;
+  }
+
+  .ew-band__karte {
+    margin-top: -32px;
+    padding: 24px 22px;
+    border-radius: 16px;
+  }
+
+  .ew-band__liste {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-block: 44px 12px;
+  }
+
+  .ew-band__punkt h3 {
+    font-size: 22px;
+  }
+
+  /* Kachel: Kontaktkarte NACH OBEN, vor die Ueberschrift. Auf einem Telefon
+     ist die Nummer das Wichtigste, und der Betrieb, um den es hier geht,
+     lebt vom Anruf. Deshalb order und nicht nur Umbruch. */
+  .ew-kachel__held {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding-block: 12px 36px;
+  }
+
+  .ew-kachel__karte {
+    order: -1;
+    padding: 22px;
+  }
+
+  .ew-kachel__tel {
+    font-size: 32px;
+  }
+
+  .ew-kachel__held h1 {
+    font-size: 38px;
+  }
+
+  .ew-kachel__bild {
+    aspect-ratio: 16 / 9;
+  }
+
+  .ew-kachel__liste {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding-bottom: 36px;
+  }
+
+  .ew-kachel__punkt {
+    padding: 18px 16px 20px;
+  }
+
+  .ew-kachel__punkt h3 {
+    font-size: 18px;
+  }
+
+  .ew-kachel__fuss {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}

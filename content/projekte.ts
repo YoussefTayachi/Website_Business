@@ -16,8 +16,8 @@
 export const projekte = {
   "elektro-musterhaus": {
     slug: "elektro-musterhaus",
-    firma: "Elektro Musterhaus",
-    branche: "Elektrohandwerk",
+    firma: "Voltas Electric",
+    branche: "Electrical",
     kurzbeschreibung:
       "Baukasten-Website aus den frühen 2010ern: Telefonnummer als Bild, kein Formular, kaum bedienbar am Handy.",
     findings: [
@@ -59,18 +59,18 @@ export const projekte = {
     },
     alteFassung: {
       navigation: [
-        { label: "Startseite", href: "#" },
-        { label: "Leistungen", href: "#" },
-        { label: "Über uns", href: "#" },
-        { label: "Kontakt", href: "#" },
+        { label: "Home", href: "#" },
+        { label: "Services", href: "#" },
+        { label: "About us", href: "#" },
+        { label: "Contact", href: "#" },
       ],
-      ueberschrift: "Willkommen bei Elektro Musterhaus",
-      unterzeile: "Ihr Partner für Elektrotechnik in der Region, seit vielen Jahren.",
+      ueberschrift: "Welcome to the website of Voltas Electric",
+      unterzeile: "Your partner for electrical engineering in the region, for many years now.",
       absaetze: [
-        "Wir bieten Ihnen ein umfangreiches Leistungsspektrum rund um die Elektroinstallation, von der Neuinstallation bis zur Wartung bestehender Anlagen.",
-        "Kompetenz, Zuverlässigkeit und Kundenzufriedenheit stehen bei uns im Mittelpunkt unseres Handelns.",
+        "We offer you a comprehensive range of services in the field of electrical installation, from new installations through to the maintenance of existing systems.",
+        "Competence, reliability and customer satisfaction are at the heart of everything that we do.",
       ],
-      ctaLabel: "Kontaktieren Sie uns",
+      ctaLabel: "Please contact us",
       // Text, der in der Kopfzeile als Bild statt als Text dargestellt wird
       // (siehe Finding "Telefonnummer als Grafik").
       telefonBildText: "Tel. 0800 / 000 000",
@@ -79,23 +79,23 @@ export const projekte = {
       // Kontaktweg sichtbar"). Ergänzt den blassen Textlink von `ctaLabel`
       // um den zweiten Teil des Befunds: die Adresse selbst.
       emailZeile:
-        "Für Anfragen wenden Sie sich bitte per E-Mail an anfrage@elektro-musterhaus.beispiel, wir kümmern uns umgehend um Ihr Anliegen.",
-      fusszeile: "Elektro Musterhaus, Musterstraße 1, 12345 Musterstadt. Alle Rechte vorbehalten.",
+        "For enquiries please contact us by e-mail at enquiries@voltas-electric.example and we will attend to your request as soon as possible.",
+      fusszeile: "Voltas Electric, 14 Mill Lane, Bradford BD1 2AB. All rights reserved.",
     },
     neueFassung: {
       navigation: [
-        { label: "Leistungen", href: "#" },
-        { label: "Ablauf", href: "#" },
-        { label: "Kontakt", href: "#" },
+        { label: "Services", href: "#" },
+        { label: "How it works", href: "#" },
+        { label: "Contact", href: "#" },
       ],
-      ueberschrift: "Elektroinstallation aus einer Hand",
-      unterzeile: "Von der Erstberatung bis zur Abnahme: ein Ansprechpartner, ein Weg zur Anfrage.",
+      ueberschrift: "Electrical work from a single source",
+      unterzeile: "From the first call to sign off: one contact, one way to get in touch.",
       absaetze: [
-        "Elektro Musterhaus übernimmt Neuinstallationen, Wartung und Störungsdienst für Betriebe und private Haushalte in der Region.",
-        "Eine Anfrage genügt: Rückmeldung mit einem konkreten Termin, nicht mit einer weiteren Frage.",
+        "Voltas Electric handles new installations, maintenance and emergency call outs for businesses and households across the region.",
+        "One enquiry is enough: you get an answer with a date in it, not another question.",
       ],
-      ctaLabel: "Anfrage senden",
-      fusszeile: "Elektro Musterhaus, Musterstraße 1, 12345 Musterstadt.",
+      ctaLabel: "Send an enquiry",
+      fusszeile: "Voltas Electric, 14 Mill Lane, Bradford BD1 2AB.",
     },
   },
 
@@ -153,10 +153,10 @@ export const projekte = {
     },
     alteFassung: {
       navigation: [
-        { label: "Startseite", href: "#" },
-        { label: "Leistungen", href: "#" },
-        { label: "Über uns", href: "#" },
-        { label: "Kontakt", href: "#" },
+        { label: "Home", href: "#" },
+        { label: "Services", href: "#" },
+        { label: "About us", href: "#" },
+        { label: "Contact", href: "#" },
       ],
       ueberschrift: "Willkommen bei Baubetrieb Mustergrund",
       unterzeile: "Ihr zuverlässiger Partner für Hochbau in der Region.",
@@ -164,7 +164,7 @@ export const projekte = {
         "Wir realisieren Bauvorhaben jeder Größenordnung und stehen Ihnen als kompetenter Partner in allen Phasen des Bauprozesses zur Seite, von der Planung bis zur schlüsselfertigen Übergabe.",
         "Qualität, Termintreue und eine partnerschaftliche Zusammenarbeit stehen bei uns im Mittelpunkt unseres unternehmerischen Handelns.",
       ],
-      ctaLabel: "Kontaktieren Sie uns",
+      ctaLabel: "Please contact us",
       // Reine Aufzaehlung von Leistungsbegriffen ohne ein einziges Projekt
       // dahinter (siehe Finding "Keine Referenz sichtbar" und "Keine laufende
       // Baustelle"): der Kunde liest vier Woerter, aber sieht nichts, was der
@@ -175,8 +175,8 @@ export const projekte = {
     neueFassung: {
       navigation: [
         { label: "Referenzen", href: "#" },
-        { label: "Leistungen", href: "#" },
-        { label: "Kontakt", href: "#" },
+        { label: "Services", href: "#" },
+        { label: "Contact", href: "#" },
       ],
       ueberschrift: "Hochbau mit sichtbaren Ergebnissen",
       unterzeile: "Abgeschlossene und laufende Projekte aus der Region, direkt auf der Seite.",
@@ -246,10 +246,10 @@ export const projekte = {
     },
     alteFassung: {
       navigation: [
-        { label: "Startseite", href: "#" },
-        { label: "Leistungen", href: "#" },
-        { label: "Über uns", href: "#" },
-        { label: "Kontakt", href: "#" },
+        { label: "Home", href: "#" },
+        { label: "Services", href: "#" },
+        { label: "About us", href: "#" },
+        { label: "Contact", href: "#" },
       ],
       ueberschrift: "Herzlich willkommen bei Dachdecker Musterhöhe",
       unterzeile: "Ihr zuverlässiger Partner rund ums Dach, seit vielen Jahren.",
@@ -257,7 +257,7 @@ export const projekte = {
         "Wir bieten Ihnen ein umfassendes Leistungsspektrum rund um die Dacheindeckung, von der Neueindeckung bis zur regelmäßigen Wartung Ihres Daches.",
         "Zuverlässigkeit und Kundenzufriedenheit stehen bei uns im Mittelpunkt unseres Handelns.",
       ],
-      ctaLabel: "Kontaktieren Sie uns",
+      ctaLabel: "Please contact us",
       // Nur die gewoehnlichen Geschaeftszeiten, kein Wort zum Notdienst
       // (siehe Finding "Kein Notdienst sichtbar"): wer nachts sucht, findet
       // hier nur eine Uhrzeit, zu der ohnehin niemand rangeht.
@@ -269,8 +269,8 @@ export const projekte = {
     neueFassung: {
       navigation: [
         { label: "Notdienst", href: "#" },
-        { label: "Leistungen", href: "#" },
-        { label: "Kontakt", href: "#" },
+        { label: "Services", href: "#" },
+        { label: "Contact", href: "#" },
       ],
       ueberschrift: "Dacharbeiten aus einer Hand",
       unterzeile: "Neueindeckung, Reparatur und Wartung für Dächer in der Region.",
