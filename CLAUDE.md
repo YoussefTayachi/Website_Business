@@ -162,8 +162,22 @@ Werkzeug-Standard.
 
 `npm run typecheck` und `npm run build` muessen fehlerfrei durchlaufen. Die
 CI (`.github/workflows/ci.yml`) faehrt genau diese zwei Befehle auf jedem
-Push nach `main`, deployt aber **nicht**. Ein Push geht ins Repo und sonst
-nirgendwohin.
+Push nach `main` und deployt selbst nicht.
+
+**ABER EIN PUSH NACH `main` GEHT LIVE.** Hier stand bis zum 2026-08-31 das
+Gegenteil ("ein Push geht ins Repo und sonst nirgendwohin"), und das war
+falsch: das Vercel-Projekt `website-business` haengt ueber Vercels eigene
+GitHub-Integration am Repo `YoussefTayachi/Website_Business` und baut jeden
+Push nach `main` als **Produktion**. Die CI-Datei hat damit nichts zu tun,
+und ein fehlendes `.vercel/`-Verzeichnis beweist gar nichts, weil die
+Verknuepfung bei Vercel liegt und nicht im Arbeitsverzeichnis.
+
+Oeffentlich erreichbar ist davon `https://website-business-five.vercel.app`.
+Die Aliase mit `-git-main-` und `-youtays-projects` im Namen antworten mit
+302, sie stehen hinter Vercels Zugriffsschutz.
+`marketing.frostbreaker.app` ist noch nicht eingerichtet und loest nicht auf.
+
+Wer also ohne Absicht veroeffentlichen will, committet und pusht **nicht**.
 
 Die vier Dinge, an denen sich diese Seite messen lassen muss: kein
 Layout-Sprung beim Laden, Tastaturbedienung ueberall, sichtbarer Fokusring,
