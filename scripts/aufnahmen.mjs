@@ -47,16 +47,22 @@ const ZIEL = "public/arbeiten";
    BEIDE SEITEN DES PAARES MUESSEN DIESELBE HOEHE HABEN, sonst springt der
    Vergleich beim Ziehen. Die Pruefung unten erzwingt das. */
 const AUFNAHMEN = [
-  // Die Galerie. Sechs Gestaltungen, jede bei 1440 aufgenommen und auf der
-  // Startseite als Karte gezeigt. 900 Pixel hoch, weil genau so viel von
-  // einer Seite in eine Galeriekarte passt, ohne dass sie zur Briefmarke
-  // wird: gezeigt wird der erste Bildschirm, und ueber den wird geurteilt.
-  { fall: "entwurf/northline", datei: "entwurf-northline", breite: 1440, hoehe: 900, platz: "Galerie, Bau" },
-  { fall: "entwurf/voltas", datei: "entwurf-voltas", breite: 1440, hoehe: 900, platz: "Galerie, Elektro" },
-  { fall: "entwurf/ridge", datei: "entwurf-ridge", breite: 1440, hoehe: 900, platz: "Galerie, Dach" },
-  { fall: "entwurf/clearflow", datei: "entwurf-clearflow", breite: 1440, hoehe: 900, platz: "Galerie, Sanitaer" },
-  { fall: "entwurf/stoneleaf", datei: "entwurf-stoneleaf", breite: 1440, hoehe: 900, platz: "Galerie, Garten" },
-  { fall: "entwurf/foxandco", datei: "entwurf-foxandco", breite: 1440, hoehe: 900, platz: "Galerie, Maler" },
+  // Die Galerie. Sechs Gestaltungen.
+  //
+  // 1200 UND NICHT 1440, und das ist der billigste Weg zu groesseren
+  // Entwuerfen: `.ew-wrap` ist 1180px breit: bei 1440 Fensterbreite stehen
+  // links und rechts 130px leere Flaeche, die in der Karte mitverkleinert
+  // wird. Bei 1200 fuellt der Inhalt den Rahmen fast randlos, und dieselbe
+  // Karte zeigt denselben Entwurf rund 20 Prozent groesser, ohne dass an
+  // einer einzigen Schriftgroesse gedreht werden muss.
+  //
+  // 760 hoch: genug fuer Kopfleiste, Held und den Anfang der Leistungen.
+  { fall: "entwurf/northline", datei: "entwurf-northline", breite: 1200, hoehe: 760, platz: "Galerie, Bau" },
+  { fall: "entwurf/voltas", datei: "entwurf-voltas", breite: 1200, hoehe: 760, platz: "Galerie, Elektro" },
+  { fall: "entwurf/ridge", datei: "entwurf-ridge", breite: 1200, hoehe: 760, platz: "Galerie, Dach" },
+  { fall: "entwurf/clearflow", datei: "entwurf-clearflow", breite: 1200, hoehe: 760, platz: "Galerie, Sanitaer" },
+  { fall: "entwurf/stoneleaf", datei: "entwurf-stoneleaf", breite: 1200, hoehe: 760, platz: "Galerie, Garten" },
+  { fall: "entwurf/foxandco", datei: "entwurf-foxandco", breite: 1200, hoehe: 760, platz: "Galerie, Maler" },
 
   // Der Hero. Dieselbe Gestaltung wie in der Galerie, aber schmal
   // aufgenommen: im Telefonrahmen steht eine Telefonansicht und keine
@@ -65,10 +71,16 @@ const AUFNAHMEN = [
 
   // Der Vergleich. Die alte Fassung ist die absichtlich schlechte Seite aus
   // components/showcase/demos/, die neue ist der Entwurf desselben Betriebs.
-  // DIE HOEHE 800 IST GEMESSEN: bei 900 endete der Inhalt der alten Fassung
-  // bei rund 830 Pixeln, und der Rest war leere Flaeche.
-  { fall: "elektro-alt", datei: "vergleich-vorher", breite: 1440, hoehe: 800, platz: "Vergleich, vorher" },
-  { fall: "entwurf/voltas", datei: "vergleich-nachher", breite: 1440, hoehe: 800, platz: "Vergleich, nachher" },
+  // Dieselbe Breite wie die Galerie, damit die alte Fassung nicht in einem
+  // anderen Massstab neben den Entwuerfen steht.
+  { fall: "elektro-alt", datei: "vergleich-vorher", breite: 1200, hoehe: 760, platz: "Vergleich, vorher" },
+  { fall: "entwurf/voltas", datei: "vergleich-nachher", breite: 1200, hoehe: 760, platz: "Vergleich, nachher" },
+
+  // Die Metadaten-Bilder. Sie landen NICHT in public/arbeiten/, sondern
+  // neben app/layout.tsx: Next findet opengraph-image.png und apple-icon.png
+  // dort von selbst, ohne dass sie irgendwo eingetragen werden muessen.
+  { fall: "og", datei: "opengraph-image", ordner: "app", breite: 1200, hoehe: 630, platz: "og:image und twitter:image" },
+  { fall: "og?icon", datei: "apple-icon", ordner: "app", breite: 180, hoehe: 180, platz: "Symbol fuer iOS-Startbildschirm" },
 ];
 
 /** Wartet, bis die Seite wirklich fertig ist, statt eine Zahl abzuwarten. */
@@ -120,8 +132,9 @@ try {
     await ruhe(page);
 
     const datei = `${a.datei}.png`;
-    const pfad = path.join(ZIEL, datei);
-    await mkdir(ZIEL, { recursive: true });
+    const ordner = a.ordner ?? ZIEL;
+    const pfad = path.join(ordner, datei);
+    await mkdir(ordner, { recursive: true });
     // ZWEI ARTEN VON AUFNAHME, und der Unterschied ist wichtig:
     //
     // Die TELEFONAUFNAHME soll im Geraeterahmen wandern koennen und ist
@@ -135,8 +148,14 @@ try {
     // Die BREITBILDAUFNAHMEN zeigen den ersten Bildschirm in einem festen
     // Fenstermass, weil genau der im Vergleich verglichen wird und beide
     // Seiten eines Paares dieselben Masse brauchen.
-    const elementweise = a.breite < 500;
-    const ziel = elementweise ? page.locator("[data-erfassung] > *").first() : page;
+    const elementweise = a.breite < 500 || a.fall.startsWith("og");
+    // DAS ELEMENT MIT DER MARKIERUNG, nicht sein erstes Kind. Die
+    // Vorgaengerfassung nahm `[data-erfassung] > *`, weil bei den Demos ein
+    // Wrapper die Markierung trug. Beim OG-Bild sitzt sie direkt auf der
+    // Flaeche, und die Aufnahme zeigte dann nur die Kopfzeile: 1200 mal 100
+    // statt 1200 mal 630. Der Wrapper ist inzwischen ueberall so hoch wie
+    // sein Inhalt, also ist er die richtige Wahl fuer beide Faelle.
+    const ziel = elementweise ? page.locator("[data-erfassung]").first() : page;
     await ziel.screenshot({ path: pfad });
 
     const masse = await page.evaluate(() => {

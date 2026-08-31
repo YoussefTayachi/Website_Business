@@ -26,7 +26,10 @@
 
 /** Eine Adresse, ein Weg. Leiste, Hero und Schlussblock brauchen dieselbe. */
 const CALL = "https://calendly.com/youssef-tayachi-frostbreaker/30min";
-const EMAIL = "youtaybusiness@gmail.com";
+/** Die Geschaeftsadresse. Frueher stand hier eine Gmail-Adresse; wer eine
+ *  Website verkauft und selbst von einem Freemail-Konto schreibt, widerlegt
+ *  sich in der Absenderzeile. */
+const EMAIL = "youssef.tayachi@frostbreaker.app";
 
 export const start = {
   meta: {

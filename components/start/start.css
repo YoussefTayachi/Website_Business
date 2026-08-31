@@ -47,20 +47,26 @@
 
      Fliesstext nicht unter 17px. Das ist die Vorgabe fuer Verkaufsseiten und
      keine Empfehlung. Kleinlabels nicht unter 13px. */
-  --st-fs-hero: clamp(2.5rem, 5.6vw, 4.5rem); /* 1440px -> 72px */
-  --st-fs-h2: clamp(1.875rem, 3.4vw, 3rem); /* 1440px -> 48px */
-  --st-fs-h3: 1.5rem; /* die Grenze, ab der Fraunces ueberhaupt erlaubt ist */
-  --st-fs-lead: clamp(1.0625rem, 0.95vw + 0.75rem, 1.25rem); /* 17 -> 20px */
-  --st-fs-body: 1.0625rem; /* 17px */
-  --st-fs-label: 0.8125rem; /* 13px, nur Versalien mit Laufweite */
-  --st-fs-tag: 0.875rem; /* 14px */
+  /* ALLE STUFEN AM 2026-08-31 ANGEHOBEN, auf Ansage des Nutzers ("mach alles
+     groesser"). Die Untergrenzen sind bei 390px nachgerechnet, nicht
+     hochskaliert: dort bleiben nach den Raendern 350px Satzbreite, und das
+     laengste Wort der Ueberschrift ist "customers" mit neun Zeichen. Bei
+     44px Madefor Bold misst es rund 230px und passt. */
+  --st-fs-hero: clamp(2.75rem, 6.4vw, 5.5rem); /* 44px -> 88px */
+  --st-fs-h2: clamp(2.125rem, 4.2vw, 3.75rem); /* 34px -> 60px */
+  --st-fs-h3: 1.75rem; /* 28px */
+  --st-fs-lead: clamp(1.1875rem, 1vw + 0.8rem, 1.5rem); /* 19px -> 24px */
+  --st-fs-body: 1.125rem; /* 18px */
+  --st-fs-label: 0.875rem; /* 14px, nur Versalien mit Laufweite */
+  --st-fs-tag: 0.9375rem; /* 15px */
 
   /* ── RHYTHMUS ────────────────────────────────────────────────────────────
      Zwei Abschnittsstufen, nicht drei: ein Kapitel und ein Unterabschnitt.
      Auf einem 667px hohen Telefon waeren 96px Innenabstand 14 Prozent des
      ersten Bildschirms, und die gehoeren der Ueberschrift. */
   --st-gutter: clamp(1.25rem, 4vw, 3rem);
-  --st-max: 72rem; /* 1152px, dieselbe Satzbreite wie frostbreaker.app */
+  --st-max: 78rem; /* 1248px. Breiter als frostbreaker.app, weil hier
+                      Bilder tragen und keine Textspalten. */
   --st-block: clamp(4.5rem, 8vw, 8.5rem);
   --st-block-s: clamp(3rem, 5vw, 4.5rem);
   --st-bar: 4.5rem;
@@ -478,7 +484,7 @@
 
 @media (min-width: 62rem) {
   .st-hero__in {
-    grid-template-columns: minmax(0, 1fr) 21rem;
+    grid-template-columns: minmax(0, 1fr) 24rem;
   }
 }
 
@@ -529,7 +535,7 @@
 .st-geraet {
   position: relative;
   margin: 0 auto;
-  width: min(20rem, 100%);
+  width: min(23rem, 100%);
   padding: 0.55rem;
   border-radius: 2.25rem;
   background: var(--c-solid);
@@ -706,15 +712,15 @@
   padding: 0;
 }
 
-@media (min-width: 40rem) {
+/* ZWEI SPALTEN, NICHT DREI. Bei drei Spalten war eine Karte rund 360px
+   breit und zeigte einen 1200px-Entwurf auf 30 Prozent: man sah, DASS da
+   sechs verschiedene Seiten stehen, aber nicht mehr, WAS darauf steht. Bei
+   zwei Spalten sind es rund 590px und damit die Haelfte des Originals.
+   Sechs Karten in drei Reihen sind laenger zu scrollen, und das ist der
+   richtige Tausch: die Galerie ist der Grund, warum jemand bleibt. */
+@media (min-width: 52rem) {
   .st-galerie__raster {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 64rem) {
-  .st-galerie__raster {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -747,10 +753,10 @@
   display: block;
   width: 100%;
   height: auto;
-  /* Genau das Fenstermass der Aufnahme (scripts/aufnahmen.mjs, 1440 zu 900).
+  /* Genau das Fenstermass der Aufnahme (scripts/aufnahmen.mjs, 1200 zu 760).
      Steht es hier, ist der Platz vor dem Bild reserviert und das Raster
      springt beim Laden nicht. */
-  aspect-ratio: 1440 / 900;
+  aspect-ratio: 1200 / 760;
   object-fit: cover;
   object-position: top center;
   transition: transform 0.5s var(--st-ease);
@@ -782,7 +788,7 @@
 
 .st-karte__name {
   font-family: var(--st-display);
-  font-size: 1.0625rem;
+  font-size: 1.25rem;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -902,7 +908,7 @@
    schon vor dem Bild reserviert und beim Laden springt nichts. */
 @media (min-width: 48rem) {
   .st-vgl {
-    aspect-ratio: 1440 / 800;
+    aspect-ratio: 1200 / 760;
   }
 }
 

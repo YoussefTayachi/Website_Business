@@ -185,7 +185,7 @@ export const seite = {
       },
       {
         ueberschrift: "Contact",
-        text: "Email: [insert email address]\nPhone: [insert phone number, if you want one listed]",
+        text: "Email: youssef.tayachi@frostbreaker.app\nPhone: [insert phone number, if you want one listed]",
       },
       {
         ueberschrift: "VAT ID",
@@ -207,7 +207,7 @@ export const seite = {
     abschnitte: [
       {
         ueberschrift: "Controller",
-        text: "[Full name]\n[Street and house number]\n[Postal code and city]\nEmail: [insert email address]",
+        text: "[Full name]\n[Street and house number]\n[Postal code and city]\nEmail: youssef.tayachi@frostbreaker.app",
       },
       {
         ueberschrift: "Hosting and server log data",

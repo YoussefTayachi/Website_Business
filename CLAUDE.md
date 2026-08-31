@@ -228,3 +228,14 @@ Die Erfassungsseiten heissen `page.capture.tsx` und stehen nur mit
 `CAPTURE=1` in `pageExtensions` (siehe `next.config.mjs`). Ohne die Variable
 sind sie fuer Next keine Seiten und koennen nicht in einen Produktionsbau
 geraten. Nachgeprueft wird das am Routen-Manifest, nicht geglaubt.
+
+**Auch die Metadaten-Bilder kommen von dort.** `app/opengraph-image.png` und
+`app/apple-icon.png` werden von `/erfassung/og` aufgenommen und liegen fest
+im Repo. Der naheliegende Weg waere `next/og` gewesen; Satori liest aber TTF,
+OTF und WOFF und **kein WOFF2**, und die @fontsource-variable-Pakete liefern
+nur WOFF2. Das OG-Bild stuende damit in einer Systemschrift. Ueber die
+Aufnahme traegt es dieselbe Schrift und dieselben Entwuerfe wie die Seite.
+
+Das Browsersymbol (`app/icon.svg`) ist die Bildmarke von Frostbreaker, damit
+marketing.frostbreaker.app und frostbreaker.app im Tab dasselbe Zeichen
+tragen.
