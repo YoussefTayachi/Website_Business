@@ -16,6 +16,15 @@ export default function StartFuss() {
   return (
     <footer className="st-fuss">
       <div className="st-wrap st-fuss__in">
+        {/* Die vollstaendige Wortmarke. Sie steht hier, weil die Kopfleiste
+            auf dem Telefon nur "frostbreaker" traegt: der Zusatz passt dort
+            neben die Modus-Gruppe nicht mehr (nachgerechnet in start.css).
+            So steht der volle Name auf jeder Breite genau einmal. */}
+        <p className="st-fuss__marke">
+          {start.leiste.marke}
+          <span className="st-fuss__marke-zusatz">{start.leiste.markeZusatz}</span>
+        </p>
+
         <ul className="st-fuss__links">
           <li>
             {kontaktLabel}: <a href={`mailto:${mail}`}>{mail}</a>

@@ -13,6 +13,9 @@
 
    ZWEI DINGE, DIE HIER GELERNT WURDEN und ohne die die Bilder luegen:
 
+   0. NICHT NUR `scrollWidth` PRUEFEN. Siehe die Begruendung unten an der
+      Messstelle: `overflow-x: clip` macht diesen Wert blind.
+
    1. VOLLSTAENDIG SCROLLEN, DANN ZURUECK. Die Abschnitte blenden ueber einen
       IntersectionObserver ein. Wer nur oben aufnimmt, fotografiert leere
       Flaechen und haelt sie fuer einen Fehler.
@@ -83,12 +86,54 @@ try {
 
     await page.screenshot({ path: path.join(ZIEL, `seite-${f.name}.png`), fullPage: true });
 
+    /* ZWEI PRUEFUNGEN, UND DIE ZWEITE IST DIE WICHTIGE.
+     *
+     * `scrollWidth - clientWidth` findet nur Ueberlauf, der die Seite
+     * waagerecht scrollen laesst. Diese Seite traegt aber `overflow-x: clip`
+     * auf `.st-page`, weil die Riesentypografie in schmalen Fenstern gern
+     * ueber den Rand laeuft. Damit ist der Wert IMMER 0, und zwar auch dann,
+     * wenn ein Bedienelement zur Haelfte abgeschnitten am Rand klebt.
+     *
+     * Genau das ist am 2026-08-31 passiert: die Modus-Gruppe ragte bei 390px
+     * fuenf Pixel aus dem Fenster, "Dark" war angeschnitten, und dieser Lauf
+     * meldete vier von vier Breiten in Ordnung. Der Nutzer hat es auf seinem
+     * Telefon gesehen, das Skript nicht.
+     *
+     * Die zweite Pruefung sucht deshalb ELEMENTE, deren rechte Kante hinter
+     * dem Fensterrand liegt. `aria-hidden` bleibt aussen vor: Zierde wie der
+     * Lichtverlauf im Hero ragt absichtlich hinaus und wird absichtlich
+     * beschnitten. Was eine Bedeutung hat, darf es nicht.
+     */
     const ueberlauf = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
-    if (ueberlauf > 0) fehler++;
+
+    const abgeschnitten = await page.evaluate(() => {
+      const vw = document.documentElement.clientWidth;
+      const treffer = [];
+      for (const el of document.querySelectorAll("body *")) {
+        if (el.closest("[aria-hidden='true']")) continue;
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) continue;
+        if (r.right > vw + 1 || r.left < -1) {
+          treffer.push({
+            was: (el.getAttribute("class") || el.tagName).toString().split(" ")[0],
+            rechts: Math.round(r.right),
+            links: Math.round(r.left),
+          });
+        }
+      }
+      // Nur die aeussersten melden: ein zu breites Element schleppt seine
+      // Kinder mit, und zwanzig Zeilen fuer einen Fehler helfen niemandem.
+      return treffer.slice(0, 5);
+    });
+
+    if (ueberlauf > 0 || abgeschnitten.length > 0) fehler++;
+    const rand = abgeschnitten.length
+      ? `   FEHLER: ${abgeschnitten.map((t) => `${t.was} (${t.links}..${t.rechts})`).join(", ")}`
+      : "";
     console.log(
-      `${f.name.padEnd(14)} waagerechter Ueberlauf: ${ueberlauf} px${ueberlauf > 0 ? "   FEHLER" : ""}`,
+      `${f.name.padEnd(14)} Ueberlauf ${ueberlauf} px, ausserhalb des Fensters: ${abgeschnitten.length}${rand}`,
     );
 
     await kontext.close();

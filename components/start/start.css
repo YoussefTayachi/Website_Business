@@ -338,8 +338,41 @@
    entscheidet die Reihenfolge im Stylesheet. Standen sie vorher, gewann
    `display: inline-flex` aus .st-pill, und der Knopf ragte bei 390px sichtbar
    aus der Leiste heraus. */
+/* ══ DIE KOPFLEISTE AUF DEM TELEFON, NACHGEMESSEN ═══════════════════════
+   Am 2026-08-31 im Browser gemessen, nicht geschaetzt:
+
+     Wortmarke mit Zusatz   186px
+     Modus-Gruppe           174px  (Beschriftungen 53/56/53)
+     Abstand dazwischen      16px
+     zusammen               376px
+
+   Verfuegbar sind bei 390px Fenster 350px, bei 360px 320px, bei 320px
+   280px. Die Gruppe ragte also aus dem Fenster, "Dark" klebte
+   angeschnitten am Rand. Aufgefallen ist es dem Nutzer auf seinem Telefon
+   und NICHT dem Pruefskript, weil `overflow-x: clip` auf .st-page den
+   Ueberlauf wegschneidet statt ihn scrollen zu lassen; die Pruefung sucht
+   seither nach Elementen ausserhalb des Fensters.
+
+   ZWEI EINGRIFFE, beide unter 48rem:
+     Zusatz "marketing" entfaellt   spart rund 75px
+     Modus-Gruppe enger gesetzt     spart rund 28px
+   Neu: 111 + 16 + 146 = 273px, passt mit Reserve auch bei 320px.
+
+   Der Zusatz faellt und nicht die Modus-Gruppe, weil die Gruppe eine
+   Funktion hat und der Zusatz eine Verzierung ist. Die vollstaendige
+   Wortmarke steht dafuer im Fuss, also auf jedem Telefon genau einmal. */
 .st-bar__cta {
   display: none;
+}
+
+.st-marke__zusatz {
+  display: none;
+}
+
+@media (min-width: 48rem) {
+  .st-marke__zusatz {
+    display: inline;
+  }
 }
 
 @media (min-width: 48rem) {
@@ -441,6 +474,21 @@
 
 /* Der Fokusring gehoert um die BESCHRIFTUNG, nicht um das unsichtbare Feld:
    ein Ring um ein Element mit Deckkraft 0 ist ein Ring um nichts. */
+/* Enger gesetzt auf dem Telefon. Die HOEHE bleibt: das Ziel misst weiter
+   44px, nur die Breite gibt nach. Bei "Light" als laengstem Wort sind das
+   noch rund 46px, deutlich ueber den 24px aus WCAG 2.5.8. */
+@media (max-width: 47.9375rem) {
+  .st-modus {
+    gap: 0;
+    padding: 0.125rem;
+  }
+
+  .st-modus__label {
+    min-width: 0;
+    padding-inline: 0.4rem;
+  }
+}
+
 .st-modus__eingabe:focus-visible + .st-modus__label {
   outline: 2px solid var(--c-focus-in);
   outline-offset: 2px;
@@ -1352,4 +1400,25 @@
     opacity: 1;
     transform: none;
   }
+}
+
+/* Die vollstaendige Wortmarke im Fuss. Siehe die Begruendung in fuss.tsx:
+   auf dem Telefon traegt die Kopfleiste nur "frostbreaker", hier steht der
+   ganze Name. */
+.st-fuss__marke {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-family: var(--st-display);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--c-accent);
+}
+
+.st-fuss__marke-zusatz {
+  font-family: var(--st-sans);
+  font-size: var(--st-fs-tag);
+  font-weight: 500;
+  color: var(--c-faint);
 }

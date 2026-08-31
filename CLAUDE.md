@@ -239,3 +239,12 @@ Aufnahme traegt es dieselbe Schrift und dieselben Entwuerfe wie die Seite.
 Das Browsersymbol (`app/icon.svg`) ist die Bildmarke von Frostbreaker, damit
 marketing.frostbreaker.app und frostbreaker.app im Tab dasselbe Zeichen
 tragen.
+
+**`scrollWidth` allein findet keinen Ueberlauf auf dieser Seite.** `.st-page`
+traegt `overflow-x: clip`, damit die Riesentypografie in schmalen Fenstern
+nicht die Seite verschiebt. Damit ist `scrollWidth - clientWidth` immer 0,
+auch wenn ein Bedienelement halb abgeschnitten am Rand klebt. Genau so ist
+die Modus-Gruppe am 2026-08-31 bei 390px aus dem Bild gelaufen, ohne dass
+der Pruefdurchlauf etwas meldete. `scripts/pruefbilder.mjs` sucht seither
+nach ELEMENTEN ausserhalb des Fensters und laesst `aria-hidden` aussen vor
+(Zierde wie der Lichtverlauf im Hero ragt absichtlich hinaus).
