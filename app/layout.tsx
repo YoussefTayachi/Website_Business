@@ -34,6 +34,12 @@ import { start } from "@/content/start";
  * /datenschutz und /arbeit/[slug].
  */
 export const metadata: Metadata = {
+  // Ohne metadataBase erzeugt Next relative Adressen fuer og:image und
+  // canonical, und ein relatives og:image zeigt in keinem Vorschaudienst ein
+  // Bild. Die Adresse steht in content/seite.ts, damit sie nicht an drei
+  // Stellen gepflegt werden muss.
+  metadataBase: new URL(seite.adresse),
+  alternates: { canonical: "/" },
   title: {
     default: start.meta.title,
     // Unterseiten (Fallstudie, Impressum, Datenschutz) setzen nur ihren
@@ -50,12 +56,28 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // Setzt .dark vor dem ersten Bild, damit der Nachtmodus nicht nachtraeglich
-  // umspringt. Gleiche Fassung wie im Hauptprojekt, damit sich beide Projekte
-  // beim Zusammenfuehren nicht widersprechen. Betrifft nur die deutschen
-  // Unterseiten: die Startseite ist ohnehin dunkel und liest kein --c-Token.
+  // Setzt die Modusklasse vor dem ersten Bild, damit nichts nachtraeglich
+  // umspringt.
+  //
+  // WAS SICH AM 2026-08-31 GEAENDERT HAT UND WARUM: die Vorgaengerfassung las
+  // ausschliesslich localStorage. Wer sein Geraet auf dunkel gestellt und
+  // diese Seite noch nie besucht hatte, bekam sie hell, und zwar dauerhaft,
+  // weil ohne Besuch auch nie ein Wert gespeichert wurde. Die
+  // Systemeinstellung trug niemand.
+  //
+  // Jetzt gilt: eine GESPEICHERTE Wahl schlaegt alles, sonst entscheidet das
+  // Geraet. Die Klasse wird in beiden Faellen gesetzt, auch die helle. Das
+  // ist Bedingung und kein Zierrat: app/globals.css traegt die dunklen
+  // Tokens zusaetzlich unter @media (prefers-color-scheme: dark) fuer den
+  // Fall ohne JavaScript, und nur `:root.light` kann diese Medienabfrage
+  // wieder schlagen, wenn jemand ausdruecklich hell gewaehlt hat.
+  //
+  // Ohne JavaScript passiert hier nichts, und die Seite ist trotzdem im
+  // richtigen Modus. Das ist der eigentliche Gewinn.
   const themeScript =
-    "try{if(localStorage.getItem('theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}";
+    "try{var s=localStorage.getItem('theme');" +
+    "var d=s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches;" +
+    "document.documentElement.classList.add(d?'dark':'light')}catch(e){}";
 
   const { sprungmarke } = start;
 

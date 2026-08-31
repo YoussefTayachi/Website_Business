@@ -1,103 +1,91 @@
-import type { CSSProperties } from "react";
-import { start } from "@/content/start";
+import Image from "next/image";
+
+import vorherBild from "@/public/arbeiten/elektro-alt-1440.png";
+import nachherBild from "@/public/arbeiten/elektro-neu-1440.png";
+
 import Reveal from "./reveal";
-import { FallAngebot, FallTelefon, FallTempo } from "./zeichnungen";
+import Vergleich from "./vergleich";
+import { start } from "@/content/start";
 
 /**
- * ARBEITEN. Drei Faelle in einem versetzten Zweispaltenraster.
+ * Die Arbeiten. Im Ausschnitt genau ein Fall, die anderen zwei kommen nach
+ * der Abnahme dazu.
  *
- * DAS FIKTIV-KENNZEICHEN STEHT AUF JEDER KARTE, sichtbar, als Kapsel auf dem
- * Bild und nicht als Fussnote darunter. Der Grund steht in content/start.ts:
- * wer nur das Bild sieht, muss lesen koennen, dass der Betrieb erfunden ist.
- * Eine gemeinsame Zeile ueber der Gruppe waere genau dann aus dem Bild.
+ * DAS KENNZEICHEN STEHT ALS TEXT AUF DER KARTE und nicht im Bild. Ein
+ * Hinweis, der nur im Screenshot steht, existiert fuer einen Screenreader
+ * nicht, und er verschwindet ausserdem, sobald jemand das Bild nicht laedt.
+ * Es steht an JEDER Karte und nicht einmal ueber der Gruppe: wer schnell
+ * scrollt oder abschnittsweise vorgelesen bekommt, sieht sonst genau die
+ * Karte ohne den Hinweis.
  *
- * ES WIRD NICHT AUF /arbeit/[slug] VERLINKT. Diese Seiten sind noch deutsch
- * und tragen robots: index=false. Ein Link von einer englischen Seite auf
- * eine deutsche noindex-Seite waere ein Bruch in zwei Richtungen. Die Karten
- * sind deshalb <article>, kein <a>.
- *
- * DIE ZEICHNUNG WIRD UEBER DEN INDEX ZUGEORDNET, nicht ueber den Namen. Der
- * Text ist englisch und darf umformuliert werden; die Reihenfolge der drei
- * Faelle ist dagegen die Dramaturgie (Anruf, Angebot, Tempo) und aendert sich
- * nicht, ohne dass jemand hier nachsieht.
- *
- * WARUM EINE SWITCH-ANWEISUNG UND KEINE KOMPONENTENLISTE: seit die Karten
- * fertige Seiten zeigen, bekommt jede Zeichnung ihren eigenen Mock-Text aus
- * content/start.ts, und die drei Mocks haben verschiedene Felder (Fall B hat
- * Projektbilder, Fall C eine feste Leiste). Eine Liste [A, B, C] waere fuer
- * TypeScript eine Vereinigung von drei Komponenten, und keine davon liesse
- * sich mehr mit ihren eigenen Prop-Typen aufrufen. Der switch bindet Index
- * und Mock an genau einer Stelle zusammen, sichtbar und geprueft.
+ * DIE FASSUNG OHNE JAVASCRIPT steht hier und nicht in vergleich.tsx: sie ist
+ * kein Teil des Reglers, sie ist sein Ersatz. Beide Aufnahmen stehen dann
+ * als beschriftete Figuren nebeneinander. Der Schalter dafuer ist das
+ * <noscript>-Stylesheet in app/layout.tsx (.nur-mit-js{display:none}), also
+ * eine Regel, die der Browser nur anwendet, wenn JavaScript wirklich aus
+ * ist. Ein Knopf, der auf nichts reagiert, ist schlimmer als kein Knopf.
  */
-function szene(i: number, titel: string) {
-  const { faelle } = start.arbeiten;
-
-  switch (i) {
-    case 1:
-      return <FallAngebot titel={titel} mock={faelle[1].mock} />;
-    case 2:
-      return <FallTempo titel={titel} mock={faelle[2].mock} />;
-    default:
-      return <FallTelefon titel={titel} mock={faelle[0].mock} />;
-  }
-}
-
-const GRUENDE = ["st-card--a", "st-card--b", "st-card--c"] as const;
-/** Nur der mittlere Fall ist quadratisch. Drei gleich hohe Karten waeren
- *  drei gleich laute, und das Raster verloere seinen Rhythmus. */
-const FORMATE = ["", "st-card--square", ""] as const;
-
 export default function StartArbeiten() {
-  const { titel, kennzeichen, faelle } = start.arbeiten;
+  const { id, augenbraue, titel, kennzeichen, regler, faelle } = start.arbeiten;
+  const fall = faelle[0];
 
   return (
-    // id ist das Ziel des Plus-Knopfs in der Leiste. Wer es aendert, muss
-    // start.leiste.menu.href in content/start.ts mitziehen.
-    <section className="st-works-sec st-wrap" id="work">
-      <Reveal>
-        <h2 className="st-h2 st-rise">
-          {titel.map((zeile, i) => (
-            <span
-              key={zeile}
-              className="st-rise__line"
-              style={{ "--st-i": i } as CSSProperties}
-            >
-              <span>{zeile}</span>
-            </span>
-          ))}
-        </h2>
-      </Reveal>
-
-      <div className="st-works">
-        <div className="st-works__grid">
-          {faelle.map((fall, i) => {
-            return (
-              <Reveal key={fall.name} as="article" className="st-work">
-                <div className="st-work__frame st-fade">
-                  <div className={`st-card st-card--work ${GRUENDE[i] ?? ""} ${FORMATE[i] ?? ""}`}>
-                    {szene(i, fall.bildAlt)}
-                    {/* Innerhalb der Karte, nicht daneben: beim Anheben auf
-                        Hover soll das Kennzeichen mitgehen. Danebenstehend
-                        blieb es liegen, waehrend die Karte sich hob. */}
-                    <p className="st-work__flag">{kennzeichen}</p>
-                  </div>
-                </div>
-
-                <h3 className="st-work__name">{fall.name}</h3>
-                <p className="st-work__line">{fall.zeile}</p>
-
-                <ul className="st-tags">
-                  {fall.tags.map((tag) => (
-                    <li key={tag} className="st-tag">
-                      {tag}
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-            );
-          })}
+    <Reveal as="section" id={id} className="st-sect">
+      <div className="st-wrap">
+        <div className="st-arb__kopf">
+          <p className="st-eyebrow st-rise" style={{ ["--i" as string]: 0 }}>
+            {augenbraue}
+          </p>
+          <h2 className="st-rise" style={{ ["--i" as string]: 1 }}>
+            {titel}
+          </h2>
         </div>
+
+        <article className="st-fall st-rise" style={{ ["--i" as string]: 2 }}>
+          <div className="st-fall__meta">
+            <h3 className="st-fall__name">{fall.name}</h3>
+            <span className="st-fall__gewerk">{fall.gewerk}</span>
+          </div>
+
+          <p className="st-fall__zeile">{fall.zeile}</p>
+
+          <Vergleich
+            vorher={vorherBild}
+            nachher={nachherBild}
+            altVorher={fall.bildAltVorher}
+            altNachher={fall.bildAltNachher}
+            adresse={fall.adresse}
+          />
+
+          <noscript>
+            <div className="st-vgl-ohne">
+              <figure>
+                <Image src={vorherBild} alt={fall.bildAltVorher} sizes="(min-width: 48rem) 50vw, 100vw" />
+                <figcaption>{regler.vorher}</figcaption>
+              </figure>
+              <figure>
+                <Image src={nachherBild} alt={fall.bildAltNachher} sizes="(min-width: 48rem) 50vw, 100vw" />
+                <figcaption>{regler.nachher}</figcaption>
+              </figure>
+            </div>
+          </noscript>
+
+          <ul className="st-tags">
+            {fall.tags.map((t) => (
+              <li key={t} className="st-tag">
+                {t}
+              </li>
+            ))}
+          </ul>
+
+          <p className="st-fiktiv">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true">
+              <path d="M12 2 1 21h22L12 2zm0 6 6.5 11h-13L12 8zm-1 3v4h2v-4h-2zm0 5v2h2v-2h-2z" />
+            </svg>
+            {kennzeichen}
+          </p>
+        </article>
       </div>
-    </section>
+    </Reveal>
   );
 }

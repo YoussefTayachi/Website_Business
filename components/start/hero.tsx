@@ -1,58 +1,77 @@
-import type { CSSProperties } from "react";
-import { start } from "@/content/start";
+import telefonBild from "@/public/arbeiten/elektro-neu-390.png";
+
+import Geraet from "./geraet";
 import Reveal from "./reveal";
-import { HeroCollage } from "./zeichnungen";
+import Zeigerlicht from "./zeigerlicht";
+import { Worte } from "./worte";
+import { start } from "@/content/start";
 
 /**
- * HERO. Riesenzeile ueber die volle Breite, zwei schmale Introspalten rechts
- * darunter, dann die grosse Karte.
+ * Der Hero.
  *
- * Die Figur ist die der Referenz und sie hat einen Grund: die Zeile nimmt die
- * ganze Breite, weil sie das Lauteste auf der Seite sein soll, und der Text
- * laeuft rechts aus, weil er das Zweitlauteste ist und nicht daneben treten
- * darf. Drei gleich laute Dinge waeren kein lautes.
+ * WAS HIER ANDERS IST ALS AUF frostbreaker.app: dort traegt den Helden ein
+ * reiner Lichtverlauf, weil das Produkt zwei Angebote hat und ein Bild die
+ * Seite auf eines davon festlegen wuerde. Hier ist es umgekehrt. Diese Seite
+ * verkauft Gestaltung, und ein Gestalter, der im ersten Bildschirm nichts
+ * zeigt, argumentiert gegen sich selbst. Deshalb steht rechts ein Telefon
+ * mit einer ECHTEN Aufnahme einer gebauten Seite darin, nicht eine
+ * Zeichnung und nicht ein Stockfoto.
  *
- * Die Zeilen der Headline liegen einzeln in einer Maske und schieben
- * nacheinander hoch (--st-i ist der Versatz). Die Mechanik dazu steht
- * geschlossen in start.css, nicht hier.
+ * Das Bild kommt als statischer Import und nicht als Zeichenkette: nur so
+ * kennt next/image die Masse schon beim Bauen, reserviert den Platz und
+ * laesst beim Laden nichts springen. Geraet rechnet aus denselben Massen
+ * aus, wie weit die Aufnahme im Rahmen wandern darf.
+ *
+ * Die Ueberschrift laeuft wortweise ein (Worte), alles darunter gestaffelt
+ * (--i). Der Zaehler der Ueberschrift und der der Absaetze sind bewusst
+ * getrennt: die Ueberschrift hat ihren eigenen, schnelleren Takt.
  */
 export default function StartHero() {
-  const { headline, intro, bildAlt } = start.hero;
+  const { augenbraue, headline, lead, cta, zweitCta, ctaZusatz } = start.hero;
 
   return (
-    <section className="st-hero st-wrap">
-      <Reveal>
-        <h1 className="st-h1 st-rise">
-          {headline.map((zeile, i) => (
-            <span
-              key={zeile}
-              className="st-rise__line"
-              style={{ "--st-i": i } as CSSProperties}
-            >
-              <span>{zeile}</span>
-            </span>
-          ))}
-        </h1>
-      </Reveal>
+    <section className="st-hero">
+      <Zeigerlicht className="st-hero__licht" />
 
-      <Reveal className="st-hero__intro">
-        {intro.map((absatz, i) => (
-          <p
-            key={absatz}
-            className="st-lead st-fade"
-            style={{ "--st-i": i } as CSSProperties}
-          >
-            {absatz}
+      <Reveal as="div" className="st-wrap st-hero__in">
+        <div>
+          <p className="st-eyebrow st-rise" style={{ ["--i" as string]: 0 }}>
+            {augenbraue}
           </p>
-        ))}
-      </Reveal>
 
-      {/* figure ohne figcaption: die Beschreibung sitzt als aria-label am SVG
-          selbst. Eine sichtbare Bildunterschrift waere hier eine vierte
-          Textebene, und die Karte soll fuer sich sprechen. */}
-      <Reveal className="st-hero__media" as="figure">
-        <div className="st-card st-card--hero st-fade">
-          <HeroCollage titel={bildAlt} />
+          <h1>
+            <Worte
+              segmente={[
+                { text: headline.vor },
+                { text: headline.akzent, klasse: "st-akzent" },
+              ]}
+            />
+            {headline.nach}
+          </h1>
+
+          <p className="st-lead st-hero__lead st-rise" style={{ ["--i" as string]: 5 }}>
+            {lead}
+          </p>
+
+          <div className="st-hero__knoepfe st-rise" style={{ ["--i" as string]: 6 }}>
+            <a className="st-pill" href={cta.href}>
+              {cta.label}
+              <span className="st-pill__pfeil" aria-hidden="true">
+                →
+              </span>
+            </a>
+            <a className="st-link" href={zweitCta.href}>
+              {zweitCta.label}
+            </a>
+          </div>
+
+          <p className="st-hero__zusatz st-rise" style={{ ["--i" as string]: 7 }}>
+            {ctaZusatz}
+          </p>
+        </div>
+
+        <div className="st-rise" style={{ ["--i" as string]: 4 }}>
+          <Geraet bild={telefonBild} />
         </div>
       </Reveal>
     </section>

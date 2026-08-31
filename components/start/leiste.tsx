@@ -1,44 +1,53 @@
+import Modus from "./modus";
 import { start } from "@/content/start";
-import { PfeilIcon, PlusIcon } from "./zeichnungen";
 
 /**
- * Die Leiste der Startseite. Fixiert, ueber dem Inhalt, ohne eigene Flaeche.
+ * Die Kopfleiste. Server Component bis auf die Modus-Gruppe, die als eigene
+ * Client-Insel darin sitzt.
  *
- * Drei Dinge, in genau dieser Ordnung: der eine CTA links, die Marke mittig,
- * ein rundes Plus rechts. Kein Menue: es ist ein One-Pager, das Plus springt
- * zum Werkabschnitt. Ein Overlay mit drei Punkten waere hier ein Versprechen
- * auf Seiten, die es nicht gibt.
+ * WAS BEI 390px DRIN IST UND WAS NICHT, ist in start.css nachgerechnet und
+ * dort begruendet: Wortmarke und Modus-Gruppe bleiben, die zwei Ankerlinks
+ * und der Pill-CTA kommen erst ab 768px dazu. Der CTA steht im Hero
+ * unmittelbar darunter noch einmal, die Modus-Gruppe haette keinen zweiten
+ * Ort, und sie darf auch keinen haben: zwei Radiogruppen mit demselben name
+ * waeren eine einzige und wuerden sich gegenseitig umschalten.
  *
- * NICHT ZU VERWECHSELN mit components/chrome/kopfleiste.tsx. Die traegt die
- * deutschen Unterseiten samt Navigation und Nachtmodus-Schalter, und genau
- * deshalb bekommt die Startseite ihre eigene: zwei Kopfleisten im selben
- * Dokument waren der Grund fuer die Route Group (mit-chrome).
- *
- * Die Marke fuehrt auf dasselbe #top, das auch die Sprungmarke im
- * Wurzel-Layout anspringt. Ein zweites id waere ein zweiter Vertrag.
+ * Die Wortmarke traegt den Akzentton, weil sie auf frostbreaker.app auch
+ * ihn traegt. Sie ist damit das erste, was die beiden Seiten als eine Marke
+ * lesbar macht. Der Ton ist --c-accent (sky-700 hell, sky-400 dunkel) und
+ * nicht sky-500: eine Wortmarke ist formal von den Kontrastregeln
+ * ausgenommen, war auf frostbreaker.app in sky-500 aber sichtbar das
+ * blasseste Element der ganzen Leiste, blasser als jeder Link daneben.
  */
 export default function StartLeiste() {
-  const { cta, marke, menu } = start.leiste;
-  const { zielId } = start.sprungmarke;
+  const { marke, markeZusatz, markeHref, anker, cta } = start.leiste;
 
   return (
     <header className="st-bar">
-      <a className="st-pill" href={cta.href}>
-        <span className="st-pill__arrow" aria-hidden="true">
-          <PfeilIcon />
-        </span>
-        <span>{cta.label}</span>
-      </a>
+      <div className="st-wrap st-bar__in">
+        <a className="st-marke" href={markeHref}>
+          {marke}
+          <span className="st-marke__zusatz">{markeZusatz}</span>
+        </a>
 
-      <a className="st-bar__mark" href={`#${zielId}`}>
-        {marke}
-      </a>
+        <nav className="st-bar__nav" aria-label="Sections">
+          {anker.map((a) => (
+            <a key={a.href} className="st-bar__link" href={a.href}>
+              {a.label}
+            </a>
+          ))}
+        </nav>
 
-      {/* Ein Icon ohne Beschriftung braucht einen Namen. Er kommt aus dem
-          Text und ist derselbe, den ein Sehender als Linkziel erwartet. */}
-      <a className="st-icon" href={menu.href} aria-label={menu.label}>
-        <PlusIcon />
-      </a>
+        <div className="st-bar__rechts">
+          <Modus />
+          <a className="st-pill st-bar__cta" href={cta.href}>
+            {cta.label}
+            <span className="st-pill__pfeil" aria-hidden="true">
+              →
+            </span>
+          </a>
+        </div>
+      </div>
     </header>
   );
 }

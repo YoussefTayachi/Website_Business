@@ -10,25 +10,32 @@ Kaltakquise-Mail, in der ein konkreter Mangel an ihrer eigenen Website benannt
 wurde. Diese Seite muss in Sekunden zwei Dinge zeigen: der Absender ist
 sichtbar Experte, und der Betrieb versteht sofort, was er davon hat.
 
-Die Startseite folgt seit dem Redesign vom 2026-08-26 dem Vorbild
-designatives.com: weisser Grund, riesige fette Grotesk-Headlines (Archivo),
-Koenigsblau als Akzent, Pill-Buttons mit Pfeil, nummerierte Leistungen mit
-Haarlinien, grosse abgerundete Fallkarten mit Tag-Pills, mintgruener
-Schlussblock mit seitenfuellender Wortmarke. Layout-Haltung und Dramaturgie
-sind von der Referenz uebernommen, Texte, Zeichnungen und Wortmarke sind
-eigene.
+Die Startseite folgt seit dem 2026-08-31 der Formensprache von
+frostbreaker.app, weil sie kuenftig auf `marketing.frostbreaker.app` steht
+und dieselbe Marke sein soll: warmes Off-White, Fraunces als Display-Serife
+mit einem kursiven Sky-Wort in der Ueberschrift, Space Grotesk als
+Fliesstext, Coral fuer genau einen Abschnitt, schwarzer Pill-CTA, echte
+Screenshots gebauter Seiten statt Zeichnungen. Sie hat einen Dunkelmodus.
 
-Das vorherige dunkle Scroll-Erlebnis (neun Akte, scrollcraft-Engine,
-Signature Move) wurde vom Nutzer vollstaendig verworfen und ist aus dem
+**Stand: Abnahme-Ausschnitt.** Gebaut sind Kopfleiste, Hero,
+Beweisstreifen, ein Fall und ein kleiner Fuss. Es fehlen die Flaechen
+"Was dich Anrufe kostet" (Coral), "Wie es laeuft", "Wer die Arbeit macht",
+der Schlussblock, die Faelle 2 und 3 sowie `app/opengraph-image.tsx`.
+`PLAN.md` beschreibt den Vollausbau und ist vier Runden gegen Codex
+gelaufen; `PLAN-REVIEW-LOG.md` haelt den Streit fest.
+
+Davor stand hier ein designatives-Klon (Archivo Black, Mint `#2affaa`,
+Koenigsblau `#1032cf`, `--st-`-Farbtokens, mintgruener Riesenfuss) und davor
+ein neunaktiges Scroll-Erlebnis. Beide sind vom Nutzer verworfen und aus dem
 Code entfernt. Der Ordner `scrollcraft/` bleibt als historische Referenz
-liegen, nichts darin wird von der Seite geladen.
+liegen, nichts darin wird geladen.
 
 Zwei Dateien ergaenzen das hier:
 
 - `README.md` fuer Befehle, Ordner und was vor einem Livegang noch offen ist
-- `PLAN.md` ist der Plan des ERSTEN Entwurfs und inzwischen Geschichte.
-  Lesenswert fuer Begruendungen, die ueberlebt haben (keine erfundenen
-  Referenzen, Demo-Kennzeichen), nicht fuer Struktur oder Optik.
+- `PLAN.md` ist der aktuelle Plan des Frostbreaker-Umbaus
+- `PLAN-REVIEW-LOG.md` ist das Streitprotokoll dazu, vier Runden gegen Codex
+- `PLAN-ERSTER-ENTWURF.md` ist der Plan des ERSTEN Entwurfs und Geschichte
 
 ## Erst fragen, dann suchen
 
@@ -68,7 +75,7 @@ gestartet kommt die Seite ungestylt hoch.
 |---|---|
 | Sichtbarer Text auf `/` (`content/start.ts`) | Englisch |
 | Impressum, Datenschutz (`content/seite.ts`) | Englisch |
-| Fallstudien `/arbeit/[slug]` (`content/projekte.ts`) | noch Deutsch, `robots: index false` |
+| Demo-Seiten (`content/projekte.ts`) | **noch Deutsch**, siehe unten |
 | Kommentare, Commit-Messages, Doku | Deutsch |
 | Bezeichner | Englisch, Dateinamen deutsch |
 
@@ -82,7 +89,15 @@ gestartet kommt die Seite ungestylt hoch.
 - **Keine erfundenen Zahlen**, Ladezeiten, Kundenzahlen, Preise, Referenzen,
   Testimonials oder Kundenlogos. Die Zielgruppe prueft so etwas nach.
 - Die drei Demo-Projekte sind fiktiv und tragen auf jeder Karte das
-  Kennzeichen "Fictional demo. Not a real business." **Das bleibt stehen.**
+  Kennzeichen "Fictional demo. Not a real business." **Das bleibt stehen**,
+  und es steht als Text auf der Karte, nie nur im Bild: ein Kennzeichen im
+  Screenshot ist fuer einen Screenreader nicht vorhanden.
+- **Offen:** die Demo-Seiten selbst sind deutsch, die Portfolio-Seite ist
+  englisch. Auf den Screenshots sieht man das. Entweder die Demos werden
+  uebersetzt oder es bleibt so, weil die Zielgruppe deutsch ist.
+- Der einzige ECHTE Beleg ist Frostbreaker selbst. Lead-Entwuerfe duerfen
+  ohne Zustimmung nicht als Referenz gezeigt werden
+  (`Website_Business/README.md`), CTS Cement hat nicht zugestimmt.
 
 ## Wo was steht
 

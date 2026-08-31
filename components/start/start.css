@@ -1,768 +1,699 @@
 /* ============================================================================
-   DIE STARTSEITE. Heller Portfolio-One-Pager.
+   DIE STARTSEITE. Layout, Typografie, Rhythmus, Bewegung.
 
-   Wird nur aus app/page.tsx importiert, steht damit nur im Buendel der Route
-   "/". Braucht tokens.css davor.
+   WARUM DIESE DATEI AUS app/page.tsx IMPORTIERT WIRD UND NICHT AUS EINEM
+   LAYOUT, und das ist der heikelste Punkt der ganzen Seite: sie setzt Regeln
+   auf .st-page und nimmt mehrere Grundregeln aus app/globals.css zurueck
+   (Schriftfamilie, Silbentrennung). Stuende sie in app/layout.tsx, traefe das
+   /impressum und /datenschutz mit, und die beiden verloeren Inter und
+   Newsreader. Als Import aus DIESEM Modul legt Next sie in das CSS-Buendel
+   genau dieser Route.
 
-   AUFBAU DIESER DATEI
-     1. Gegenregeln zu app/globals.css
-     2. Grundgeruest und Typografie
-     3. Bewegung (eine Mechanik, von allen Abschnitten benutzt)
-     4. Leiste
-     5. Hero
-     6. Statement
-     7. Leistungen
-     8. Arbeiten
-     9. Ueber
-    10. Fuss
+   REIHENFOLGE, UND SIE IST BEDINGUNG:
+       app/globals.css (aus dem Wurzel-Layout)  ->  DIESE DATEI
+   globals.css bringt die Farbtokens, den Fokusring und die Grundlagen mit.
+   Diese Datei bringt KEINE Farbe mit. Es steht kein einziger Hex-Wert hier
+   drin, jede Farbe kommt als var(--c-*). Nur so folgt die Startseite dem
+   Dunkelmodus, ohne dass irgendetwas doppelt gepflegt wird.
+
+   ALLE KLASSEN TRAGEN DAS PRAEFIX .st-. Eine frueherer Fassung benutzte
+   generische Namen (.hero, .cta, .step) und faerbte damit die Rechtsseiten
+   ein. Mit Praefix ist der Fehler strukturell erledigt.
    ========================================================================== */
 
-/* ── 1. GEGENREGELN ZU app/globals.css ────────────────────────────────────
-   globals.css liegt im selben Dokument, weil das Wurzel-Layout Tailwind
-   braucht. Vier seiner Grundregeln zielen auf die deutschen Rechtsseiten und
-   treffen hier daneben. Alle vier stehen ungeschichtet, diese Datei laedt
-   danach, also entscheidet die Reihenfolge und nicht die Spezifitaet. */
-
-html {
-  /* globals.css rechnet mit --header-h aus der Chrome der Unterseiten. Die
-     Leiste dieser Seite ist anders hoch, und ohne die Korrektur springt jeder
-     Ankersprung (#work, #top) unter die Leiste. */
-  scroll-padding-top: calc(var(--st-bar-h) + 2rem);
-}
-
-body {
-  background: var(--st-paper);
-  color: var(--st-ink);
-  font-family: var(--st-font);
-  font-size: var(--st-fs-body);
-  line-height: 1.5;
-  /* globals.css schaltet die Inter-Stilsaetze cv11 und ss01 ein. Archivo hat
-     diese Namen nicht, und eine unbekannte Feature-Angabe kostet nichts,
-     ausser dass sie hier nur verwirrt. */
-  font-feature-settings: normal;
-  -webkit-font-smoothing: antialiased;
-  /* globals.css schaltet einen Farbuebergang fuer den Nachtmodus. Diese Seite
-     hat keinen, der Uebergang wuerde beim ersten Bild nur nachwehen. */
-  transition: none;
-}
-
-/* globals.css setzt h1..h3 auf Newsreader und hyphens:auto (fuer deutschen
-   Satz). Beides ist hier falsch: die Seite ist englisch und laeuft komplett
-   auf Archivo. */
-h1,
-h2,
-h3,
-h4 {
-  font-family: inherit;
-  hyphens: manual;
-  font-optical-sizing: auto;
-}
-
-/* globals.css faerbt den Griff der Bildlaufleiste mit --c-paper ein. Hat der
-   Besucher den Nachtmodus der Unterseiten im localStorage stehen, traegt
-   <html> die Klasse .dark, --c-paper ist dann dunkel, und auf dieser weissen
-   Seite stuende ein schwarzer Rand um den Griff. */
-*::-webkit-scrollbar-thumb {
-  background: var(--st-line);
-  border: 3px solid var(--st-paper);
-}
-
-::selection {
-  background: var(--st-mint);
-  color: var(--st-ink);
-}
-
-/* ── FOKUS ────────────────────────────────────────────────────────────────
-   globals.css faerbt den Ring mit --c-accent, einer Farbe, die diese Seite
-   nicht kennt.
-
-   WARUM RING PLUS WEISSE FUGE: die Leiste schwebt ueber allem, ihre Knoepfe
-   stehen also mal auf Papier, mal auf der tiefschwarzen Herokarte, mal auf
-   Mint. Blau auf dem Kartenschwarz misst 2,24:1 und faellt damit unter die 3:1 aus
-   WCAG 2.4.11. Die box-shadow fuellt die Fuge zwischen Element und Ring mit
-   Papier, der blaue Ring liegt dadurch IMMER auf Weiss: 8,83:1, unabhaengig
-   vom Untergrund. */
-.st-page :focus-visible,
-.st-bar :focus-visible {
-  outline: 3px solid var(--st-blue);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 3px var(--st-paper);
-}
-
-/* Im Fuss ist der Untergrund bekannt und hell. Schwarz darauf misst 15,98:1,
-   die weisse Fuge waere dort nur Unruhe. */
-.st-fuss :focus-visible {
-  outline-color: var(--st-ink);
-  box-shadow: none;
-}
-
-/* ── 2. GRUNDGERUEST UND TYPOGRAFIE ──────────────────────────────────────── */
-
 .st-page {
+  /* ── SCHRIFT ─────────────────────────────────────────────────────────────
+     Die Paarung von frostbreaker.app: Fraunces traegt die Displaystufen,
+     Space Grotesk alles darunter. Der Zusatz "Variable" im Namen ist kein
+     Vertipper, so registriert @fontsource-variable seine Familien.
+
+     Fraunces ERST AB 24px. Eine Display-Serife in 17px liest sich als
+     Fachtext, nicht als Marke. Die Serife markiert Ueberschriften, sonst
+     nichts. Das ist dieselbe Regel wie auf frostbreaker.app, und sie steht
+     dort mit derselben Begruendung. */
+  --st-display: "Fraunces Variable", ui-serif, Georgia, "Times New Roman", serif;
+  --st-sans: "Space Grotesk Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* ── GROESSEN ────────────────────────────────────────────────────────────
+     Untergrenzen sind an 390px Fensterbreite nachgerechnet, nicht geschaetzt:
+     dort bleiben nach den Raendern 350px Satzbreite. Die laengste Zeile der
+     Ueberschrift ("Stop losing customers", 22 Zeichen) passt bei 40px hinein.
+
+     Fliesstext nicht unter 17px. Das ist die Vorgabe fuer Verkaufsseiten und
+     keine Empfehlung. Kleinlabels nicht unter 13px. */
+  --st-fs-hero: clamp(2.5rem, 5.6vw, 4.5rem); /* 1440px -> 72px */
+  --st-fs-h2: clamp(1.875rem, 3.4vw, 3rem); /* 1440px -> 48px */
+  --st-fs-h3: 1.5rem; /* die Grenze, ab der Fraunces ueberhaupt erlaubt ist */
+  --st-fs-lead: clamp(1.0625rem, 0.95vw + 0.75rem, 1.25rem); /* 17 -> 20px */
+  --st-fs-body: 1.0625rem; /* 17px */
+  --st-fs-label: 0.8125rem; /* 13px, nur Versalien mit Laufweite */
+  --st-fs-tag: 0.875rem; /* 14px */
+
+  /* ── RHYTHMUS ────────────────────────────────────────────────────────────
+     Zwei Abschnittsstufen, nicht drei: ein Kapitel und ein Unterabschnitt.
+     Auf einem 667px hohen Telefon waeren 96px Innenabstand 14 Prozent des
+     ersten Bildschirms, und die gehoeren der Ueberschrift. */
+  --st-gutter: clamp(1.25rem, 4vw, 3rem);
+  --st-max: 72rem; /* 1152px, dieselbe Satzbreite wie frostbreaker.app */
+  --st-block: clamp(4.5rem, 8vw, 8.5rem);
+  --st-block-s: clamp(3rem, 5vw, 4.5rem);
+  --st-bar: 4.5rem;
+
+  --st-r-card: 1.25rem;
+  --st-r-pill: 9999px;
+  --st-r-tag: 0.5rem;
+
+  /* ── BEWEGUNG ────────────────────────────────────────────────────────────
+     EINE Kurve fuer alles, was hereinkommt. Dieselbe wie auf
+     frostbreaker.app, damit sich die beiden Seiten gleich anfuehlen.
+     Kein ease-in irgendwo: ease-in verzoegert die ersten Millisekunden, also
+     genau die, in denen jemand hinsieht. */
+  --st-ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --st-dur: 0.62s;
+  --st-stagger: 38ms;
+
+  font-family: var(--st-sans);
+  font-size: var(--st-fs-body);
+  background: var(--c-paper);
+  color: var(--c-ink);
+  /* globals.css setzt hyphens:auto fuer den deutschen Fliesstext der
+     Rechtsseiten. Auf einer englischen Seite mit sehr grossen Ueberschriften
+     erzeugt das Trennstriche mitten in der Schlagzeile. */
+  hyphens: manual;
   /* Die Riesentypografie laeuft in schmalen Fenstern gern ueber den Rand.
-     Beschnitten statt gescrollt: die Seite selbst darf nie waagerecht
-     scrollen. clip statt hidden, weil hidden einen Scroll-Container erzeugt
-     und damit position:sticky im Inneren aushebeln wuerde. */
+     Die Seite selbst darf nie waagerecht scrollen. */
   overflow-x: clip;
-  /* Platz fuer die fixierte Leiste. Als padding und nicht als margin, damit
-     der Fuss weiterhin bis an den unteren Rand laeuft. */
-  padding-top: var(--st-bar-h);
 }
 
-.st-wrap {
-  width: 100%;
-  max-width: var(--st-max);
-  margin-inline: auto;
-  padding-inline: var(--st-gutter);
-}
-
-/* Die drei Displaystufen. Gemeinsam: sehr fett, sehr eng gesetzt, negative
-   Laufweite. Bei diesen Graden ist die Vorgabelaufweite einer Grotesk zu
-   weit, die Zeile zerfaellt sonst in Einzelbuchstaben. */
-.st-h1,
-.st-h2,
-.st-h3 {
-  font-weight: 700;
-  line-height: 0.92;
-  letter-spacing: -0.035em;
-  margin: 0;
+.st-page :where(h1, h2, h3) {
+  font-family: var(--st-display);
+  font-optical-sizing: auto;
+  font-weight: 500;
+  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 
-.st-h1 {
-  font-size: var(--st-fs-hero);
+/* Die Satzbreite. Ein Bauteil, damit der Rand nicht an zwanzig Stellen neu
+   erfunden wird. */
+.st-wrap {
+  margin-inline: auto;
+  max-width: var(--st-max);
+  padding-inline: var(--st-gutter);
 }
-.st-h2 {
-  font-size: var(--st-fs-display);
+
+.st-sect {
+  padding-block: var(--st-block);
 }
-.st-h3 {
-  font-size: var(--st-fs-service);
-  letter-spacing: -0.03em;
+
+/* Augenbraue ueber einer Ueberschrift. 13px Versalien in --c-accent, und der
+   Akzent traegt hier Schrift, deshalb ist es sky-700 und nicht sky-500
+   (2,68:1 waere unlesbar). Die Zuordnung macht globals.css. */
+.st-eyebrow {
+  font-size: var(--st-fs-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-accent);
 }
 
 .st-lead {
   font-size: var(--st-fs-lead);
-  line-height: 1.45;
-  margin: 0;
-  /* Fliesstext bricht bei diesem Grad sonst zu spaet um. */
-  text-wrap: pretty;
+  line-height: 1.6;
+  color: var(--c-soft);
+  max-width: 54ch;
 }
 
-/* Kleinlabel in Versalien. Versalien brauchen positive Laufweite, sonst
-   kleben sie. */
-.st-label {
-  font-size: var(--st-fs-label);
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin: 0;
-}
+/* ═══════════════════════════════════════════════════════════════════════
+   BEWEGUNG: DER AUSGANGSZUSTAND
+   ═══════════════════════════════════════════════════════════════════════
+   Alles, was hereinkommt, ist OHNE JAVASCRIPT SICHTBAR. Der unsichtbare
+   Startzustand haengt an @media (scripting: enabled) und existiert damit
+   nur dort, wo ihn auch jemand wieder aufloesen kann. Ohne diese Klammer
+   waere die halbe Seite bei abgeschaltetem JavaScript dauerhaft leer, und
+   das ist der haeufigste Fehler bei Reveal-Animationen ueberhaupt.
 
-/* Der unterstrichene Pfeil-Link. Die Linie ist eine echte Unterstreichung
-   und kein Rahmen, damit sie bei Umbruch mitwandert. */
-.st-arrowlink {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6em;
-  font-size: var(--st-fs-label);
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--st-ink);
-  text-decoration: underline;
-  text-underline-offset: 0.55em;
-  text-decoration-thickness: 1px;
-  border-radius: 2px;
-}
-
-.st-arrowlink svg {
-  width: 1.35em;
-  height: 1.35em;
-  flex: none;
-  transition: transform var(--st-dur-tap) var(--st-ease-fast);
-}
-
-@media (hover: hover) {
-  .st-arrowlink:hover svg {
-    transform: translateX(0.35em);
-  }
-  .st-arrowlink:hover {
-    text-decoration-thickness: 2px;
-  }
-}
-
-/* Die grosse abgerundete Medienkarte. Eine Klasse fuer Hero und Fallkarten:
-   beide sind dieselbe Sache in zwei Groessen.
-
-   DIE HOEHE IST RESERVIERT (aspect-ratio), nicht vom Inhalt abgeleitet. Das
-   ist der Grund, warum diese Seite beim Laden nicht springt: die Zeichnung im
-   Inneren ist ein SVG mit viewBox und braucht keine einzige geladene Datei,
-   um ihre Flaeche zu kennen. */
-.st-card {
-  position: relative;
-  display: block;
-  margin: 0;
-  border-radius: var(--st-radius-card);
-  overflow: hidden;
-  background: var(--st-fall-b);
-  /* isolation, damit die abgerundete Ecke auch ueber der SVG-Zeichnung
-     greift. Ohne das steht in Safari eine harte Ecke im Rundungsradius. */
-  isolation: isolate;
-}
-
-.st-card svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-/* ── ZEICHENPALETTE ───────────────────────────────────────────────────────
-   Die Farben der SVG-Zeichnungen (components/start/zeichnungen.tsx).
-
-   WARUM ALS KLASSEN UND NICHT ALS ATTRIBUT: fill="var(--st-mint)" wirkt
-   nicht. Praesentationsattribute in SVG nehmen an der Variablenaufloesung
-   nicht teil, der Browser liest dort eine unbekannte Farbe und faellt auf
-   Schwarz zurueck. Als CSS-Eigenschaft (Klasse oder style-Attribut) wirkt
-   var() dagegen normal. Klassen, damit im JSX kein einziger Farbwert steht.
-
-   stop-color hat dasselbe Problem, deshalb tragen auch die Verlaufsstopps
-   eigene Klassen. */
-.st-fill-ink {
-  fill: var(--st-ink);
-}
-.st-fill-paper {
-  fill: var(--st-paper);
-}
-.st-fill-mint {
-  fill: var(--st-mint);
-}
-.st-fill-blue {
-  fill: var(--st-blue);
-}
-.st-fill-chip {
-  fill: var(--st-chip);
-}
-.st-fill-media {
-  fill: var(--st-draw-media);
-}
-.st-fill-line {
-  fill: var(--st-draw-line);
-}
-.st-fill-a {
-  fill: var(--st-fall-a);
-}
-.st-fill-b {
-  fill: var(--st-fall-b);
-}
-.st-fill-c {
-  fill: var(--st-fall-c);
-}
-
-.st-stroke-ink {
-  fill: none;
-  stroke: var(--st-ink);
-}
-.st-stroke-mint {
-  fill: none;
-  stroke: var(--st-mint);
-}
-.st-stroke-soft {
-  fill: none;
-  stroke: var(--st-line-soft);
-}
-/* Nur fuer die Ziegelreihen im Dachmotiv: helle Linien auf schwarzer Flaeche. */
-.st-stroke-paper {
-  fill: none;
-  stroke: var(--st-paper);
-}
-
-.st-stop-blue {
-  stop-color: var(--st-blue);
-}
-.st-stop-mint {
-  stop-color: var(--st-mint);
-}
-.st-stop-paper {
-  stop-color: var(--st-paper);
-}
-
-/* ── 3. BEWEGUNG ──────────────────────────────────────────────────────────
-   Eine Mechanik fuer die ganze Seite. Ein Client-Rumpf (reveal.tsx) setzt
-   data-st-in, sobald sein Bereich einmal im Bild war, und alles darin faehrt
-   den Endzustand an. Einmalig, nie zurueck.
-
-   ZWEI SICHERUNGEN, und beide sind Bedingung:
-
-   1. DER AUSGANGSZUSTAND STEHT IN @media (scripting: enabled). Ohne
-      JavaScript kommt data-st-in nie, die Zeilen blieben in ihrer Maske
-      stehen, und die Seite waere leer. Mit der Abfrage gibt es ohne Skript
-      gar keinen Ausgangszustand, sondern sofort das fertige Bild. Dasselbe
-      Muster benutzt app/globals.css bereits.
-
-   2. Bei prefers-reduced-motion: reduce gilt der ENDZUSTAND, nicht eine
-      gedaempfte Fassung. useReveal liefert dort ohnehin sofort revealed, die
-      Regel unten nimmt zusaetzlich jeden Uebergang heraus, damit beim ersten
-      Bild nichts nachlaeuft.
-
-   KEINE DER BEWEGUNGEN AENDERT DIE SEITENHOEHE. Die Masken haben keine feste
-   Hoehe, sie wachsen mit ihrem Inhalt; verschoben wird nur innerhalb. */
-
-/* Zeile einer Ueberschrift, die von unten hochschiebt.
-   Die Maske traegt Innenabstand oben und unten, weil line-height 0.92 die
-   Ober- und Unterlaengen aus dem Zeilenkasten schiebt und overflow:clip sie
-   sonst abschneidet. Der negative Aussenabstand nimmt den Platz wieder weg,
-   der Zeilenrhythmus bleibt damit unveraendert. */
-.st-rise {
-  display: block;
-}
-
-.st-rise__line {
-  display: block;
-  overflow: clip;
-  padding-block: 0.1em 0.18em;
-  margin-block: -0.1em -0.18em;
-}
-
-/* Kein will-change: die Seite hat ein Dutzend solcher Zeilen, und jede waere
-   dauerhaft eine eigene Ebene im Speicher. Die Bewegung ist eine reine
-   transform-Animation und laeuft auch ohne den Hinweis im Compositor. */
-.st-rise__line > span {
-  display: block;
-}
-
-/* Einfaches Aufklaren fuer Fliesstext, Kapseln, Karten. */
-.st-fade {
-  display: block;
-}
-
+   Der Schalter ist [data-st-in], gesetzt von components/start/reveal.tsx,
+   sobald der Bereich einmal im Bild war. Was daraufhin passiert, entscheidet
+   allein diese Datei. */
 @media (scripting: enabled) {
-  .st-rise__line > span {
-    transform: translateY(120%);
-    transition: transform var(--st-dur-in) var(--st-ease-out);
-    transition-delay: calc(var(--st-i, 0) * var(--st-stagger));
-  }
-
-  .st-fade {
+  .st-rise {
     opacity: 0;
-    transition: opacity var(--st-dur-in) var(--st-ease-out);
-    transition-delay: calc(var(--st-i, 0) * var(--st-stagger));
+    transform: translateY(1.25rem);
   }
 
-  [data-st-in] .st-rise__line > span {
+  .st-rise[data-st-in],
+  [data-st-in] .st-rise {
+    opacity: 1;
     transform: none;
   }
 
-  [data-st-in] .st-fade {
+  .st-rise {
+    transition:
+      opacity var(--st-dur) var(--st-ease),
+      transform var(--st-dur) var(--st-ease);
+    transition-delay: calc(var(--i, 0) * var(--st-stagger));
+  }
+
+  /* Die Ueberschrift laeuft WORTWEISE ein, nicht als Block. Wortweise und
+     nicht zeilenweise, weil eine Zeile nur weiss, wo sie umbricht, wenn man
+     sie von Hand umbricht; ein Wort weiss es immer. Deshalb auch keine
+     Maske mit overflow:hidden: die schneidet bei Fraunces die Unterlaengen
+     von y, p und g ab, sobald jemand die Schriftgroesse hochstellt. Hier
+     bewegen sich nur Deckkraft und 0,4em. */
+  .st-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.4em);
+    transition:
+      opacity 0.5s var(--st-ease),
+      transform 0.5s var(--st-ease);
+    transition-delay: calc(var(--i, 0) * 34ms);
+  }
+
+  [data-st-in] .st-word {
     opacity: 1;
+    transform: none;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .st-rise__line > span,
-  .st-fade,
-  .st-svc__row::before {
-    transform: none !important;
-    opacity: 1 !important;
-    transition: none !important;
-  }
-}
-
-/* ── 4. LEISTE ────────────────────────────────────────────────────────────
-   Fixiert, ueber dem Inhalt, ohne eigene Flaeche. Der Inhalt laeuft sichtbar
-   darunter durch, genau wie in der Referenz. Pill und Icon tragen deshalb
-   eine eigene Papierflaeche: sie muessen auch ueber der schwarzen Herokarte
-   lesbar bleiben. */
+/* ═══════════════════════════════════════════════════════════════════════
+   KOPFLEISTE
+   ═══════════════════════════════════════════════════════════════════════ */
 .st-bar {
-  position: fixed;
-  inset-block-start: 0;
-  inset-inline: 0;
-  z-index: 50;
-  height: var(--st-bar-h);
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: color-mix(in srgb, var(--c-paper) 86%, transparent);
+  backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--c-line);
+}
+
+.st-bar__in {
+  display: flex;
   align-items: center;
-  gap: clamp(0.75rem, 2vw, 2rem);
-  width: 100%;
-  max-width: var(--st-max);
-  margin-inline: auto;
-  padding-inline: var(--st-gutter);
-  /* Nichts abfangen, was nicht muss: zwischen den drei Elementen soll der
-     Inhalt darunter anklickbar und markierbar bleiben. */
-  pointer-events: none;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: var(--st-bar);
 }
 
-.st-bar > * {
-  pointer-events: auto;
-}
-
-/* Die Wortmarke, mittig.
-
-   SIE TRAEGT EINE EIGENE PAPIERFLAECHE, und das ist eine Abweichung von der
-   Referenz mit Grund. Dort steht die Wortmarke ohne Flaeche und laeuft
-   deshalb sichtbar in den Inhalt darunter; auf der tiefschwarzen Karte ist
-   sie dort schwarz auf schwarz, also weg. Auf dieser Seite liegt genau so
-   eine Karte im Hero, der Fehler waere also nicht theoretisch.
-
-   GEPRUEFT UND VERWORFEN: mix-blend-mode: difference auf der Marke. Es
-   loeste das Problem elegant, wirkt hier aber nicht. Die Leiste ist
-   position:fixed, und fixed erzeugt IMMER einen Stapelkontext; eine
-   Mischung greift nur innerhalb ihres Stapelkontextes und traf damit die
-   leere Leiste statt der Seite. Ergebnis war eine durchgehend weisse Marke,
-   auf Papier unsichtbar. Am 2026-08-26 im Browser nachgesehen.
-
-   Papierflaeche ohne Kontur, waehrend Pill und Icon eine Kontur tragen: so
-   liest die Marke als Schild und nicht als dritter Knopf. */
-.st-bar__mark {
-  justify-self: center;
-  padding: 0.28em 0.6em;
-  border-radius: var(--st-radius-pill);
-  background: var(--st-paper);
-  font-size: var(--st-fs-barmark);
+.st-marke {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  min-height: 44px;
+  /* KEIN flex-wrap. Eine Wortmarke, die in zwei Zeilen bricht, ist keine
+     Wortmarke mehr, sondern zwei Woerter. Bei 390px hat sie nach dem
+     Entfallen des CTA genug Platz, und der Zusatz darf notfalls schrumpfen
+     statt umzuziehen. */
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  font-size: clamp(1.125rem, 1.4vw, 1.375rem);
   font-weight: 700;
   letter-spacing: -0.02em;
-  white-space: nowrap;
-  color: var(--st-ink);
+  color: var(--c-accent);
   text-decoration: none;
 }
 
-/* Der Pill-Knopf. Weisse Flaeche, schwarze Kontur, Pfeil links. */
-.st-pill {
-  justify-self: start;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.7em;
-  height: clamp(2.5rem, 3vw, 2.75rem);
-  padding-inline: clamp(0.875rem, 1.2vw, 1.25rem);
-  border: 1.5px solid var(--st-ink);
-  border-radius: var(--st-radius-pill);
-  background: var(--st-paper);
-  color: var(--st-ink);
-  font-size: clamp(0.8125rem, 1vw, 1rem);
-  font-weight: 500;
-  letter-spacing: 0.045em;
-  text-transform: uppercase;
-  text-decoration: none;
-  white-space: nowrap;
-  transition:
-    background-color var(--st-dur-tap) var(--st-ease-fast),
-    color var(--st-dur-tap) var(--st-ease-fast);
-}
-
-/* Der Pfeil laeuft auf Hover an. Er sitzt in einer Maske, damit er am linken
-   Rand verschwindet und rechts wieder hereinkommt, statt aus dem Knopf zu
-   laufen. */
-.st-pill__arrow {
-  position: relative;
-  display: block;
-  width: 1.15em;
-  height: 1.15em;
-  flex: none;
-  overflow: clip;
-}
-
-.st-pill__arrow svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  transition: transform var(--st-dur-tap) var(--st-ease-fast);
-}
-
-@media (hover: hover) {
-  .st-pill:hover {
-    background: var(--st-ink);
-    color: var(--st-paper);
-  }
-  .st-pill:hover .st-pill__arrow svg {
-    transform: translateX(0.35em);
-  }
-}
-
-/* Das runde Plus rechts. Springt zum Werkabschnitt, deshalb kein Menue-Icon
-   und keine Ueberblendung: es ist ein One-Pager. */
-.st-icon {
-  justify-self: end;
-  display: grid;
-  place-items: center;
-  width: clamp(2.5rem, 3vw, 2.75rem);
-  height: clamp(2.5rem, 3vw, 2.75rem);
-  border: 1.5px solid var(--st-ink);
-  border-radius: var(--st-radius-pill);
-  background: var(--st-paper);
-  color: var(--st-ink);
-  transition:
-    background-color var(--st-dur-tap) var(--st-ease-fast),
-    color var(--st-dur-tap) var(--st-ease-fast);
-}
-
-.st-icon svg {
-  width: 45%;
-  height: 45%;
-  transition: transform var(--st-dur-in) var(--st-ease-out);
-}
-
-@media (hover: hover) {
-  .st-icon:hover {
-    background: var(--st-ink);
-    color: var(--st-paper);
-  }
-  .st-icon:hover svg {
-    transform: rotate(90deg);
-  }
-}
-
-/* ── 5. HERO ─────────────────────────────────────────────────────────────── */
-
-.st-hero {
-  padding-block-start: clamp(2.5rem, 12vw, 10rem);
-}
-
-/* Die zwei Introspalten stehen rechts unter der Headline, nicht darunter
-   zentriert. Das ist die Figur der Referenz: die Zeile nimmt die volle
-   Breite, der Text laeuft rechts aus. */
-.st-hero__intro {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--st-gap);
-  width: min(100%, 38rem);
-  margin-inline-start: auto;
-  margin-block-start: clamp(2rem, 4vw, 3.5rem);
-}
-
-.st-hero__media {
-  margin-block-start: clamp(3rem, 7vw, 7rem);
-}
-
-/* 16:10 auf jeder Breite. Die Zeichnung im Inneren ist auf genau dieses
-   Verhaeltnis gezeichnet, es wird also nichts beschnitten und nichts
-   gestaucht. Bei 390px Fensterbreite ergibt das 350x219px. */
-.st-card--hero {
-  aspect-ratio: 16 / 10;
-}
-
-/* ── 6. STATEMENT ─────────────────────────────────────────────────────────
-   Zwei Zeilen, mehr nicht. Der Abschnitt ist absichtlich der leerste der
-   Seite: er trennt den Einstieg von der Leistungsliste. */
-.st-statement {
-  padding-block: var(--st-block);
-}
-
-/* ── 7. LEISTUNGEN ───────────────────────────────────────────────────────── */
-
-/* Nur der obere Abstand: nach unten schliesst die Abschlusslinie der Liste
-   den Block, und ein zusaetzlicher Abstand darunter liesse den Pfeil-Link
-   losgeloest wirken. */
-.st-svc-sec {
-  padding-block-end: var(--st-block);
-}
-
-.st-svc {
-  list-style: none;
-  margin: clamp(2.5rem, 5vw, 4.5rem) 0 0;
-  padding: 0;
-  /* Die Abschlusslinie unter dem letzten Punkt. Sie zieht nicht auf: der
-     letzte Punkt hat seine eigene Linie darueber, und zwei laufende Linien
-     an derselben Stelle waeren Unruhe. */
-  border-block-end: 1px solid var(--st-line);
-}
-
-.st-svc__row {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-  column-gap: var(--st-gap);
-  align-items: start;
-  padding-block: clamp(1.5rem, 2.6vw, 2.25rem);
-}
-
-/* Die Haarlinie als Pseudoelement statt als border, damit sie beim
-   Sichtbarwerden von links aufziehen kann. Ein border kann das nicht.
-   transform auf einem ::before ist unbedenklich: es erzeugt zwar einen
-   containing block, aber nur fuer sich selbst, und darin steht nichts
-   Fixiertes. */
-.st-svc__row::before {
-  content: "";
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline: 0;
-  height: 1px;
-  background: var(--st-line);
-}
-
-@media (scripting: enabled) {
-  .st-svc__row::before {
-    transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform var(--st-dur-in) var(--st-ease-out);
-    transition-delay: calc(var(--st-i, 0) * var(--st-stagger));
-  }
-  [data-st-in] .st-svc__row::before {
-    transform: none;
-  }
-}
-
-.st-svc__nr {
-  grid-column: 1;
-  grid-row: 1;
-  font-size: var(--st-fs-label);
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  color: var(--st-ink);
-}
-
-.st-svc__title {
-  grid-column: 1;
-  grid-row: 2;
-  margin-block-start: 0.15em;
-}
-
-.st-svc__text {
-  grid-column: 2;
-  grid-row: 2;
-  max-width: 32ch;
-  margin: 0;
-  font-size: var(--st-fs-body);
-  line-height: 1.45;
-  /* Setzt die erste Textzeile ungefaehr auf die Versalhoehe des Titels
-     daneben. Ohne das haengt der Text sichtbar zu hoch. */
-  padding-block-start: 0.35em;
-}
-
-.st-svc__more {
-  margin-block-start: clamp(2.5rem, 5vw, 4.5rem);
-}
-
-/* ── 8. ARBEITEN ─────────────────────────────────────────────────────────── */
-
-.st-works-sec {
-  padding-block-end: var(--st-block);
-  /* Ziel des Plus-Knopfs. scroll-margin statt scroll-padding am html, weil
-     der Sprung hier zusaetzlich Luft ueber der Ueberschrift braucht: sie
-     wirkt sonst an die Leiste geklebt. */
-  scroll-margin-block-start: calc(var(--st-bar-h) + 3rem);
-}
-
-.st-works {
-  margin-block-start: clamp(3rem, 7vw, 6.5rem);
-}
-
-/* Versetztes Zweispaltenraster. Die DOM-Reihenfolge bleibt 1, 2, 3 (Tastatur
-   und Screenreader lesen die Faelle in der Reihenfolge, in der sie im Text
-   stehen), das Raster verschiebt nur.
-
-   Der negative Aussenabstand an der zweiten Karte ist der ganze Trick: sie
-   beginnt oberhalb der Unterkante der ersten und erzeugt damit den Versatz,
-   ohne dass eine Karte aus dem Raster faellt. */
-.st-works__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--st-gap);
-}
-
-.st-work:nth-child(1) {
-  grid-column: 2;
-  grid-row: 1;
-}
-.st-work:nth-child(2) {
-  grid-column: 1;
-  grid-row: 2;
-  margin-block-start: clamp(-14rem, -14vw, -6rem);
-}
-/* Auch die dritte Karte greift nach oben, sonst steht sie als Nachzuegler
-   unter dem Versatz und die linke Spalte reisst auf. */
-.st-work:nth-child(3) {
-  grid-column: 2;
-  grid-row: 3;
-  margin-block-start: clamp(-10rem, -9vw, -4rem);
-}
-
-.st-work__frame {
-  position: relative;
-  display: block;
-}
-
-/* Die drei Grundfarben der Fallkarten. Sie stehen unter der Zeichnung und
-   werden von ihr vollstaendig verdeckt; sichtbar sind sie nur in dem einen
-   Bild zwischen Layout und Zeichnung. Genau deshalb stehen sie hier: eine
-   schwarze Karte, die kurz aufblitzt, bevor sie mintgruen wird, waere ein
-   Fehler, den niemand beschreiben kann. */
-.st-card--a {
-  background: var(--st-fall-a);
-}
-.st-card--b {
-  background: var(--st-fall-b);
-}
-.st-card--c {
-  background: var(--st-fall-c);
-}
-
-.st-card--work {
-  aspect-ratio: 5 / 4;
-  transition:
-    transform var(--st-dur-tap) var(--st-ease-fast),
-    box-shadow var(--st-dur-tap) var(--st-ease-fast);
-}
-
-/* Muss NACH .st-card--work stehen: beide sind eine Klasse tief, es
-   entscheidet die Reihenfolge. Davor stehend gewinne 5/4. */
-.st-card--square {
-  aspect-ratio: 1 / 1;
-}
-
-/* Die Karte hebt beim Zeigen leicht an, und die Zeichnung darin waechst ein
-   wenig ueber ihren Rahmen hinaus. Zwei Bewegungen mit unterschiedlichem Weg
-   ergeben Tiefe, dieselbe Bewegung zweimal ergibt nur Groesse. */
-@media (hover: hover) {
-  .st-work:hover .st-card--work {
-    transform: translateY(-6px);
-    box-shadow: 0 1.5rem 3rem -1rem rgb(0 0 0 / 0.25);
-  }
-  .st-work .st-card--work svg {
-    transition: transform 0.5s var(--st-ease-fast);
-  }
-  .st-work:hover .st-card--work svg {
-    transform: scale(1.03);
-  }
-}
-
-/* DAS FIKTIV-KENNZEICHEN. Es sitzt auf der Karte und nicht darunter, weil es
-   genau dann zaehlen muss, wenn jemand nur das Bild sieht. Weisse Kapsel auf
-   allen drei Karten, damit die Schrift auf Blau, Schwarz und Mint gleich
-   sicher liest (21:1 in jedem Fall). Kein aria-hidden: das ist Inhalt.
-
-   Die haarfeine Kontur ist nicht Deko: Weiss auf Mint misst nur 1,31:1, die
-   Kapsel auf der dritten Karte haette sonst keine sichtbare Kante. Auf den
-   beiden dunklen Karten faellt sie nicht auf, weil sie dort ohnehin im
-   Kontrast verschwindet. */
-.st-work__flag {
-  box-shadow: 0 0 0 1px color-mix(in oklab, var(--st-ink) 16%, transparent);
-  position: absolute;
-  inset-block-start: clamp(0.75rem, 1.4vw, 1.25rem);
-  inset-inline-start: clamp(0.75rem, 1.4vw, 1.25rem);
-  z-index: 2;
-  margin: 0;
-  padding: 0.45em 0.85em;
-  border-radius: var(--st-radius-tag);
-  background: var(--st-paper);
-  color: var(--st-ink);
+.st-marke__zusatz {
   font-size: var(--st-fs-tag);
   font-weight: 500;
-  line-height: 1.25;
-  max-width: calc(100% - 2 * clamp(0.75rem, 1.4vw, 1.25rem));
+  letter-spacing: 0.02em;
+  color: var(--c-mute);
 }
 
-.st-work__name {
-  margin: clamp(1.25rem, 2vw, 1.75rem) 0 0;
-  font-size: var(--st-fs-name);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+.st-bar__nav {
+  display: none;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.st-work__line {
-  margin: 0.5em 0 0;
+.st-bar__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: 0.75rem;
+  border-radius: 0.5rem;
   font-size: var(--st-fs-body);
-  line-height: 1.45;
+  color: var(--c-soft);
+  text-decoration: none;
+  transition: color 0.18s var(--st-ease);
+}
+
+.st-bar__link:hover {
+  color: var(--c-ink);
+}
+
+.st-bar__rechts {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* WAS BEI 390px IN DIE LEISTE PASST, nachgerechnet und nicht gehofft. Nach
+   den Raendern bleiben rund 350px. Die Wortmarke braucht mit ihrem Zusatz
+   rund 150px, die Modus-Gruppe mit drei Zielen zu 44px rund 145px, der
+   Pill-CTA rund 130px. Zusammen 425px, und das sind 75px zu viel.
+
+   Gestrichen wird deshalb in der Leiste der CTA, nicht die Modus-Gruppe:
+   der CTA steht im Hero 200 Pixel darunter noch einmal, die Modus-Gruppe
+   hat keinen zweiten Ort. Sie darf auch nicht zweimal auf der Seite stehen,
+   denn zwei <input type="radio"> mit demselben name sind EINE Gruppe: die
+   eine wuerde die andere umschalten, und beide fuehren ihren Zustand selbst.
+
+   Die zwei Ankerlinks entfallen unter 768px ebenfalls, und es kommt kein
+   Menueknopf an ihre Stelle: ein One-Pager, den man in einer Wischbewegung
+   durchlaeuft, braucht keine Navigation zu zwei Ankern.
+
+   OFFEN FUER DIE VOLLE SEITE: eine feste CTA-Leiste am unteren Rand auf dem
+   Telefon, wie sie frostbreaker.app hat. Im Ausschnitt gibt es dafuer noch
+   zu wenig Seite. */
+@media (min-width: 48rem) {
+  .st-bar__nav {
+    display: flex;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   KNOEPFE
+   ═══════════════════════════════════════════════════════════════════════ */
+.st-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.6rem 1.15rem;
+  border-radius: var(--st-r-pill);
+  background: var(--c-solid);
+  color: var(--c-solid-ink);
+  font-size: var(--st-fs-body);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background 0.2s var(--st-ease),
+    transform 0.2s var(--st-ease);
+}
+
+/* Der Pfeil laeuft, die Flaeche bleibt. Bewegung nur bei einem feinen
+   Zeiger: ein springender Knopf beim Tippen stoert, ein Farbwechsel nicht. */
+.st-pill__pfeil {
+  transition: transform 0.2s var(--st-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .st-pill:hover .st-pill__pfeil {
+    transform: translateX(3px);
+  }
+}
+
+.st-pill:hover {
+  background: color-mix(in srgb, var(--c-solid) 88%, var(--c-accent));
+}
+
+/* DIESE ZWEI REGELN MUESSEN HINTER .st-pill STEHEN und nicht oben bei der
+   Kopfleiste, wo sie thematisch hingehoerten. `.st-pill` und `.st-bar__cta`
+   sind beide eine einzelne Klasse, haben also dieselbe Spezifitaet, und dann
+   entscheidet die Reihenfolge im Stylesheet. Standen sie vorher, gewann
+   `display: inline-flex` aus .st-pill, und der Knopf ragte bei 390px sichtbar
+   aus der Leiste heraus. */
+.st-bar__cta {
+  display: none;
+}
+
+@media (min-width: 48rem) {
+  .st-bar__cta {
+    display: inline-flex;
+  }
+}
+
+/* Der Zweitweg. Bewusst ein Textlink mit Pfeil und kein zweiter Knopf: zwei
+   gleich starke Knoepfe nebeneinander verwaessern den Hauptweg. */
+.st-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  font-size: var(--st-fs-body);
+  font-weight: 500;
+  color: var(--c-ink);
+  text-decoration: none;
+}
+
+.st-link::after {
+  content: "→";
+  transition: transform 0.2s var(--st-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .st-link:hover::after {
+    transform: translateX(4px);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MODUS-GRUPPE
+   ═══════════════════════════════════════════════════════════════════════
+   Drei native Radios in einem fieldset. Der Browser bringt damit
+   Gruppensemantik, Pfeiltastenwechsel, wandernden Fokus und die Ansage von
+   sich aus mit. Die Vorgaengerplanung wollte drei Knoepfe mit
+   role="radiogroup" daruebergelegt, und das haette role="radio",
+   tabindex-Verwaltung und Pfeiltasten von Hand gebraucht: drei Fehlerquellen
+   fuer etwas, das nativ vorhanden ist.
+
+   Das Eingabefeld selbst ist visuell versteckt, aber NICHT display:none und
+   nicht visibility:hidden: beides nimmt es aus der Tastaturreihenfolge. Es
+   liegt deckungsgleich unter seiner Beschriftung. */
+.st-modus {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  border: 1px solid var(--c-line2);
+  border-radius: var(--st-r-pill);
+  padding: 0.1875rem;
+  margin: 0;
+}
+
+.st-modus__legende {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.st-modus__wahl {
+  position: relative;
+  display: inline-flex;
+}
+
+.st-modus__eingabe {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.st-modus__label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  min-width: 44px;
+  padding-inline: 0.6rem;
+  border-radius: var(--st-r-pill);
+  font-size: var(--st-fs-tag);
+  font-weight: 500;
+  color: var(--c-mute);
+  cursor: pointer;
+  transition:
+    background 0.18s var(--st-ease),
+    color 0.18s var(--st-ease);
+}
+
+.st-modus__eingabe:checked + .st-modus__label {
+  background: var(--c-wash);
+  color: var(--c-ink);
+}
+
+/* Der Fokusring gehoert um die BESCHRIFTUNG, nicht um das unsichtbare Feld:
+   ein Ring um ein Element mit Deckkraft 0 ist ein Ring um nichts. */
+.st-modus__eingabe:focus-visible + .st-modus__label {
+  outline: 2px solid var(--c-focus-in);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--c-focus-out);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════════════════════════════ */
+.st-hero {
+  position: relative;
+  padding-block: clamp(3rem, 6vw, 6rem) var(--st-block);
+  overflow: clip;
+}
+
+/* Der Grund: zwei Lichtquellen, links Sky, rechts Coral, beide aus den
+   vorhandenen Tokens und keine erfundene Farbe. Er folgt dem Zeiger
+   (components/start/zeigerlicht.tsx), und zwar ueber transform statt ueber
+   die Verlaufsmitte: transform laeuft auf der Komposition, eine wandernde
+   Verlaufsmitte laesst den Browser in jedem Bild neu rastern. */
+.st-hero__licht {
+  position: absolute;
+  inset: -20% -10% auto -10%;
+  height: 120%;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(42% 50% at 18% 8%, color-mix(in srgb, var(--c-accent-fill) 26%, transparent), transparent 62%),
+    radial-gradient(38% 46% at 86% 2%, color-mix(in srgb, var(--c-coral) 18%, transparent), transparent 64%);
+  transform: translate3d(calc(var(--mx, 0) * 22px), calc(var(--my, 0) * 16px), 0);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.st-hero__in {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4rem);
+  align-items: center;
+}
+
+@media (min-width: 62rem) {
+  .st-hero__in {
+    grid-template-columns: minmax(0, 1fr) 21rem;
+  }
+}
+
+.st-hero h1 {
+  margin-top: 0.75rem;
+  font-size: var(--st-fs-hero);
+  line-height: 1.02;
+}
+
+/* Das eine kursive Akzentwort, wie auf frostbreaker.app. Es sitzt auf dem
+   Satzteil, der die Aussage traegt, nicht auf einem Fuellwort. */
+.st-akzent {
+  color: var(--c-accent);
+  font-style: italic;
+}
+
+.st-hero__lead {
+  margin-top: 1.5rem;
+}
+
+.st-hero__knoepfe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  margin-top: 2rem;
+}
+
+.st-hero__zusatz {
+  margin-top: 1rem;
+  font-size: var(--st-fs-tag);
+  color: var(--c-faint);
   max-width: 46ch;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   GERAETERAHMEN
+   ═══════════════════════════════════════════════════════════════════════
+   Ein Telefon, in dem eine echte aufgenommene Seite langsam wandert.
+
+   KEIN ECHTER SCROLLCONTAINER. Ein scrollbarer Kasten mitten auf der Seite
+   faengt auf dem Telefon die senkrechte Wischgeste ab, und das ist genau die
+   Scroll-Entfuehrung, die an dieser Seite schon einmal verworfen wurde. Hier
+   verschiebt ein transform ein statisches Bild in einem beschnittenen
+   Rahmen, und die Bildebene ist fuer den Zeiger durchlaessig. */
+.st-geraet {
+  position: relative;
+  margin: 0 auto;
+  width: min(20rem, 100%);
+  padding: 0.55rem;
+  border-radius: 2.25rem;
+  background: var(--c-solid);
+  box-shadow: var(--sh-lift);
+}
+
+.st-geraet__screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.75rem;
+  aspect-ratio: 9 / 19;
+  /* Die Blende bleibt HELL, auch im Dunkelmodus, und das ist Absicht: darin
+     steht die Aufnahme einer hellen Website. Ein aufgenommenes Bild kippt
+     nicht mit dem Theme mit, und es zu invertieren waere eine Luege ueber
+     das, was der Kunde spaeter sieht. Ein Bildschirm, auf dem eine helle
+     Seite leuchtet, ist im Dunklen richtig und nicht falsch. */
+  background: #ffffff;
+}
+
+.st-geraet__img {
+  position: absolute;
+  inset: 0 0 auto 0;
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+  animation: stLauf 26s var(--st-ease) infinite alternate;
+}
+
+@keyframes stLauf {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    /* --st-lauf setzt die Komponente aus den bekannten Bildmassen. Ein fester
+       Wert waere bei einer neu aufgenommenen, laengeren Seite sofort falsch. */
+    transform: translateY(var(--st-lauf, -60%));
+  }
+}
+
+/* Angehalten wird ueber den RAHMEN, nicht ueber die Bildebene: die ist fuer
+   den Zeiger durchlaessig. :focus-within haelt die Bewegung schon an, bevor
+   jemand den Knopf drueckt, und das ist der Sinn: wer sich zum Anhalten
+   hintastet, soll nicht auf ein fahrendes Ziel treffen. */
+.st-geraet:hover .st-geraet__img,
+.st-geraet:focus-within .st-geraet__img,
+.st-geraet[data-pause] .st-geraet__img {
+  animation-play-state: paused;
+}
+
+/* Der Knopf ist bei Hover UND bei Fokus sichtbar. Nur bei Fokus waere er
+   fuer alle, die mit der Maus kommen, unauffindbar. */
+.st-geraet__halt {
+  position: absolute;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  width: 44px;
+  border: 1px solid var(--c-line2);
+  border-radius: var(--st-r-pill);
+  background: var(--c-sheet);
+  color: var(--c-ink);
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.2s var(--st-ease),
+    transform 0.2s var(--st-ease);
+}
+
+.st-geraet:hover .st-geraet__halt,
+.st-geraet:focus-within .st-geraet__halt,
+.st-geraet[data-pause] .st-geraet__halt {
+  opacity: 1;
+  transform: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   BEWEISSTREIFEN
+   ═══════════════════════════════════════════════════════════════════════ */
+.st-beweis {
+  border-block: 1px solid var(--c-line);
+  background: var(--c-band);
+  padding-block: var(--st-block-s);
+}
+
+.st-beweis__in {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  justify-content: space-between;
+}
+
+.st-beweis__satz {
+  font-size: var(--st-fs-lead);
+  color: var(--c-ink);
+  max-width: 42ch;
+}
+
+.st-beweis__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.st-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--c-line2);
+  border-radius: var(--st-r-pill);
+  background: var(--c-sheet);
+  font-size: var(--st-fs-tag);
+  color: var(--c-ink);
+  text-decoration: none;
+  transition:
+    border-color 0.18s var(--st-ease),
+    transform 0.18s var(--st-ease);
+}
+
+.st-chip__zusatz {
+  color: var(--c-mute);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .st-chip:hover {
+    border-color: var(--c-line3);
+    transform: translateY(-2px);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ARBEITEN
+   ═══════════════════════════════════════════════════════════════════════ */
+.st-arb__kopf {
+  max-width: 32ch;
+}
+
+.st-arb__kopf h2 {
+  margin-top: 0.75rem;
+  font-size: var(--st-fs-h2);
+  line-height: 1.06;
+}
+
+.st-fall {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+.st-fall__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.st-fall__name {
+  font-family: var(--st-display);
+  font-optical-sizing: auto;
+  font-size: var(--st-fs-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.st-fall__gewerk {
+  font-size: var(--st-fs-tag);
+  color: var(--c-mute);
+}
+
+.st-fall__zeile {
+  font-size: var(--st-fs-lead);
+  color: var(--c-soft);
+  max-width: 52ch;
+  margin-bottom: 1.25rem;
 }
 
 .st-tags {
@@ -770,192 +701,347 @@ h4 {
   flex-wrap: wrap;
   gap: 0.5rem;
   list-style: none;
-  margin: clamp(1rem, 1.6vw, 1.25rem) 0 0;
+  margin: 1.25rem 0 0;
   padding: 0;
 }
 
 .st-tag {
-  padding: 0.55em 1em;
-  border-radius: var(--st-radius-tag);
-  background: var(--st-chip);
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--st-r-tag);
+  background: var(--c-wash);
   font-size: var(--st-fs-tag);
-  font-weight: 500;
-  letter-spacing: 0.045em;
-  line-height: 1.2;
+  color: var(--c-soft);
 }
 
-/* ── 9. UEBER ─────────────────────────────────────────────────────────────── */
-
-/* Nur unten Abstand. Der Werkabschnitt darueber bringt seinen eigenen
-   Abschluss mit, und zwei volle Bloecke uebereinander ergaben im Browser
-   rund 350px Leere: kein Weissraum mehr, sondern ein Loch. */
-.st-ueber {
-  padding-block: 0 var(--st-block);
+/* Das Kennzeichen. Es steht als TEXT auf der Karte und nicht im Bild: ein
+   Kennzeichen, das nur im Screenshot steht, ist fuer einen Screenreader
+   nicht vorhanden. */
+.st-fiktiv {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--c-coral-line);
+  border-radius: var(--st-r-tag);
+  background: var(--c-coral-wash);
+  font-size: var(--st-fs-tag);
+  color: var(--c-coral-ink);
 }
 
-.st-ueber__body {
+/* ═══════════════════════════════════════════════════════════════════════
+   VERGLEICH
+   ═══════════════════════════════════════════════════════════════════════
+   Ein natives input[type=range] ueber zwei uebereinanderliegenden Bildern.
+
+   WARUM NATIV UND NICHT SELBST GEBAUT: ein selbstgebauter Wischer hat keinen
+   angesagten Wert, keine Tastaturbedienung ohne Nacharbeit und keinen
+   Zustand, den Hilfsmittel verstehen. Das Feld liegt deckungsgleich ueber
+   dem Bild, ist bis auf seinen Griff unsichtbar, und traegt touch-action:
+   pan-y, damit eine senkrechte Wischgeste die SEITE scrollt und nicht am
+   Regler haengen bleibt.
+
+   Ohne JavaScript wird nichts davon gerendert (.nur-mit-js), stattdessen
+   stehen beide Aufnahmen als zwei Figuren untereinander. */
+/* DER BROWSERRAHMEN. Ohne ihn liest sich eine Aufnahme mit hellem Rand als
+   Bild mit Fehler, mit ihm als Website in einem Fenster. Das ist der
+   billigste Zugewinn an Glaubwuerdigkeit auf dieser Seite: die grauen
+   Flaechen links und rechts der alten Seite sind dann sichtbar der
+   Seitenhintergrund und nicht ein schlecht zugeschnittenes Foto.
+
+   Die Adresszeile traegt eine Musteradresse aus content/start.ts und keine
+   echte: die Betriebe sind fiktiv, und eine erfundene Domain, die es
+   wirklich gibt, waere ein Fund, den die Zielgruppe macht. */
+.st-rahmen {
+  border-radius: var(--st-r-card);
+  overflow: hidden;
+  background: var(--c-wash);
+  box-shadow: var(--sh-lift);
+}
+
+.st-rahmen__leiste {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--c-line);
+}
+
+.st-rahmen__punkte {
+  display: flex;
+  gap: 0.35rem;
+  flex: none;
+}
+
+.st-rahmen__punkt {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--c-line2);
+}
+
+.st-rahmen__adresse {
+  flex: 1;
+  min-width: 0;
+  padding: 0.2rem 0.7rem;
+  border-radius: var(--st-r-pill);
+  background: var(--c-sheet);
+  font-size: var(--st-fs-tag);
+  color: var(--c-mute);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.st-vgl {
+  position: relative;
+  overflow: hidden;
+  background: var(--c-sheet);
+  /* AUF DEM TELEFON HOEHER ALS DIE AUFNAHME. Bei 390px waere das
+     Fenstermass der Aufnahme (1440 zu 800) nur 190 Pixel hoch, und zwei
+     Websites nebeneinander in 190 Pixeln zeigen nichts, was man lesen
+     koennte. 3 zu 4 gibt dem Vergleich dort 460 Pixel; object-position: top
+     haelt dabei den Kopf beider Seiten im Bild, und das ist der Teil,
+     ueber den geurteilt wird.
+
+     Das ist KEINE Bildregie und braucht kein zweites Bild: es ist derselbe
+     Aufnahmesatz, nur anders beschnitten. */
+  aspect-ratio: 3 / 4;
+}
+
+/* Ab 48rem passt das echte Fenstermass der Aufnahme, und dann gilt es auch:
+   1440 zu 800. Beide Bilder eines Paares haben identische Masse, das
+   erzwingt scripts/aufnahmen.mjs. Steht das Verhaeltnis hier, ist der Platz
+   schon vor dem Bild reserviert und beim Laden springt nichts. */
+@media (min-width: 48rem) {
+  .st-vgl {
+    aspect-ratio: 1440 / 800;
+  }
+}
+
+.st-vgl__bild {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Oben verankert. Wird der Rahmen in einer schmalen Spalte hoeher als
+     breit, soll der Kopf der Website stehen bleiben und nicht ihre Mitte:
+     der Kopf ist das, worueber geurteilt wird. */
+  object-position: top center;
+}
+
+/* Die neue Fassung liegt darueber und wird von links freigegeben. clip-path
+   und nicht width: eine wachsende Breite skaliert das Bild darin, ein
+   Beschnitt gibt es frei. Genau das ist der Unterschied zwischen "die neue
+   Seite wird breiter" und "die neue Seite kommt zum Vorschein". */
+.st-vgl__nachher {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 0 0 calc(var(--p, 50) * 1%));
+}
+
+.st-vgl__kante {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--p, 50) * 1%);
+  width: 2px;
+  margin-left: -1px;
+  background: var(--c-sheet);
+  pointer-events: none;
+}
+
+.st-vgl__griff {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--p, 50) * 1%);
+  translate: -50% -50%;
+  height: 44px;
+  width: 44px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--st-gap);
-  margin-block-start: clamp(2rem, 4vw, 3.5rem);
-  max-width: 62rem;
+  place-items: center;
+  border-radius: var(--st-r-pill);
+  background: var(--c-sheet);
+  color: var(--c-ink);
+  box-shadow: 0 2px 10px -2px rgb(0 0 0 / 0.35);
+  pointer-events: none;
 }
 
-/* ── 10. FUSS ─────────────────────────────────────────────────────────────
-   Vollflaechig Mint, bis an alle vier Kanten. Kein Rand, kein Rahmen: die
-   Farbe selbst ist der Abschluss. */
+.st-vgl__regler {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+  /* Die eine Zeile, die verhindert, dass der Regler die Seite festhaelt. */
+  touch-action: pan-y;
+}
+
+/* Der Ring gehoert sichtbar um den ganzen RAHMEN, nicht um ein unsichtbares
+   Feld und auch nicht nur um die Bildflaeche: fokussiert ist der Vergleich
+   als Ganzes, und der Rahmen ist seine sichtbare Grenze. */
+.st-rahmen:has(.st-vgl__regler:focus-visible) {
+  outline: 2px solid var(--c-focus-in);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--c-focus-out);
+}
+
+.st-vgl__marken {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  pointer-events: none;
+}
+
+.st-vgl__marke {
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--st-r-tag);
+  background: color-mix(in srgb, var(--c-solid) 78%, transparent);
+  color: var(--c-solid-ink);
+  font-size: var(--st-fs-tag);
+}
+
+/* Zwei Sprungknoepfe, damit Ziehen nie der einzige Weg ist. */
+.st-vgl__sprung {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.st-sprung {
+  min-height: 44px;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--c-line2);
+  border-radius: var(--st-r-pill);
+  background: var(--c-sheet);
+  color: var(--c-soft);
+  font-size: var(--st-fs-tag);
+  cursor: pointer;
+  transition:
+    border-color 0.18s var(--st-ease),
+    color 0.18s var(--st-ease);
+}
+
+.st-sprung:hover {
+  border-color: var(--c-line3);
+  color: var(--c-ink);
+}
+
+/* Die Fassung ohne JavaScript: zwei Figuren untereinander, beschriftet. */
+.st-vgl-ohne {
+  display: grid;
+  gap: 1rem;
+}
+
+.st-vgl-ohne figure {
+  margin: 0;
+}
+
+.st-vgl-ohne img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--st-r-card);
+  box-shadow: var(--sh-lift);
+}
+
+.st-vgl-ohne figcaption {
+  margin-top: 0.5rem;
+  font-size: var(--st-fs-tag);
+  color: var(--c-mute);
+}
+
+@media (min-width: 48rem) {
+  .st-vgl-ohne {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FUSS DES AUSSCHNITTS
+   ═══════════════════════════════════════════════════════════════════════ */
 .st-fuss {
-  background: var(--st-mint);
-  color: var(--st-ink);
-  padding-block-start: clamp(3rem, 6vw, 5.5rem);
-  /* Die Wortmarke unten laeuft absichtlich ueber den Rand. */
-  overflow: clip;
+  border-top: 1px solid var(--c-line);
+  padding-block: var(--st-block-s);
 }
 
-.st-fuss__cols {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-  gap: var(--st-gap);
-  margin-block-start: clamp(2.5rem, 5vw, 4.5rem);
+.st-fuss__in {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  font-size: var(--st-fs-tag);
+  color: var(--c-mute);
 }
 
-.st-fuss__label {
-  display: block;
-  font-size: var(--st-fs-label);
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  /* Der Text liefert "CONTACT" und "Legal" in unterschiedlicher Schreibung.
-     Die Versalien sind hier eine Satzentscheidung, keine Textaenderung. */
-  text-transform: uppercase;
-  margin-block-end: 0.85em;
-}
-
-.st-fuss__list {
+.st-fuss__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  gap: 0.35em;
 }
 
-.st-fuss__link {
-  color: var(--st-ink);
-  font-size: var(--st-fs-lead);
-  font-weight: 600;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 0.3em;
-  text-decoration-thickness: 2px;
-  border-radius: 2px;
-  transition: text-decoration-color var(--st-dur-tap) var(--st-ease-fast);
+.st-fuss a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--c-soft);
+  text-decoration: none;
 }
 
-@media (hover: hover) {
-  .st-fuss__link:hover {
-    text-decoration-color: currentColor;
-  }
+.st-fuss a:hover {
+  color: var(--c-ink);
 }
 
-/* Die seitenfuellende Wortmarke.
 
-   nowrap plus overflow:clip am Fuss, nicht Umbruch: bei 11,6vw trifft die
-   Zeile die Satzbreite nur ungefaehr, und eine Marke, die in der zweiten
-   Zeile mit einem Wort weiterlaeuft, saehe nach Fehler aus. Laeuft sie
-   dagegen an den Kanten leicht heraus, liest das als Absicht. Die Referenz
-   macht es genauso, dort haengt der Unterlaengenbogen des g unter der Kante.
+/* ═══════════════════════════════════════════════════════════════════════
+   REDUZIERTE BEWEGUNG
+   ═══════════════════════════════════════════════════════════════════════
+   Gezeigt wird der ENDZUSTAND, nicht eine gedaempfte Fassung. Das ist die
+   Vorgabe aus CLAUDE.md und der Grund, warum hier ueberall none steht und
+   nirgends eine kleinere Zahl.
 
-   Die Unterlaenge braucht Platz: line-height 0.78 schneidet sie sonst mit ab,
-   deshalb der Innenabstand unten. */
-.st-fuss__markwrap {
-  position: relative;
-  margin-block-start: clamp(3rem, 7vw, 6rem);
-}
-
-.st-fuss__mark {
-  display: block;
-  margin: 0;
-  font-size: var(--st-fs-mark);
-  font-weight: 700;
-  line-height: 0.78;
-  letter-spacing: -0.045em;
-  white-space: nowrap;
-  padding-block-end: 0.12em;
-  /* Die Marke ist kein Ziel und keine Ueberschrift, sondern das Signet am
-     Ende. Als aria-hidden waere sie fuer einen Screenreader eine dritte
-     Wiederholung desselben Namens. */
-}
-
-.st-fuss__copy {
-  margin: 0;
-  padding-block: 1.25rem 1.5rem;
-  font-size: var(--st-fs-tag);
-  color: var(--st-ink);
-}
-
-/* Die Wortmarke faehrt beim Erreichen des Fusses von unten herein. Sie steht
-   ohnehin in einer Maske (overflow:clip am Fuss), der Weg ist also gedeckt. */
-@media (scripting: enabled) {
-  .st-fuss__mark {
-    transform: translateY(18%);
-    opacity: 0;
-    transition:
-      transform 1.1s var(--st-ease-out),
-      opacity 0.8s var(--st-ease-out);
-  }
-  [data-st-in] .st-fuss__mark {
-    transform: none;
-    opacity: 1;
-  }
-}
-
+   Der Modus-Wechsel bekommt hier ausdruecklich transition: none. Ohne diese
+   Zeile blendete die ganze Seite beim Umschalten ueber, und das ist genau
+   die Sorte flaechiger Bewegung, wegen der Menschen die Einstellung setzen. */
 @media (prefers-reduced-motion: reduce) {
-  .st-fuss__mark {
-    transform: none !important;
+  .st-rise,
+  .st-word {
     opacity: 1 !important;
+    transform: none !important;
     transition: none !important;
   }
-}
 
-/* ── SCHMALE FENSTER ──────────────────────────────────────────────────────
-   Ein einziger Umbruchpunkt. Alles darunter ist einspaltig, alles darueber
-   das Raster von oben. Zwei Umbruchpunkte waeren zwei Layouts zu pflegen. */
-@media (max-width: 60rem) {
-  .st-hero__intro,
-  .st-ueber__body {
-    grid-template-columns: minmax(0, 1fr);
-    width: 100%;
+  .st-geraet__img {
+    animation: none;
   }
 
-  .st-svc__row {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 0.35rem;
-  }
-  .st-svc__nr,
-  .st-svc__title,
-  .st-svc__text {
-    grid-column: 1;
-  }
-  .st-svc__nr {
-    grid-row: 1;
-  }
-  .st-svc__title {
-    grid-row: 2;
-  }
-  .st-svc__text {
-    grid-row: 3;
-    max-width: 46ch;
-    padding-block-start: 0.6em;
+  .st-hero__licht {
+    transform: none;
+    transition: none;
   }
 
-  .st-works__grid {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: clamp(3rem, 8vw, 5rem);
+  .st-pill,
+  .st-pill__pfeil,
+  .st-link::after,
+  .st-chip,
+  .st-geraet__halt,
+  .st-sprung,
+  .st-modus__label {
+    transition: none;
   }
-  .st-work:nth-child(1),
-  .st-work:nth-child(2),
-  .st-work:nth-child(3) {
-    grid-column: 1;
-    grid-row: auto;
-    margin-block-start: 0;
+
+  .st-geraet__halt {
+    opacity: 1;
+    transform: none;
   }
 }

@@ -1,73 +1,68 @@
 /* ============================================================================
-   DIE STARTSEITE. Ein heller Portfolio-One-Pager.
+   DIE STARTSEITE. Abnahme-Ausschnitt: Kopfleiste, Hero, Beweisstreifen, ein
+   Fall, Fuss. Die uebrigen Flaechen (Problem, Vorgehen, Wer die Arbeit macht,
+   Schluss) kommen nach der Abnahme dazu.
 
-   WARUM DIE STYLESHEET-IMPORTE HIER STEHEN UND NICHT IM LAYOUT, und das ist
-   der heikelste Punkt der ganzen Seite: components/start/start.css setzt
-   Regeln auf html und body und nimmt mehrere Grundregeln aus
-   app/globals.css zurueck (Schrift, Silbentrennung, Fokusfarbe,
-   Bildlaufleiste). Stuende auch nur eine der beiden Dateien in
-   app/layout.tsx, traefe das /impressum, /datenschutz und /arbeit/[slug]
-   mit. Als Import aus DIESEM Modul legt Next sie in das CSS-Buendel genau
-   dieser Route.
+   WARUM DIE SCHRIFT- UND STYLESHEET-IMPORTE HIER STEHEN UND NICHT IM LAYOUT,
+   und das ist der heikelste Punkt der ganzen Seite:
+
+   1. components/start/start.css setzt Regeln auf .st-page und nimmt
+      Grundregeln aus app/globals.css zurueck (Schriftfamilie,
+      Silbentrennung). Stuende die Datei in app/layout.tsx, traefe das
+      /impressum und /datenschutz mit.
+   2. Fraunces und Space Grotesk braucht NUR diese Route. Die deutschen
+      Rechtsseiten laufen weiter auf Inter und Newsreader, und die kommen
+      aus dem Wurzel-Layout. Wer die neuen Schriften dorthin zieht, nimmt
+      den Rechtsseiten ihre eigene und laedt auf jeder Route vier Familien
+      statt zwei.
+
+   Genau an dieser Stelle stand vorher Archivo, aus demselben Grund.
 
    DIE REIHENFOLGE IST BEDINGUNG:
-     app/globals.css  (aus app/layout.tsx, kommt vor der Seite)
-       -> tokens.css   Farbe, Schrift, Groesse, Rhythmus, Kurven
-       -> start.css    das Layout und die Gegenregeln, braucht die Tokens
-   Beide Dateien sind ungeschichtet und schlagen damit die @layer-Regeln von
-   Tailwind, unabhaengig von ihrer Position im Dokument. Innerhalb der
-   ungeschichteten Regeln entscheidet die Reihenfolge.
+     app/globals.css (aus dem Layout, bringt die Farbtokens)
+       -> start.css  (Layout und Gegenregeln, braucht die Tokens)
 
-   ALLE KLASSEN DIESER SEITE TRAGEN DAS PRAEFIX .st-. Die Vorgaengerfassung
-   benutzte generische Namen (.hero, .cta, .step, .foot) und faerbte damit
-   das Impressum ein. Mit Praefix ist der Fehler strukturell erledigt.
-
-   ARCHIVO KOMMT EBENFALLS VON HIER und nicht aus dem Layout: die deutschen
-   Unterseiten laufen weiter auf Inter und Newsreader und sollen keine
-   Schrift laden, die sie nicht setzen.
+   ALLE KLASSEN DIESER SEITE TRAGEN DAS PRAEFIX .st-. Eine frueherer Fassung
+   benutzte generische Namen und faerbte damit die Rechtsseiten ein.
    ========================================================================== */
 
-import "@fontsource-variable/archivo";
-import "@/components/start/tokens.css";
+import "@fontsource-variable/fraunces/opsz.css";
+import "@fontsource-variable/fraunces/opsz-italic.css";
+import "@fontsource-variable/space-grotesk";
 import "@/components/start/start.css";
 
 import type { Metadata } from "next";
-import StartLeiste from "@/components/start/leiste";
-import StartHero from "@/components/start/hero";
-import StartStatement from "@/components/start/statement";
-import StartLeistungen from "@/components/start/leistungen";
+
 import StartArbeiten from "@/components/start/arbeiten";
-import StartUeber from "@/components/start/ueber";
+import StartBeweis from "@/components/start/beweis";
 import StartFuss from "@/components/start/fuss";
+import StartHero from "@/components/start/hero";
+import StartLeiste from "@/components/start/leiste";
 import { start } from "@/content/start";
 
 // Der Titel der Startseite darf die Marke nicht noch einmal angehaengt
-// bekommen (app/layout.tsx haengt sie per template an jeden Unterseitentitel).
-// `absolute` schaltet das Template fuer diese eine Seite ab.
+// bekommen (app/layout.tsx haengt sie per template an jeden
+// Unterseitentitel). `absolute` schaltet das Template fuer diese Seite ab.
 export const metadata: Metadata = {
   title: { absolute: start.meta.title },
   description: start.meta.description,
+  alternates: { canonical: "/" },
 };
 
 export default function Home() {
   return (
-    // .st-page haelt zwei Dinge zusammen: den Platz fuer die fixierte Leiste
-    // und das Beschneiden nach den Seiten. Die Riesentypografie laeuft in
-    // schmalen Fenstern gern ueber den Rand, und die Seite selbst darf nie
-    // waagerecht scrollen.
     <div className="st-page">
       <StartLeiste />
 
       {/* id="top" ist das Ziel der Sprungmarke aus app/layout.tsx UND das
-          Ziel der Wortmarke in der Leiste. Das Gegenstueck fuer die deutschen
-          Unterseiten steht in app/(mit-chrome)/layout.tsx und traegt dasselbe
-          id, damit die Sprungmarke auf jeder Route ein Ziel hat. */}
-      <main id="top">
+          Ziel der Wortmarke in der Leiste. Das Gegenstueck fuer die
+          deutschen Unterseiten steht in app/(mit-chrome)/layout.tsx und
+          traegt dasselbe id, damit die Sprungmarke auf jeder Route ein Ziel
+          hat. */}
+      <main id={start.sprungmarke.zielId}>
         <StartHero />
-        <StartStatement />
-        <StartLeistungen />
+        <StartBeweis />
         <StartArbeiten />
-        <StartUeber />
       </main>
 
       <StartFuss />

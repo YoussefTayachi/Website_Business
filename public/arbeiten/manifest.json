@@ -1,0 +1,47 @@
+{
+  "erzeugtVon": "scripts/aufnahmen.mjs",
+  "bilder": [
+    {
+      "datei": "elektro-neu-390.png",
+      "platz": "Telefonrahmen im Hero",
+      "quelle": "http://localhost:3210/erfassung/elektro-neu",
+      "fensterbreite": 390,
+      "fensterhoehe": 1400,
+      "geraeteskala": 2,
+      "elementweise": true,
+      "dokumenthoehe": 1400,
+      "inhaltshoehe": 948,
+      "bytes": 143770,
+      "browser": "151.0.7922.174",
+      "erzeugt": "2026-08-31"
+    },
+    {
+      "datei": "elektro-alt-1440.png",
+      "platz": "Vergleich Fall 1, vorher",
+      "quelle": "http://localhost:3210/erfassung/elektro-alt",
+      "fensterbreite": 1440,
+      "fensterhoehe": 800,
+      "geraeteskala": 2,
+      "elementweise": false,
+      "dokumenthoehe": 800,
+      "inhaltshoehe": 637,
+      "bytes": 367585,
+      "browser": "151.0.7922.174",
+      "erzeugt": "2026-08-31"
+    },
+    {
+      "datei": "elektro-neu-1440.png",
+      "platz": "Vergleich Fall 1, nachher",
+      "quelle": "http://localhost:3210/erfassung/elektro-neu",
+      "fensterbreite": 1440,
+      "fensterhoehe": 800,
+      "geraeteskala": 2,
+      "elementweise": false,
+      "dokumenthoehe": 800,
+      "inhaltshoehe": 762,
+      "bytes": 166498,
+      "browser": "151.0.7922.174",
+      "erzeugt": "2026-08-31"
+    }
+  ]
+}

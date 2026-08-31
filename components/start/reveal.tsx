@@ -26,12 +26,19 @@ export default function Reveal({
   className,
   children,
   style,
+  id,
 }: {
   /** Standard ist div. section, ul, ol und figure kommen ebenfalls vor. */
   as?: ElementType;
   className?: string;
   children: ReactNode;
   style?: React.CSSProperties;
+  /**
+   * Sprungziel. Es gehoert an DIESE Huelle und nicht an ein zusaetzliches
+   * Element darin: der Anker soll den Abschnitt treffen, den der Beobachter
+   * beobachtet, sonst springt man an eine Stelle, die noch unsichtbar ist.
+   */
+  id?: string;
 }) {
   const Tag = as ?? "div";
   const { ref, revealed } = useReveal<HTMLDivElement>();
@@ -39,6 +46,7 @@ export default function Reveal({
   return (
     <Tag
       ref={ref}
+      id={id}
       className={className}
       style={style}
       // Nur setzen, nie auf "false": die CSS-Regeln haengen an der reinen

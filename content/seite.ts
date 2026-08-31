@@ -32,6 +32,18 @@
 
 export const seite = {
   /**
+   * Die Adresse, unter der die Seite steht. Sie ist die Grundlage fuer
+   * `metadataBase` in app/layout.tsx und damit fuer jedes canonical und
+   * jedes og:image: ohne sie erzeugt Next relative Adressen, und ein
+   * relatives og:image zeigt in keinem Vorschaudienst ein Bild.
+   *
+   * Sie steht hier und nicht im Layout, weil sie mehrere Stellen betrifft
+   * (Metadaten, Impressum, spaeter das OG-Bild) und an jeder dieselbe sein
+   * muss. Ohne Schraegstrich am Ende, den haengt Next selbst an.
+   */
+  adresse: "https://marketing.frostbreaker.app",
+
+  /**
    * Kopfleiste, sichtbar auf allen Seiten ausser der Startseite (Impressum,
    * Datenschutz, /arbeit/[slug]). Die Wortmarke selbst ist bereits der Weg
    * zurueck zur Startseite (href="/" in kopfleiste.tsx), darum bleibt hier

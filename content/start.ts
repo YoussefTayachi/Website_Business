@@ -1,48 +1,40 @@
-// Aller sichtbare Text der Startseite. Die Seite ist seit dem Redesign vom
-// 2026-08-26 kein neunaktiges Scroll-Erlebnis mehr, sondern ein heller
-// One-Pager im Stil von designatives.com: riesige fette Headlines, ein
-// Fiktiv-Kennzeichen auf jeder Fallkarte, ein mintgruener Fuss. Der Text hier
-// ist die einzige Quelle dafuer, die Komponenten unter components/start/
-// enthalten keinen einzigen Satz.
+// Aller sichtbare Text der Startseite.
 //
-// SPRACHE: Englisch, wie die ganze Startseite seit CLAUDE.md Abschnitt
-// "Sprache". Die Fallstudien (/arbeit/[slug]) bleiben deutsch, siehe dort.
+// STAND 2026-08-31: Die Seite wird auf die Formensprache von frostbreaker.app
+// umgebaut und zieht auf marketing.frostbreaker.app. Der designatives-Klon
+// davor (Archivo Black, Mint, Koenigsblau) ist entfallen. Dies ist der Text
+// des ABNAHME-AUSSCHNITTS: Kopfleiste, Hero, Beweisstreifen und eine
+// Fallkarte. Die uebrigen Flaechen (Problem, Vorgehen, Wer die Arbeit macht,
+// Schluss) kommen nach der Abnahme dazu, der Aufbau dieser Datei ist darauf
+// schon angelegt.
 //
-// WARUM KEIN "WE": Youssef ist eine Person, kein Studio. Jeder Satz steht in
-// der ersten Person Singular, auch wenn der designatives-Rhythmus (kurz,
-// selbstbewusst) den Agentur-Plural nahelegt.
-//
-// WARUM DAS KENNZEICHEN PRO KARTE STEHT statt einmal ueber der Gruppe: wer
-// nur die erste Karte einer Reihe sieht (etwa beim schnellen Scrollen oder
-// mit einem Screenreader, der Abschnittsweise vorliest), soll trotzdem lesen,
-// dass der Betrieb fiktiv ist. Einmal ueber der Gruppe waere das an genau der
-// Stelle unsichtbar, an der es am meisten zaehlt.
+// SPRACHE: Englisch, wie die ganze Startseite. Die Fallstudien blieben
+// deutsch, sind aber mit dem Umbau entfallen.
 //
 // REGELN, die auch nach einer Ueberarbeitung gelten muessen:
 //   - Keine Gedankenstriche in sichtbarem Text (Doppelpunkt, Komma, Klammer).
 //   - Kein Agentur-Plural. Es ist eine Person, also erste Person Singular.
+//     Die Marke ist Frostbreaker, die Person dahinter ist Youssef, und die
+//     Seite sagt "I", nicht "we".
 //   - Keine erfundenen Zahlen, Ladezeiten, Kundenzahlen oder Referenzen.
-//   - Die drei Demo-Betriebe sind fiktiv, ihr Kennzeichen bleibt auf jeder
-//     Karte stehen.
+//   - Die Demo-Betriebe sind fiktiv, ihr Kennzeichen bleibt auf jeder Karte.
+//   - Der EINZIGE echte Beleg ist Frostbreaker selbst. Es gibt keinen
+//     zugestimmten Kundenfall (siehe Website_Business/README.md), also wird
+//     auch keiner behauptet.
 //
 // Muster wie in content/seite.ts: erst der Inhalt als literales Objekt
 // (`as const`), die Typen danach als `typeof`-Ableitung.
 
-/**
- * Die eine Adresse, an die alles auf dieser Seite fuehrt. Steht als eigene
- * Konstante hier, weil mehrere Stellen sie brauchen (Leiste, Leistungen-Link,
- * Fuss) und sie an jeder derselbe sein muss.
- */
+/** Eine Adresse, ein Weg. Steht als Konstante hier, weil Leiste, Hero und
+ *  spaeter der Schlussblock dieselbe brauchen. */
+const CALL = "https://calendly.com/youssef-tayachi-frostbreaker/30min";
 const EMAIL = "youtaybusiness@gmail.com";
-const MAILTO = `mailto:${EMAIL}?subject=Website%20check`;
 
 export const start = {
-  /** Metadaten fuer app/layout.tsx. Englisch, wie die ganze Startseite. */
   meta: {
-    title: "Youssef Tayachi: web design for trades, built not sold",
+    title: "Frostbreaker Marketing: websites that get the call",
     description:
-      "I find what's costing your trade business calls, then build the fix. See it working, not just described.",
-    /** openGraph.locale in app/layout.tsx haengt daran. */
+      "I rebuild the one page that gets your business the call, and you see it working, not described.",
     locale: "en_US",
   },
 
@@ -50,193 +42,140 @@ export const start = {
    * Sprungmarke im Wurzel-Layout. Gilt fuer ALLE Routen, auch die deutschen
    * Rechtsseiten: sie steht im Wurzel-Layout und kann deshalb nur eine
    * Sprache haben. Englisch, weil die Startseite den Ton setzt.
-   *
-   * zielId ist ein Vertrag mit app/layout.tsx und dem <main id="top"> der
-   * Startseite. Wer das id aendert, muss beide mitziehen.
    */
   sprungmarke: {
     label: "Skip to content",
     zielId: "top",
   },
 
-  /**
-   * app/not-found.tsx, das globale 404. Englisch, weil es am Wurzel-Layout
-   * (lang="en") haengt und fuer jede Adresse greift, auch die deutschen
-   * Unterseiten ohne eigene 404-Seite.
-   */
+  /** app/not-found.tsx, das globale 404. */
   notFound: {
     title: "This page doesn't exist.",
     ctaLabel: "Back to the homepage",
   },
 
-  /** Die Kopfleiste: Pill-CTA links, Marke mittig, rundes Icon rechts. */
+  /**
+   * Die Kopfleiste. Ab 768px traegt sie Wortmarke, zwei Ankerlinks, die
+   * Modus-Gruppe und den Pill-CTA. Darunter nur Wortmarke und CTA, die
+   * Modus-Gruppe steht dann im Fuss (Begruendung in PLAN.md, Abschnitt 5:
+   * drei Ziele zu 44px sind allein 132px, und bei 390px stehen insgesamt
+   * rund 350px zur Verfuegung).
+   */
   leiste: {
-    cta: { label: "Email me", href: MAILTO },
-    marke: "Youssef Tayachi",
-    menu: { label: "See the work", href: "#work" },
+    marke: "frostbreaker",
+    markeZusatz: "marketing",
+    markeHref: "#top",
+    anker: [
+      { label: "Work", href: "#work" },
+      { label: "How it works", href: "#how" },
+    ],
+    cta: { label: "Book a call", href: CALL },
   },
 
   /**
-   * HERO. Headline riesig und kurz, genau zwei Zeilen, damit sie bei ~130px
-   * noch in eine Bildschirmbreite passt. Die zwei Intro-Absaetze tragen die
-   * Erklaerung, die die Headline sich bewusst spart.
+   * Die Modus-Gruppe. Drei native Radios in einem fieldset, nicht drei
+   * Knoepfe mit ARIA daruebergelegt: der Browser bringt Gruppensemantik,
+   * Pfeiltasten, wandernden Fokus und die Ansage von sich aus mit.
+   */
+  modus: {
+    legende: "Theme",
+    optionen: [
+      { wert: "system", label: "Auto" },
+      { wert: "light", label: "Light" },
+      { wert: "dark", label: "Dark" },
+    ],
+  },
+
+  /**
+   * HERO. Die Ueberschrift traegt genau ein kursives Akzentwort, wie auf
+   * frostbreaker.app. Es steht auf dem Teil, der die Aussage traegt, nicht
+   * auf einem Fuellwort: verloren wird der Kunde VOR dem Anruf, und genau
+   * das ist der Satzteil in Sky.
    */
   hero: {
-    headline: ["Stop losing", "customers online"],
-    intro: [
-      "I check your website the way a customer does: fast, on a phone, in a hurry. Most trade sites fail right there.",
-      "So I rebuild the one page that gets you the call, and show you the working page, not a mockup.",
-    ],
-    bildAlt:
-      "A sketched collage of a website redesign: a phone screen, a laptop screen, and a checkmark.",
+    augenbraue: "Web design for local businesses",
+    headline: { vor: "Stop losing customers ", akzent: "before they call", nach: "." },
+    lead: "I look at your website the way your customer does: on a phone, in a hurry. Then I rebuild the page that brings the call.",
+    cta: { label: "Book a call", href: CALL },
+    zweitCta: { label: "See the work", href: "#work" },
+    /** Steht klein unter den Knoepfen, wie auf frostbreaker.app. Nimmt dem
+     *  Klick das Risiko, ohne etwas zu versprechen, das nicht eingehalten
+     *  werden kann. */
+    ctaZusatz: "30 minutes. We look at your site together and I tell you what I would change.",
+    geraet: {
+      /** Das Bild im Telefonrahmen: die fertige Fassung von Elektro
+       *  Musterhaus, aufgenommen bei 390px. */
+      bildAlt:
+        "The rebuilt Elektro Musterhaus website on a phone: a call bar with the phone number sits above the headline, followed by the services.",
+      pause: "Pause the preview",
+      weiter: "Play the preview",
+    },
   },
 
   /**
-   * Der grosse Zwischensatz, zwei Zeilen. Kontrastform statt Behauptung:
-   * nicht "schoen", sondern "bringt den Anruf".
+   * BEWEISSTREIFEN. Der einzige Ort auf dieser Seite, an dem etwas
+   * Nachpruefbares steht, deshalb sind beide Adressen echte Links.
    */
-  statement: {
-    zeilen: ["Built to get calls,", "not just look nice."],
-  },
-
-  /**
-   * Vier Leistungen, ein Wort bis zwei pro Titel, ein Satz Erklaerung.
-   * Kein Kartengitter, keine Icons: die Nummer traegt die Struktur.
-   */
-  leistungen: {
-    titel: "What I build",
-    punkte: [
-      {
-        nr: "01",
-        titel: "Mobile first",
-        text: "Most of your customers find you on a phone, so that's the screen I design for first.",
-      },
-      {
-        nr: "02",
-        titel: "Fast pages",
-        text: "A page that loads slow loses the visitor before they read a word.",
-      },
-      {
-        nr: "03",
-        titel: "One click",
-        text: "Your phone number and address are a tap away, not buried in a menu.",
-      },
-      {
-        nr: "04",
-        titel: "No rent",
-        text: "You get the files and the login. Nothing rented back to you every month.",
-      },
+  beweis: {
+    satz: "The site you are on, the app that emailed you and the pages below: I built all of them.",
+    links: [
+      { label: "frostbreaker.app", href: "https://www.frostbreaker.app/", zusatz: "Product site" },
+      { label: "app.frostbreaker.app", href: "https://app.frostbreaker.app/", zusatz: "The software" },
     ],
-    /** Keine Unterseite fuer "Leistungen", also kein "read more": der Link
-     *  geht direkt in die Mail. */
-    link: { label: "Ask about your website", href: MAILTO },
   },
 
   /**
-   * Drei fiktive Fallbeispiele. Jede Zeile beschreibt in einem Satz, was
-   * kaputt war und was jetzt anders ist, statt Adjektive zu haeufen.
+   * ARBEITEN. Fall 1 von dreien, der Rest kommt nach der Abnahme.
    *
-   * DAS FELD `mock` IST DER TEXT IN DER ZEICHNUNG. Die Fallkarten zeigen seit
-   * dem 2026-08-26 keine leeren Balkenmuster mehr, sondern die fertige Website
-   * des jeweiligen Betriebs: Navigation, Schlagzeile, Knopfbeschriftung,
-   * Telefonnummer. Das ist sichtbarer Seitentext und steht deshalb hier, nicht
-   * in components/start/zeichnungen.tsx. Wer ihn dort hineinschreibt, versteckt
-   * ihn vor dem naechsten, der die Texte durchgeht.
-   *
-   * JEDE ZEICHNUNG MUSS GENAU DAS ZEIGEN, WAS `zeile` DARUEBER BEHAUPTET.
-   * Fall 1 behauptet einen tippbaren Anruf, also traegt der Mock oben einen
-   * Anrufbalken mit Nummer. Fall 2 behauptet die Anfrage ganz oben, also steht
-   * `cta` zweimal weit oben. Fall 3 behauptet Tempo auf dem Handy, also ist es
-   * eine Handy-Ansicht mit Kontakt in Sichtweite. Wer eine Zeile umschreibt,
-   * schreibt den Mock mit um.
-   *
-   * DIE TELEFONNUMMERN SIND MUSTER, kein Anschluss: Ortsvorwahl plus eine
-   * durchgezaehlte Ziffernfolge, wie sie in jedem Formularbeispiel steht.
-   * Erfundene Kennzahlen, Sterne oder Kundenzahlen stehen hier nicht, auch
-   * nicht als Zierde in einem Mock: die Zielgruppe prueft so etwas nach.
+   * DER VERGLEICH IST DAS ARGUMENT dieser Seite, deshalb steht er hier und
+   * nicht in einer Mail. Die Regel "kein Vorher/Nachher-Regler" aus
+   * Lehren/checkliste.md gilt fuer den Entwurf, der an einen LEAD geht, wo
+   * der Prototyp die Website ist. Hier ist es umgekehrt.
    */
   arbeiten: {
-    titel: ["Selected", "work"],
+    id: "work",
+    augenbraue: "Selected work",
+    titel: "Same business, one rebuilt page.",
     kennzeichen: "Fictional demo. Not a real business.",
+    regler: {
+      label: "Compare the old and the new page",
+      vorher: "Before",
+      nachher: "After",
+      /** aria-valuetext, damit ein Screenreader den ZUSTAND ansagt und nicht
+       *  eine nackte Zahl. Die Mitte bekommt den Prozentwert eingesetzt. */
+      ansageVorher: "Before, the old page",
+      ansageNachher: "After, the rebuilt page",
+      ansageMitte: (p: number) => `${p} percent of the rebuilt page`,
+    },
     faelle: [
       {
+        slug: "elektro",
         name: "Elektro Musterhaus",
-        zeile: "The phone number wasn't a link. Now it's the first thing you can tap.",
-        tags: ["WEB DESIGN", "MOBILE FIRST", "ELECTRICIAN"],
-        bildAlt:
-          "The Elektro Musterhaus website on a phone: a green call bar with the number 030 1234567 sits above the headline 24/7 emergency electrician, followed by a fuse box photo and service tiles for wiring, fuse boxes, EV chargers and fault finding.",
-        mock: {
-          marke: "ELEKTRO MUSTERHAUS",
-          nav: ["Services", "Emergency", "Contact"],
-          ruf: { label: "Call 030 1234567", zusatz: "24 hours, 7 days a week" },
-          headline: ["24/7 emergency", "electrician"],
-          kacheln: ["Wiring", "Fuse boxes", "EV chargers", "Fault finding"],
-        },
-      },
-      {
-        name: "Bau Mustergrund",
-        zeile: "The quote request was buried in a wall of text. Now it's one line, at the top.",
-        tags: ["WEB DESIGN", "COPY", "CONSTRUCTION"],
-        bildAlt:
-          "The Bau Mustergrund homepage on a laptop: a green Get a quote button sits in the header and again under the headline Building work you can plan around, above a row of site photos.",
-        mock: {
-          marke: "BAU MUSTERGRUND",
-          adresse: "bau-mustergrund.example",
-          nav: ["Projects", "Services", "About"],
-          cta: "Get a quote",
-          zweitCta: "See projects",
-          headline: ["Building work", "you can plan around"],
-          lead: "Tell me what you need. You get a written price.",
-          leistungen: ["New builds", "Extensions", "Renovation"],
-          projekte: ["Hall extension", "Family home", "Facade work"],
-        },
-      },
-      {
-        name: "Dach Musterhoehe",
-        zeile:
-          "The old site loaded slow and looked broken on a phone. The new one loads fast and looks like a real business.",
-        tags: ["WEB DESIGN", "SPEED", "ROOFING"],
-        bildAlt:
-          "The Dach Musterhoehe website on a phone: the headline Roof repairs done right, a green call button with the number 030 7654321, a roof photo and a bar at the bottom with Call now and Directions.",
-        mock: {
-          marke: "DACH MUSTERHOEHE",
-          nav: ["Roofs", "Repairs", "Contact"],
-          headline: ["Roof repairs", "done right"],
-          lead: "Leaks, tiles and gutters.",
-          ruf: "Call 030 7654321",
-          leistungen: ["New roofs", "Leak repair", "Gutters"],
-          leiste: { ruf: "Call now", weg: "Directions" },
-        },
+        gewerk: "Electrician",
+        /** Adresszeile im Browserrahmen. `.example` ist eine reservierte
+         *  Endung und kann niemandem gehoeren: eine erfundene Domain, die es
+         *  wirklich gibt, waere genau der Fund, den diese Zielgruppe macht. */
+        adresse: "elektro-musterhaus.example",
+        zeile: "The phone number was a picture, not a link. Now it is the first thing you can tap.",
+        tags: ["Web design", "Mobile first", "Speed"],
+        bildAltVorher:
+          "The old Elektro Musterhaus website: a wall of grey text, the phone number sits inside an image, no visible way to get in touch.",
+        bildAltNachher:
+          "The rebuilt Elektro Musterhaus website: a tappable call bar with the phone number, a clear headline and the four services as tiles.",
       },
     ],
   },
 
-  /** Kein Team, kein Stockfoto einer Person: nur der eine Satz, der sagt,
-   *  wer die Mail schreibt und wer danach baut, ist dieselbe Person. */
-  ueber: {
-    titel: "Who does the work",
-    absaetze: [
-      "I'm Youssef. I build one site at a time, by hand, and check it on a real phone before you ever see it.",
-      "No studio, no account manager. The person who found the problem on your site is the person who fixes it.",
-    ],
-  },
-
-  /** Der mintgruene Schlussblock: eine letzte grosse Zeile, dann die
-   *  Kontaktdaten und die Marke seitenfuellend. */
+  /** Fuss des Ausschnitts. Der vollstaendige Schlussblock kommt mit den
+   *  restlichen Flaechen. */
   fuss: {
-    headline: ["Let's fix", "your website"],
-    /** Versalien macht das CSS (text-transform), hier steht Schreibschrift. */
-    kontakt: { label: "Contact", mail: EMAIL },
-    rechtliches: {
-      label: "Legal",
-      links: [
-        { label: "Imprint", href: "/impressum" },
-        { label: "Privacy", href: "/datenschutz" },
-      ],
-    },
-    marke: "Youssef Tayachi",
-    /** Ein einzelnes Jahr, keine erfundene Spanne seit einem Startjahr. */
-    copyright: "© 2026 Youssef Tayachi. All rights reserved.",
+    kontaktLabel: "Contact",
+    mail: EMAIL,
+    rechtLinks: [
+      { label: "Imprint", href: "/impressum" },
+      { label: "Privacy", href: "/datenschutz" },
+    ],
+    copyright: "© 2026 Youssef Tayachi",
   },
 } as const;
 

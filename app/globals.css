@@ -41,129 +41,235 @@
 
 /* ── 1. PRIMITIVE ─────────────────────────────────────────────────────────
    Die Rohwerte, in Leitern sortiert. Keine Komponente greift hier zu, sie
-   nimmt die semantische Ebene darunter.
+   nimmt die semantische Ebene darunter. HIER UND NUR HIER STEHEN HEX-WERTE.
 
-   Papier: warm, aber nicht cremig. Der naheliegende Weg waere Pergament
-   (Richtung #f4f1ea, Saettigung um 19 Prozent). Das liest sich als Vintage,
-   und die Zielkunden sollen nicht an ein Cafe denken, sondern an einen
-   Pruefbericht. Deshalb Werkdruckpapier: gleicher Farbton, halbe Saettigung.
+   Seit dem 2026-08-31 sind die hellen Leitern an frostbreaker.app
+   ausgerichtet, damit marketing.frostbreaker.app und frostbreaker.app
+   sichtbar dieselbe Marke sind. Das vorherige warme Werkdruckpapier und der
+   Siegellack-Akzent sind entfallen.
 
-   Tinte: im Dunklen mit einem Hauch Blau, weil ein warmes Schwarz auf dem
-   Bildschirm schlammig wird. Die Schrift darauf bleibt warm. Das ist der
-   Umschlag von Papier zu Tinte und keine Invertierung. */
+   ALLE KONTRASTWERTE IN DIESER DATEI SIND GERECHNET (WCAG 2.1, relative
+   Luminanz), NICHT GESCHAETZT. Gerechnet wird gegen den jeweils
+   unguenstigsten Grund, und das ist in BEIDEN Modi die Bandflaeche: hell ist
+   sie die dunkelste Flaeche unter dunklem Text, dunkel die hellste unter
+   hellem Text. Gemessene Helligkeiten der vier dunklen Flaechen:
+   #131418 0,0071 · #191a1f 0,0104 · #202128 0,0155 · #26282e 0,0213.
+   Wer eine Flaeche abdunkelt oder aufhellt, rechnet die Textleiter neu. */
 :root {
-  /* Papierleiter, hell */
-  --p-paper-0: #fbfaf7; /* das aufgelegte Blatt */
-  --p-paper-1: #f4f2ee; /* der Tisch, Seitengrund */
-  --p-paper-2: #ebe8e1; /* vertiefte Flaeche */
-  --p-paper-3: #e2ded4; /* Haarlinie */
-  --p-paper-4: #cfc9bc; /* kraeftige Kante */
-  --p-paper-5: #8a8478; /* Kante an Bedienelementen, 3,32:1 auf Papier */
+  /* Papierleiter, hell. Vier Flaechen, drei Linien. */
+  --p-paper-0: #ffffff; /* das aufgelegte Blatt, Karten */
+  --p-paper-1: #fbfbfa; /* Seitengrund */
+  --p-paper-2: #f5f5f4; /* vertiefte Flaeche, Chips, Felder */
+  --p-paper-3: #f1f0ed; /* Bandflaeche fuer Abschnittswechsel */
+  --p-paper-4: #e9e8e6; /* Haarlinie, 1,18:1, traegt nur Rhythmus */
+  --p-paper-5: #d8d7d4; /* kraeftige Kante, 1,39:1 */
+  --p-paper-6: #8a8880; /* Kante an Bedienelementen, 3,43:1 (WCAG 1.4.11) */
 
-  /* Tintenleiter, hell */
-  --p-ink-0: #1b1a17; /* 15,56:1 auf Papier */
-  --p-ink-1: #55514a; /*  7,06:1 */
-  --p-ink-2: #6f6a61; /*  4,80:1, die Untergrenze fuer Fliesstext */
-  --p-ink-3: #9c968b; /*  2,63:1, nur Zierde und Platzhalter */
+  /* Tintenleiter, hell. Gegen die Bandflaeche gerechnet. */
+  --p-ink-0: #1c1b19; /* 15,10:1 */
+  --p-ink-1: #57534e; /*  6,69:1 */
+  --p-ink-2: #5d5b56; /*  5,95:1 */
+  --p-ink-3: #6b6963; /*  4,82:1, tiefer geht Schrift nicht */
 
-  /* Tintenleiter, dunkel */
+  /* Nachtleiter. --p-night-4 ist am 2026-08-31 neu dazugekommen: vorher
+     trugen Bandflaeche und Haarlinie beide #26282e, und eine Haarlinie auf
+     einer gleichfarbigen Flaeche ist keine Linie, sondern nichts. */
   --p-night-0: #131418; /* Seitengrund */
   --p-night-1: #191a1f; /* das Blatt */
   --p-night-2: #202128; /* vertiefte Flaeche */
-  --p-night-3: #26282e; /* Haarlinie */
-  --p-night-4: #34363d; /* kraeftige Kante */
-  --p-night-5: #6e717a; /* Kante an Bedienelementen, 3,77:1 auf Grund */
-  --p-day-0: #edebe6; /* Schrift auf Nacht, 15,45:1 */
-  --p-day-1: #a6a29a; /*  7,24:1 */
-  --p-day-2: #85817a; /*  4,75:1 */
-  --p-day-3: #575450; /*  2,44:1, nur Zierde */
+  --p-night-3: #26282e; /* Bandflaeche */
+  --p-night-4: #2e3037; /* Haarlinie, 1,40:1 */
+  --p-night-5: #34363d; /* kraeftige Kante, 1,53:1 */
+  --p-night-6: #6e717a; /* Kante an Bedienelementen, 3,77:1 */
 
-  /* Akzentleiter. Ein Farbton (352 Grad), zwei Helligkeiten je Thema. */
-  --p-seal-deep: #8c1226;
-  --p-seal: #a81b2e;
-  --p-seal-lift: #e9566c;
-  --p-seal-lift-hi: #f2707f;
-  --p-seal-wash: #f7eae9;
-  --p-seal-wash-dark: #2a1a1e;
-  --p-seal-line: #e3b9be;
-  --p-seal-line-dark: #5a2731;
+  /* Tagleiter, also Schrift auf Nacht. Gegen die dunkle Bandflaeche. */
+  --p-day-0: #edebe6; /* 12,37:1 */
+  --p-day-1: #a6a29a; /*  5,79:1 */
+  --p-day-2: #949088; /*  4,63:1 */
+  --p-day-3: #575450; /* unter dem Grenzwert, deshalb NIE Inhalt */
+
+  /* Akzentleiter Sky. Drei Helligkeiten mit drei Zustaendigkeiten, und die
+     Trennung ist keine Feinheit: sky-500 misst auf dem Seitengrund 2,68:1
+     und sky-600 3,59:1 auf dem Band. Beide fallen fuer Fliesstext durch.
+     Nur sky-700 traegt hell Schrift, nur sky-400 traegt sie dunkel. */
+  --p-sky-fill: #0ea5e9; /* NUR Flaeche, nie Schrift, nie tragende Kante */
+  --p-sky-600: #0284c7; /* ab 24px und fuer Kanten, 3,59:1 auf Band */
+  --p-sky-700: #0369a1; /* jede Schriftgroesse, 5,21:1 auf Band */
+  --p-sky-400: #38bdf8; /* dunkel: jede Schriftgroesse, 6,88:1 auf Band */
+  --p-sky-300: #7dd3fc; /* dunkel: Hover, geht nach oben statt nach unten */
+  --p-sky-wash: #e0f2fe; /* Akzentflaeche hell, --p-sky-700 darauf 5,17:1 */
+  --p-sky-wash-dark: #0c2534; /* dunkel, --p-sky-300 darauf 9,47:1 */
+  --p-sky-line: #bae6fd;
+  --p-sky-line-dark: #1e4a63;
+
+  /* Coral. EINE Aufgabe auf dieser Seite: der Abschnitt, der benennt, was
+     dem Betrieb Anrufe kostet. Coral ist kein zweiter Leitakzent.
+
+     ACHTUNG, WEISS AUF CORAL IST VERBOTEN: es misst 3,48:1 und faellt
+     durch. Auf einer Coral-Flaeche steht Tinte (4,94:1). Das sieht falsch
+     aus, weil Coral kraeftig wirkt, und ist trotzdem der gerechnete Wert. */
+  --p-coral: #ea5a3e; /* NUR Flaeche und Rahmen */
+  --p-coral-ink: #bd3f1d; /* Coral als Schrift, hell, 4,73:1 auf Band */
+  --p-coral-lift: #fb9a8c; /* Coral als Schrift, dunkel, 7,09:1 auf Band */
+  --p-coral-wash: #fdece7; /* --p-coral-ink darauf 4,71:1 */
+  --p-coral-wash-dark: #2b1713; /* --p-coral-lift darauf 8,18:1 */
+  --p-coral-line: #f8cdbf;
+  --p-coral-line-dark: #5a2a1c;
 }
 
 /* ── 2. SEMANTISCHE TOKENS ────────────────────────────────────────────────
-   Nur diese Namen tauchen in Komponenten auf. Alle Kontrastwerte sind
-   gerechnet (WCAG 2.1, relative Luminanz), nicht geschaetzt. */
+   Nur diese Namen tauchen in Komponenten auf.
+
+   DREI BLOECKE, UND DAS IST ABSICHT:
+     :root                                  hell
+     @media (prefers-color-scheme: dark)    dunkel OHNE JavaScript
+     .dark                                  dunkel durch ausdrueckliche Wahl
+
+   Der mittlere Block ist der wichtigste und hat bis zum 2026-08-31 gefehlt.
+   Das Theme-Skript in app/layout.tsx las ausschliesslich localStorage; wer
+   sein Geraet auf dunkel gestellt und diese Seite nie besucht hatte, bekam
+   sie hell. Die Systemeinstellung traegt jetzt das CSS, das Skript
+   ueberschreibt nur eine GESPEICHERTE Wahl. Deshalb `:root:not(.light)`:
+   die Klasse .light ist die ausdrueckliche Gegenwahl und muss die
+   Medienabfrage schlagen koennen.
+
+   Die dunkle Zuordnung steht zweimal da. Das ist hingenommen und nicht
+   uebersehen: sie besteht ausschliesslich aus var()-Verweisen, die
+   eigentlichen Farbwerte stehen weiterhin an genau einer Stelle (Abschnitt 1).
+   Wer hier etwas aendert, aendert BEIDE Bloecke. */
 :root {
   --c-paper: var(--p-paper-1); /* Seitengrund */
-  --c-sheet: var(--p-paper-0); /* Karten, Fallstudien, alles Aufgelegte */
-  --c-wash: var(--p-paper-2); /* Zitat, Einzug, vertiefte Flaeche */
-  --c-line: var(--p-paper-3); /* die Haarlinie, 1,20:1 zum Grund */
-  --c-line2: var(--p-paper-4); /* wo eine Linie tragen soll, 1,47:1 */
-  --c-line3: var(--p-paper-5); /* Kante an Bedienelementen, 3,32:1 (WCAG 1.4.11) */
-  --c-ink: var(--p-ink-0); /* Fliesstext und Ueberschriften, 15,56:1 */
-  --c-soft: var(--p-ink-1); /* Vorspann, Bildunterschrift, 7,06:1 */
-  --c-faint: var(--p-ink-2); /* Kleintext, 4,80:1, tiefer geht Schrift nicht */
-  --c-mute: var(--p-ink-3); /* Zierde und deaktiviert, NIE Inhalt, 2,63:1 */
+  --c-sheet: var(--p-paper-0); /* Karten, alles Aufgelegte */
+  --c-wash: var(--p-paper-2); /* vertiefte Flaeche, Chips, Felder */
+  --c-band: var(--p-paper-3); /* Abschnittswechsel */
+  --c-line: var(--p-paper-4); /* Haarlinie, traegt nur Rhythmus */
+  --c-line2: var(--p-paper-5); /* wo eine Linie tragen soll */
+  --c-line3: var(--p-paper-6); /* Kante an Bedienelementen, 3,43:1 */
+  --c-ink: var(--p-ink-0); /* 15,10:1 */
+  --c-soft: var(--p-ink-1); /*  6,69:1 */
+  --c-faint: var(--p-ink-2); /*  5,95:1 */
+  --c-mute: var(--p-ink-3); /*  4,82:1 */
 
-  /* Der eine Akzent. Er traegt zwei Aufgaben: den CTA und den Befund-Marker.
-     Beide meinen dasselbe, naemlich "hier zeigt jemand mit dem Finger drauf".
+  --c-accent: var(--p-sky-700); /* Schrift, 5,21:1 */
+  --c-accent-big: var(--p-sky-600); /* erst ab 24px, 3,59:1 */
+  --c-accent-fill: var(--p-sky-fill); /* NUR Flaeche */
+  --c-accent-strong: var(--p-sky-600); /* Hover geht hell nach unten */
+  --c-accent-contrast: var(--p-paper-0); /* Weiss auf Akzent, 5,93:1 */
+  --c-accent-wash: var(--p-sky-wash);
+  --c-accent-line: var(--p-sky-line);
 
-     Warum Siegellack und nicht Blau: Blau ist in einem Portfolio die
-     Nullentscheidung und steht bei dieser Zielgruppe fuer Behoerdenformular.
-     Warum nicht Terrakotta oder Bernstein: auf warmem Papier wird beides
-     Schlamm und der Marker verliert seine Schaerfe. Rot ist die Farbe, in der
-     seit jeher korrigiert und gesiegelt wird, also genau die Bedeutung, die
-     diese Seite ohnehin transportiert. Blaustichiges Karmin und nicht
-     Zinnober, damit es nach Siegellack aussieht und nicht nach Alarm.
+  --c-coral: var(--p-coral); /* NUR Flaeche */
+  --c-coral-ink: var(--p-coral-ink); /* Coral als Schrift, 4,73:1 */
+  --c-coral-contrast: var(--p-ink-0); /* auf Coral steht Tinte, 4,94:1 */
+  --c-coral-wash: var(--p-coral-wash);
+  --c-coral-line: var(--p-coral-line);
 
-     6,56:1 auf Papier, also auch als Fliesstext zulaessig. Schrift auf der
-     Akzentflaeche liegt bei 7,03:1. Ein Wert fuer Flaeche und Schrift, ein
-     zweiter ist nicht noetig. */
-  --c-accent: var(--p-seal);
-  --c-accent-strong: var(--p-seal-deep); /* Hover und aktiv, 8,42:1 */
-  --c-accent-contrast: var(--p-paper-0); /* Schrift auf der Akzentflaeche */
-  --c-accent-wash: var(--p-seal-wash); /* Akzentflaeche, Tinte darauf 14,83:1 */
-  --c-accent-line: var(--p-seal-line); /* Haarlinie im Akzentton */
+  /* Der Pill-CTA. Umgekehrte Flaeche, in beiden Modi der staerkste Knopf. */
+  --c-solid: var(--p-ink-0);
+  --c-solid-ink: var(--p-paper-0); /* 17,21:1 */
 
-  /* Das Haarlinienraster. Als rgba und nicht als Volltonfarbe, weil es unter
-     Flaechen durchscheinen soll. 0,055 ist abgestimmt: darueber liest es sich
-     als Karopapier, darunter ist es auf mittelmaessigen Monitoren weg. */
-  --c-grid: rgba(27, 26, 23, 0.055);
+  /* DER FOKUSRING IST ZWEIFARBIG, UND DAS IST KEINE ZIERDE. Ein einfarbiger
+     Ring versagt dort, wo er seiner Flaeche zu nah kommt: --p-sky-700 auf
+     einer sky-Flaeche misst 2,1:1, --p-sky-400 darauf 1,3:1. Ein Ring, den
+     man auf dem wichtigsten Knopf der Seite nicht sieht, ist keiner.
+     Zwei Ringe uebereinander loesen das ohne Fallunterscheidung: eine der
+     beiden Haelften steht immer im Kontrast. Gemessen ueber alle Flaechen
+     dieser Seite ist der schlechteste Fall 4,94:1 (Tinte auf Coral), und
+     damit ueber der geforderten 3:1. In BEIDEN Modi dieselbe Konstruktion. */
+  --c-focus-in: var(--p-ink-0);
+  --c-focus-out: var(--p-paper-0);
+  --c-sel: rgba(14, 165, 233, 0.18);
 
-  /* Genau ein Schatten in der ganzen Seite, und der ist fast nicht da. Er
-     hebt das Blatt vom Tisch, mehr nicht. */
-  --sh-lift: 0 1px 2px rgba(27, 26, 23, 0.05), 0 10px 28px -18px rgba(27, 26, 23, 0.28);
+  --c-grid: rgba(28, 27, 25, 0.055);
+  --sh-lift: 0 1px 2px rgba(28, 27, 25, 0.05), 0 10px 28px -18px rgba(28, 27, 25, 0.28);
 
   color-scheme: light;
 }
 
+/* Die Systemeinstellung, ohne JavaScript. Siehe die Begruendung oben. */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --c-paper: var(--p-night-0);
+    --c-sheet: var(--p-night-1);
+    --c-wash: var(--p-night-2);
+    --c-band: var(--p-night-3);
+    --c-line: var(--p-night-4);
+    --c-line2: var(--p-night-5);
+    --c-line3: var(--p-night-6);
+    --c-ink: var(--p-day-0);
+    --c-soft: var(--p-day-1);
+    --c-faint: var(--p-day-2);
+    --c-mute: var(--p-day-3);
+
+    --c-accent: var(--p-sky-400);
+    --c-accent-big: var(--p-sky-400);
+    --c-accent-fill: var(--p-sky-fill);
+    --c-accent-strong: var(--p-sky-300);
+    --c-accent-contrast: var(--p-night-0);
+    --c-accent-wash: var(--p-sky-wash-dark);
+    --c-accent-line: var(--p-sky-line-dark);
+
+    --c-coral: var(--p-coral);
+    --c-coral-ink: var(--p-coral-lift);
+    --c-coral-contrast: var(--p-ink-0);
+    --c-coral-wash: var(--p-coral-wash-dark);
+    --c-coral-line: var(--p-coral-line-dark);
+
+    --c-solid: var(--p-day-0);
+    --c-solid-ink: var(--p-night-0); /* 15,45:1 */
+
+    --c-focus-in: var(--p-ink-0);
+    --c-focus-out: var(--p-paper-0);
+    --c-sel: rgba(56, 189, 248, 0.26);
+
+    --c-grid: rgba(237, 235, 230, 0.05);
+    /* Im Dunklen sieht niemand einen Schatten. Statt einen zu simulieren,
+       den man nicht wahrnimmt, uebernimmt eine Haarlinie die Aufgabe. */
+    --sh-lift: 0 0 0 1px var(--p-night-5);
+
+    color-scheme: dark;
+  }
+}
+
+/* Die ausdrueckliche Wahl. Schlaegt die Medienabfrage, weil das Skript in
+   app/layout.tsx die Klasse setzt und eine Klasse spezifischer ist als
+   :root. Inhaltlich identisch zum Block darueber, siehe Begruendung dort. */
 .dark {
   --c-paper: var(--p-night-0);
   --c-sheet: var(--p-night-1);
   --c-wash: var(--p-night-2);
-  --c-line: var(--p-night-3); /* 1,25:1 */
-  --c-line2: var(--p-night-4); /* 1,53:1 */
-  --c-line3: var(--p-night-5); /* 3,77:1 */
-  --c-ink: var(--p-day-0); /* 15,45:1 */
-  --c-soft: var(--p-day-1); /*  7,24:1 */
-  --c-faint: var(--p-day-2); /*  4,75:1 */
-  --c-mute: var(--p-day-3); /*  2,44:1 */
+  --c-band: var(--p-night-3);
+  --c-line: var(--p-night-4);
+  --c-line2: var(--p-night-5);
+  --c-line3: var(--p-night-6);
+  --c-ink: var(--p-day-0);
+  --c-soft: var(--p-day-1);
+  --c-faint: var(--p-day-2);
+  --c-mute: var(--p-day-3);
 
-  /* Derselbe Farbton, angehoben. #a81b2e laege auf dem Nachtgrund bei 2,4:1
-     und waere als Schrift unlesbar und als Marker unsichtbar. #e9566c liegt
-     bei 5,27:1 auf dem Grund und 4,97:1 auf dem Blatt, und die Schrift auf
-     der Akzentflaeche ist hier dunkel statt hell. */
-  --c-accent: var(--p-seal-lift);
-  --c-accent-strong: var(--p-seal-lift-hi); /* im Dunklen geht Hover nach oben */
-  --c-accent-contrast: var(--p-night-0); /* 5,27:1 auf dem Akzent */
-  --c-accent-wash: var(--p-seal-wash-dark); /* Tinte darauf 13,93:1 */
-  --c-accent-line: var(--p-seal-line-dark);
+  --c-accent: var(--p-sky-400);
+  --c-accent-big: var(--p-sky-400);
+  --c-accent-fill: var(--p-sky-fill);
+  --c-accent-strong: var(--p-sky-300);
+  --c-accent-contrast: var(--p-night-0);
+  --c-accent-wash: var(--p-sky-wash-dark);
+  --c-accent-line: var(--p-sky-line-dark);
+
+  --c-coral: var(--p-coral);
+  --c-coral-ink: var(--p-coral-lift);
+  --c-coral-contrast: var(--p-ink-0);
+  --c-coral-wash: var(--p-coral-wash-dark);
+  --c-coral-line: var(--p-coral-line-dark);
+
+  --c-solid: var(--p-day-0);
+  --c-solid-ink: var(--p-night-0);
+
+  --c-focus-in: var(--p-ink-0);
+  --c-focus-out: var(--p-paper-0);
+  --c-sel: rgba(56, 189, 248, 0.26);
 
   --c-grid: rgba(237, 235, 230, 0.05);
-
-  /* Im Dunklen sieht niemand einen Schatten. Statt einen zu simulieren, den
-     man nicht wahrnimmt, uebernimmt eine Haarlinie die Aufgabe: das Blatt
-     hebt sich hier durch seine Kante ab, nicht durch Licht. */
-  --sh-lift: 0 0 0 1px var(--p-night-3);
+  --sh-lift: 0 0 0 1px var(--p-night-5);
 
   color-scheme: dark;
 }
@@ -182,11 +288,21 @@
   --color-soft: var(--c-soft);
   --color-faint: var(--c-faint);
   --color-mute: var(--c-mute);
+  --color-band: var(--c-band);
   --color-accent: var(--c-accent);
+  --color-accent-big: var(--c-accent-big);
+  --color-accent-fill: var(--c-accent-fill);
   --color-accent-strong: var(--c-accent-strong);
   --color-accent-contrast: var(--c-accent-contrast);
   --color-accent-wash: var(--c-accent-wash);
   --color-accent-line: var(--c-accent-line);
+  --color-coral: var(--c-coral);
+  --color-coral-ink: var(--c-coral-ink);
+  --color-coral-contrast: var(--c-coral-contrast);
+  --color-coral-wash: var(--c-coral-wash);
+  --color-coral-line: var(--c-coral-line);
+  --color-solid: var(--c-solid);
+  --color-solid-ink: var(--c-solid-ink);
 
   --shadow-lift: var(--sh-lift);
 }
@@ -465,12 +581,25 @@ h3 {
   hyphens: auto;
 }
 
-/* Fokus. Sichtbar, in Akzentfarbe, mit Abstand zur Kante, damit er als Ring
-   gelesen wird und nicht als Rahmen. 6,56:1 hell und 5,27:1 dunkel gegen den
-   Grund, also deutlich ueber den 3:1 aus WCAG 2.4.11. */
+/* Fokus, ZWEIFARBIG. Der Grund steht ausfuehrlich bei --c-focus-in in
+   Abschnitt 2: ein einfarbiger Ring verschwindet auf der Flaeche, der er
+   farblich nahe kommt, und das waere ausgerechnet der wichtigste Knopf der
+   Seite (Akzentfarbe auf Akzentflaeche misst 2,1:1 hell und 1,3:1 dunkel).
+
+   Aufbau von innen nach aussen:
+     Elementkante -> 2px --c-focus-out (Papier) -> 2px --c-focus-in (Tinte)
+   Der Versatz legt die Tintenhaelfte auf den UMGEBENDEN Grund, die
+   Papierhaelfte auf die Flaeche des Elements selbst. Eine der beiden steht
+   damit immer im Kontrast, ohne eine Regel je Flaeche. Gemessen ueber alle
+   Flaechen dieser Seite ist der schlechteste Fall 4,94:1, und die Forderung
+   aus WCAG 2.4.11 sind 3:1.
+
+   Wer einem fokussierbaren Element einen eigenen box-shadow gibt, muss
+   diesen Ring darin mitfuehren, sonst loescht er ihn. */
 :focus-visible {
-  outline: 2px solid var(--c-accent);
+  outline: 2px solid var(--c-focus-in);
   outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--c-focus-out);
 }
 
 /* Nur fuer den Zeiger unterdruecken, nicht generell: bei Tastaturbedienung
@@ -479,8 +608,11 @@ h3 {
   outline: none;
 }
 
+/* Eigener Wert je Modus (--c-sel), nicht die Akzentwaschung: die ist im
+   Dunklen fast so dunkel wie der Grund, und markierter Text waere dort
+   nicht als markiert zu erkennen. */
 ::selection {
-  background: var(--c-accent-wash);
+  background: var(--c-sel);
   color: var(--c-ink);
 }
 
