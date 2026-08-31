@@ -1,430 +1,556 @@
-# Implementierungsplan: Portfolio-Website Webdesign
+# Plan: marketing.frostbreaker.app, der One-Pager fuer das Webdesign-Angebot
 
-> **HISTORISCH.** Dieser Plan beschreibt den ersten Entwurf und dessen
-> Scroll-Redesign. Am 2026-08-26 wurde die Startseite komplett neu gebaut,
-> als heller One-Pager nach dem Vorbild designatives.com; das dunkle
-> Scroll-Erlebnis samt Engine ist aus dem Code entfernt. Was weiter gilt
-> (keine erfundenen Referenzen, Demo-Kennzeichen, Sprachregeln), steht in
-> `CLAUDE.md`. Dieser Text bleibt als Begruendungsarchiv liegen.
+_Gesperrt ueber claudex-loop, von Claude und Youssef Tayachi, 2026-08-31._
+_Fassung 4, nach Codex-Runde 3. Der Plan des ERSTEN Entwurfs liegt als_
+_`PLAN-ERSTER-ENTWURF.md` daneben._
 
-Stand: 2026-08-23, teilweise überholt am 2026-08-25, verworfen am 2026-08-26.
-Zielordner: `C:\Users\Youssef Tayachi\Desktop\Website Business`.
-Eigenständiges Next.js-Projekt. Später als Branch in das frostbreaker.app-Repo
-übernehmbar, deshalb technisch identische Basis (Next.js 15 App Router,
-React 19, Tailwind v4, TypeScript strict).
+## Ziel
 
----
+Die Startseite wird vollstaendig neu gebaut, in der Formensprache von
+frostbreaker.app statt im designatives-Klon von vorher. Sie steht kuenftig auf
+`marketing.frostbreaker.app` und ist die Landeseite fuer Betriebe, die aus
+einer Kaltakquise-Mail kommen, in der ein konkreter Mangel an ihrer eigenen
+Website benannt wurde. Sie muss in Sekunden drei Dinge zeigen: der Absender
+kann sichtbar gestalten, der Betrieb versteht sofort was er bekommt, und ein
+Gespraech kostet nichts. Wenig Text, viel Bild, grosse Schrift, Bewegung, die
+das Koennen belegt statt es zu behaupten. Hell und dunkel, und auf dem Telefon
+zuerst.
 
-## Stand 2026-08-25: das scrollcraft-Redesign
+## Entscheidungen aus dem Verhoer
 
-Die Startseite wurde neu gebaut. Sie ist kein statischer One-Pager mehr,
-sondern eine Scroll-Erlebnis-Seite aus neun Akten, getragen von einer eigenen
-Vanilla-JS-Engine. Der Weg dahin: zuerst als eigenständige HTML/CSS/JS-Seite
-gebaut und im Browser verifiziert (`scrollcraft/builds/casefile/`, mit
-`BRIEF.md` als Interview und Begründung), dann nach React portiert.
-
-**Was der Nutzer für dieses Redesign ausdrücklich aufgehoben hat.** Die drei
-Punkte sind Entscheidungen, keine Versäumnisse:
-
-| Frühere Festlegung | Steht in | Gilt jetzt |
+| # | Entscheidung | gesperrt auf |
 |---|---|---|
-| Alle sichtbaren Texte deutsch | §10, §3 | **Englisch.** Kommentare, Commits und Doku bleiben deutsch. |
-| Kein Sprachumschalter, weil die Zielkunden deutschsprachig sind | §5 | Weiterhin kein Umschalter, aber aus dem umgekehrten Grund: es gibt genau eine Sprache, und das ist Englisch. |
-| Keine Animationsbibliothek | §8 | Eine Ausnahme: die scrollcraft-Engine. Kein React-Framework wie Framer Motion, sondern eigenes Vanilla JS und CSS ohne Abhängigkeiten, statisch in `public/scrollcraft/`, lädt nur auf `/`. Ohne eine Scroll-Engine ist der Signature Move nicht baubar. |
+| 1 | Marke | Frostbreaker Marketing als Dach, Youssef Tayachi als Gesicht, erste Person Singular |
+| 2 | Domain | `marketing.frostbreaker.app`, setzt `metadataBase` |
+| 3 | Zielgruppe | Handwerk als konkrete Bildebene, Rahmen etwas breiter auf oertliche Betriebe, die vom Anruf leben |
+| 4 | Sprache | Englisch, sichtbarer Seitentext komplett |
+| 5 | Beweis | frostbreaker.app und app.frostbreaker.app als echte Belege, drei Handwerks-Demos als Branchenprobe mit Kennzeichen |
+| 6 | CTS Cement | faellt aus. Keine Zustimmung des Leads, Regel aus `Website_Business/README.md` |
+| 7 | Handlungsaufruf | Call buchen. Kein Formular, kein Preis, kein Selbstbedienungs-Einstieg |
+| 8 | Preis | wird nicht genannt |
+| 9 | Bewegung | ausgebaut, deutlich ueber Frostbreaker hinaus, aber ohne Scroll-Entfuehrung |
+| 10 | Dunkelmodus | wird gebaut, gegen meine erste Empfehlung, auf ausdruecklichen Wunsch |
+| 11 | Mobil | 390px ist die Entwurfsbreite, nicht die Nachbesserung |
 
-Dazu eine neue Leitlinie, die für alles Weitere gilt: **80 Prozent visuell,
-20 Prozent Text.** Was man zeigen kann, wird gezeigt und nicht beschrieben.
+Kosmetik gesperrt wie vorgeschlagen. Zwei Punkte hat Claude selbst gesetzt,
+beide billig zu drehen: der Calendly-Link
+(`https://calendly.com/youssef-tayachi-frostbreaker/30min`, eine Konstante in
+`content/start.ts`) und die Auslegung von "etwas breiter" (Ueberschrift
+spricht oertliche Betriebe an, Bilder bleiben Handwerk).
 
-**Der Signature Move.** In Akt 4 stehen zwei Mini-Websites im selben Rahmen.
-Die schlechte Fassung ruckelt beim Scrollen wirklich: ihre innere Bahn wird auf
-einem gedrosselten, unregelmäßigen Zeitplan gemalt und holt ihren Rückstand nie
-auf, so wie es der Paint-Thread einer langsamen Seite unter einem schnellen
-Scroll tut. Die neue Fassung folgt dem Rad in jedem Frame, 1:1. Der Besucher
-fühlt den Unterschied in der Hand, bevor er einen Satz darüber gelesen hat.
-Das ist die eine Sache, die diese Seite kann und ein Standard-Portfolio nicht,
-und sie ist der Grund, warum §4 (Bewegungskonzept) und §7
-(Komponentenarchitektur) unten nur noch historisch gelten.
+## 1. Das Farbsystem, vollstaendig gerechnet
 
-**Die neun Akte**, mit dem Gefühl, das jeder tragen soll:
+`app/globals.css` traegt bereits ein Zwei-Modus-System: primitive Farbleitern,
+semantische Ebene, `@custom-variant dark`, Theme-Skript, Schalter. Die
+Architektur bleibt, die Werte wandern.
 
-| # | Akt | Gefühl | Bauart |
+**Alle Werte unten sind gerechnet (WCAG 2.1, relative Luminanz), nicht
+geschaetzt, und zwar gegen den jeweils unguenstigsten Grund.** Der
+unguenstigste Grund ist in beiden Modi die **Bandflaeche**, weil sie hell dem
+Text am naechsten und dunkel am weitesten von ihm entfernt liegt: hell
+`#f1f0ed`, dunkel `#26282e`.
+
+Gemessene Helligkeiten der vier dunklen Flaechen, damit das nachpruefbar ist:
+`#131418` 0,0071 · `#191a1f` 0,0104 · `#202128` 0,0155 · `#26282e` 0,0213.
+Fassung 3 hat hier `#202128` als unguenstigsten Grund angesetzt, und das war
+falsch. Das Skript liegt bei und laeuft beim Bau erneut.
+
+### Flaechen
+
+| Rolle | hell | dunkel |
+|---|---|---|
+| Seitengrund | `#fbfbfa` | `#131418` |
+| Blatt, Karte | `#ffffff` | `#191a1f` |
+| vertieft | `#f5f5f4` | `#202128` |
+| Band | `#f1f0ed` | `#26282e` |
+
+### Text, gegen den unguenstigsten Grund
+
+| Rolle | hell | Kontrast | dunkel | Kontrast |
+|---|---|---|---|---|
+| Fliesstext, Ueberschrift | `#1c1b19` | 15,10:1 | `#edebe6` | 12,37:1 |
+| Vorspann, Bildunterschrift | `#57534e` | 6,69:1 | `#a6a29a` | 5,79:1 |
+| Kleintext | `#5d5b56` | 5,95:1 | `#949088` | 4,63:1 |
+| Zierde, deaktiviert, **nie Inhalt** | `#6b6963` | 4,82:1 | `#575450` | unter Grenzwert, deshalb nie Inhalt |
+
+**Korrektur, in zwei Stufen.** Der naheliegende dunkle Kleintext `#85817a`
+misst auf der Bandflaeche 3,79:1. Fassung 3 hob ihn auf `#8d8981` an, rechnete
+dabei aber gegen die falsche Flaeche: auf `#26282e` sind das nur 4,23:1 und es
+faellt weiterhin durch. Endstand `#949088` mit 4,63:1.
+
+### Linien
+
+| Rolle | hell | Kontrast | dunkel | Kontrast |
+|---|---|---|---|---|
+| Haarlinie, nur Rhythmus | `#e9e8e6` | 1,18:1 | `#26282e` | 1,25:1 |
+| kraeftige Kante | `#d8d7d4` | 1,39:1 | `#34363d` | 1,53:1 |
+| **Kante an Bedienelementen** | `#8a8880` | **3,43:1** | `#6e717a` | 3,77:1 |
+
+**Zweite Korrektur:** Frostbreaker fuehrt `#a9a8a2` als Bedienkante. Das misst
+2,30:1 und verfehlt die 3:1 aus WCAG 1.4.11 fuer Bedienelemente. Auf `#8a8880`
+angehoben (3,43:1 auf Grund, 3,12:1 auf Band). Die beiden leiseren Linien
+tragen keine Information und duerfen leise bleiben.
+
+### Akzente
+
+| Rolle | hell | Kontrast | dunkel | Kontrast |
+|---|---|---|---|---|
+| Akzenttext, jede Groesse | sky-700 `#0369a1` | 5,21:1 | sky-400 `#38bdf8` | 6,88:1 |
+| Akzent gross, ab 24px, Kanten | sky-600 `#0284c7` | 3,59:1 | sky-300 `#7dd3fc` | 8,84:1 |
+| Akzentflaeche | sky-500 `#0ea5e9` | nur Flaeche | sky-500 | nur Flaeche |
+| Akzentwaschung | `#e0f2fe` | Text darauf 5,17:1 | `#0c2534` | Text darauf 9,47:1 |
+| Coral, Flaeche und Rahmen | `#ea5a3e` | nur Flaeche | `#ea5a3e` | nur Flaeche |
+| Coral-Text | `#bd3f1d` | 4,73:1 | `#fb9a8c` | 7,09:1 |
+| Coral-Waschung | `#fdece7` | Coral-Text darauf 4,71:1 | `#2b1713` | Coral-Text darauf 8,18:1 |
+
+### Text auf Akzentflaechen, und die dritte Korrektur
+
+| Kombination | Kontrast | Urteil |
+|---|---|---|
+| Weiss auf Tinte `#1c1b19` (Pill-CTA) | 17,21:1 | traegt |
+| Weiss auf sky-700 | 5,93:1 | traegt |
+| Weiss auf sky-600 | 4,10:1 | **faellt durch** |
+| **Weiss auf Coral** | **3,48:1** | **faellt durch** |
+| Tinte auf Coral | 4,94:1 | traegt |
+| Nacht auf sky-400 | 8,59:1 | traegt |
+
+**Auf Coral steht Tinte, nie Weiss.** Das ist kontraintuitiv, weil Coral
+kraeftig aussieht, aber es ist gerechnet. Wer spaeter einen weissen Text auf
+eine Coral-Flaeche setzt, bricht die Seite.
+
+### Zustaende und Bedienteile
+
+| Rolle | hell | dunkel |
+|---|---|---|
+| Auswahl `::selection` | sky-500 bei 18 % | sky-400 bei 26 % |
+| Reglerbahn | `#f5f5f4`, Kante `#8a8880` | `#26282e`, Kante `#6e717a` |
+| Reglergriff | `#1c1b19`, Rand `#ffffff` | `#edebe6`, Rand `#131418` |
+| Hover | eine Stufe dunkler | eine Stufe **heller** |
+
+**Der Fokusring ist zweifarbig, und das ist keine Zierde.** Ein einfarbiger
+Ring versagt dort, wo er der Flaeche zu nah kommt: sky-700 auf einer
+sky-500-Flaeche misst 2,1:1, sky-400 darauf 1,3:1. Ein Ring, den man auf dem
+wichtigsten Knopf der Seite nicht sieht, ist keiner.
+
+Deshalb: **2px Tinte `#1c1b19` innen, 2px Papier `#ffffff` aussen**, in beiden
+Modi dieselbe Konstruktion. Damit liegt immer eine der beiden Haelften ueber
+3:1, egal worauf der Ring landet. Gemessen ueber alle Flaechen der Seite:
+
+| Flaeche | Tinte | Papier | wirksam |
 |---|---|---|---|
-| 1 | Hero | Verdacht, Kälte | gepinnt, Iris-Enthüllung auf ein Still |
-| 2 | Befund | wachsende Unruhe | fließend, drei Befunde nacheinander |
-| 3 | Scharnier | angehaltener Atem | fließend, **absichtlich fast leer** |
-| 4 | Vergleich | Erleichterung (**der Höhepunkt**) | gepinnt, größte Spanne, der Signature Move |
-| 5 | Weitere Fälle | Neugier, Bestätigung | seitlich schwenkend, zwei weitere Gewerke |
-| 6 | Leistungen | Klarheit | fließend, drei Aussagen |
-| 7 | Prozess | Zuversicht | schwenkend, vier Schritte auf einer Haarlinie |
-| 8 | Über | Nähe | fließend, erste Person, ein Still |
-| 9 | Kontakt | Entschluss | gepinnt, ein `mailto:`, Fuß eingefaltet |
+| Grund hell `#fbfbfa` | 16,62:1 | 1,04:1 | 16,62:1 |
+| Band hell `#f1f0ed` | 15,10:1 | 1,14:1 | 15,10:1 |
+| sky-500 `#0ea5e9` | 6,21:1 | 2,77:1 | 6,21:1 |
+| **Coral `#ea5a3e`** | 4,94:1 | 3,48:1 | **4,94:1** |
+| Tinte, Pill-CTA `#1c1b19` | 1,00:1 | 17,21:1 | 17,21:1 |
+| Grund dunkel `#131418` | 1,07:1 | 18,41:1 | 18,41:1 |
+| Band dunkel `#26282e` | 1,17:1 | 14,73:1 | 14,73:1 |
 
-Akt 3 ist kein Defekt. Die Stille vor dem Höhepunkt ist gebaut, nicht
-vergessen.
+Der schlechteste Fall der ganzen Seite ist 4,94:1, und der liegt ueber der
+geforderten 3:1 fuer Bedienelemente.
 
-**Was das strukturell nach sich zog.** Die Startseite bringt eigene
-Kopfleiste, eigenes `<main id="top">` und einen in Akt 9 eingefalteten Fuß mit.
-Das Wurzel-Layout darf deshalb keine Chrome mehr tragen, sonst stünden zwei
-Kopfleisten und zwei verschachtelte `<main>` auf der Seite. Die drei übrigen
-Routen holen sich die Chrome aus der Route Group `(mit-chrome)`. Die URLs sind
-unverändert geblieben.
+Die `--st-`-Tokens entfallen, mit ihnen Mint `#2affaa`, Koenigsblau `#1032cf`
+und reines Schwarz auf reinem Weiss.
 
-Die vier Stylesheets der Startseite werden aus `app/page.tsx` importiert, nie
-aus einem Layout: `page.css` benutzt sehr allgemeine Selektoren, und die
-`--sc-*`-Tokens würden sonst das Impressum tiefschwarz einfärben.
+### Wie `--st-*` verschwindet, Datei fuer Datei
 
-Der aktuelle Aufbau steht in `README.md`, die Arbeitsregeln in `CLAUDE.md`.
-Die Abschnitte 1, 2 und 6 unten gelten unverändert weiter. Die Abschnitte 3
-bis 5 und 7 bis 10 sind an den markierten Stellen überholt.
+1. `components/start/tokens.css` wird **geloescht**. Farbe, Schrift und
+   Groesse ziehen nach `app/globals.css` in die semantische Ebene, weil
+   Startseite und Rechtsseiten kuenftig ein System teilen.
+2. Was routen-lokal bleibt, sind **Rhythmus-Tokens** der Startseite (Rand,
+   Abschnittsabstand, Radien, Kurven). Sie wandern in den Kopf von
+   `components/start/start.css`, weil nur diese Route sie braucht.
+3. `components/start/start.css` wird neu geschrieben und liest ausschliesslich
+   `--c-*` aus `globals.css`. Kein Hex-Wert in der Datei.
+4. Jede `.st-`-Klasse behaelt ihr Praefix.
+5. **Die Importreihenfolge in `app/page.tsx` bleibt unveraendert:**
+   `globals.css` (aus dem Wurzel-Layout) vor `start.css` (aus der Seite).
+   Startseiten-CSS wird nie aus einem Layout importiert.
+6. Nachweis: im gebauten HTML von `/impressum` darf keine `.st-`-Regel stehen.
 
----
+## 2. Schrift, ohne die Rechtsseiten zu beschaedigen
 
-## 1. Die Ausgangslage, ehrlich benannt
+Fassung 2 sagte, `app/layout.tsx` tausche die Schriften. Das haette Inter und
+Newsreader von den deutschen Rechtsseiten genommen. Korrigiert:
 
-Der Besucher kommt aus einer Kaltakquise-Mail. Er ist skeptisch. In dieser Mail
-stand ein konkreter Befund über *seine* Website: zu langsam, unlesbar auf dem
-Handy, Design von 2011, kein erkennbarer nächster Schritt. Er klickt, um zu
-prüfen, ob der Absender das überhaupt beurteilen kann.
+- **Wurzel-Layout behaelt** Inter, Newsreader (opsz) und JetBrains Mono. Die
+  Rechtsseiten bleiben unveraendert gesetzt.
+- **`app/page.tsx` importiert** `@fontsource-variable/fraunces` und
+  `@fontsource-variable/space-grotesk`. Genau dort, wo heute Archivo steht,
+  aus demselben Grund: die Schrift landet nur im Buendel dieser Route.
+- **Archivo wird deinstalliert.** Nichts laedt es mehr.
+- Space Grotesk kommt neu ins `package.json`, Fraunces ist bereits da.
+- Fraunces traegt Displaystufen **ab 24px**, darunter Space Grotesk. Vier
+  Groessenstufen, dazwischen nichts. Fliesstext nicht unter 17px.
 
-Daraus folgt, was diese Seite leisten muss und was nicht:
+## 3. Theme-Umschaltung
 
-- Sie muss den Befund aus der Mail **einlösen**, nicht wiederholen.
-- Sie hat keine echten Referenzen. Erfundene wären der schnellste Weg, das
-  Vertrauen zu verlieren, das die Mail gerade aufgebaut hat.
-- Sie braucht keine Navigation über sieben Punkte. Ein Kaltklick liest eine
-  Bahn, nicht ein Menü.
+Das vorhandene Skript liest ausschliesslich `localStorage` und folgt der
+Systemeinstellung **nicht**. Fassung 1 behauptete das Gegenteil. Korrigiert:
 
-## 2. Die tragende Entscheidung
+1. **CSS traegt die Grundlage**: `@media (prefers-color-scheme: dark)` setzt
+   die dunklen Tokens. Der Modus stimmt damit auch ohne JavaScript.
+2. **Das Skript ueberschreibt nur bei gespeicherter Wahl** und setzt dann
+   `.light` oder `.dark` auf `html`, was die Medienabfrage schlaegt.
+3. Kein Aufblitzen, weil das Skript vor dem ersten Bild laeuft.
 
-**Der Beweis ist die Seite selbst, und die Seite zeigt den Befund.**
+**Der Schalter ist entschieden**, und er wird nicht aus Knoepfen nachgebaut:
+drei **native `<input type="radio">`** in einem `<fieldset>` mit `<legend>`
+("Theme"), Werte **System / Light / Dark**. Der Browser bringt damit
+Gruppensemantik, Pfeiltastenwechsel, wandernden Fokus und den angesagten
+Zustand von sich aus mit. Fassung 3 wollte `role="radiogroup"` ueber
+gewoehnliche Knoepfe legen; das ist unvollstaendige ARIA und haette
+`role="radio"`, `tabindex`-Verwaltung und Pfeiltasten von Hand gebraucht,
+also drei Fehlerquellen fuer etwas, das nativ vorhanden ist.
 
-Statt zu behaupten, Youssef könne gutes Webdesign, stellt die Seite das
-Problem und seine Lösung nebeneinander und lässt den Besucher selbst
-umschalten. Das Herzstück ist eine Fläche, in der eine bewusst schlechte
-Website eines offensichtlich fiktiven Betriebs **live gerendert** steht, nicht
-als Screenshot: gequetschte Zeilen, Grauverlauf, blaue Unterstreichungen,
-Kontrast unter der Grenze, ein CTA, den man suchen muss. Daneben, per Schieber
-oder Umschalter erreichbar, dieselbe Firma neu gebaut.
+Die Beschriftungen sind sichtbar, jedes Ziel misst 44px, die Auswahl faerbt
+sich ueber `:checked`. "System" loescht den gespeicherten Wert und gibt die
+Entscheidung an die Medienabfrage zurueck. Ein Ein-Klick-Umschalter kann das
+nicht, weil er keinen Weg zurueck zu "System" hat.
 
-Über der schlechten Fassung liegen **Messschilder**: Haarlinien mit
-Monoschrift-Beschriftung, die auf einzelne Stellen zeigen und benennen, was
-dort nicht stimmt. Genau die Sprache, in der ein Prüfbericht spricht, und
-genau die Befunde, die Youssef in seinen Mails anspricht.
+## 4. Bildebene aus echten Seiten, reproduzierbar
 
-Warum das und nicht ein Standard-Portfolio-Raster: ein Raster mit
-Projektbildern setzt voraus, dass der Besucher Bilder von Websites bewerten
-kann und will. Der Kontrast zwischen zwei begehbaren Fassungen setzt das nicht
-voraus. Er wirkt sofort, und er beweist Handwerk in beide Richtungen: die
-schlechte Fassung überzeugend schlecht zu bauen ist selbst eine
-Gestaltungsleistung.
+Im Repo liegen sechs lauffaehige Demo-Seiten (`components/showcase/demos/`,
+1.238 Zeilen echtes Layout). Sie werden zu Bilddateien.
 
-## 3. Visuelle Richtung
+**Die Erfassungsroute darf nie in einen Produktionsbau geraten, und Fassung 2
+loeste das falsch.** Ein Ordner mit Unterstrich (`app/_erfassung/`) ist ein
+privater Next-Ordner und erzeugt ueberhaupt keine Route, die Aufnahme haette
+also nie funktioniert. Korrigiert ueber `pageExtensions`:
 
-> **Teilweise überholt (2026-08-25).** Gilt weiter für `/arbeit/[slug]`,
-> `/impressum` und `/datenschutz`. Die Startseite folgt seit dem
-> scrollcraft-Redesign einer eigenen Richtung: Kino-Tech-Noir, tiefdunkler
-> Grund, ein hartes Führungslicht, ein warmer Akzent, dazu dieselbe
-> Messschild-Sprache aus Haarlinien und Monoschrift. Nur dunkel, kein
-> Nachtmodus-Schalter: eine Kinoseite hat keine Tagfassung. Ihre Tokens stehen
-> in `components/start/tokens.css`, die Begründung in
-> `scrollcraft/builds/casefile/BRIEF.md`.
->
-> Auch die Zielgruppenzeile unten ist überholt: seit dem Pivot sind es
-> Bauunternehmen, Elektriker und Dachdecker, und die Seite spricht Englisch.
+```js
+// next.config.mjs
+const capture = process.env.CAPTURE === "1";
+export default {
+  pageExtensions: capture ? ["capture.tsx", "tsx", "ts"] : ["tsx", "ts"],
+  images: { formats: ["image/avif", "image/webp"] },
+};
+```
 
-Nicht der zurückhaltende Werkzeug-Look von Frostbreaker, aber auch nicht
-Berlin-Startup-Neon. Zielkunden sind deutschsprachige Betriebe, die noch eine
-Website von 2011 haben: Handwerk, Kanzleien, Praxen, Autohäuser, Gastronomie.
-Für die muss die Seite **teuer und seriös** wirken, nicht laut.
+Die Erfassungsseiten heissen `page.capture.tsx`. Ohne `CAPTURE=1` ist die
+Datei fuer Next **keine Seite**, sie kann im Produktionsbau gar nicht
+entstehen. Das ist strukturell sicher statt von einer Laufzeitpruefung
+abhaengig. Die Dateien bleiben im Repo, damit die Aufnahme wiederholbar ist.
 
-**Richtung: editorial und messtechnisch.** Eine hochwertige Publikation, in der
-jemand mit dem Lineal Befunde einträgt.
+**Ein eingecheckter Befehl macht jede Aufnahme, keine Handarbeit.**
+`scripts/aufnahmen.mjs` haelt fest und protokolliert:
 
-| Ebene | Festlegung |
+- Adresse je Fassung, Fenstermass 390 und 1440, `deviceScaleFactor: 2`
+- Farbschema je Lauf (hell und dunkel getrennt)
+- `document.fonts.ready` **und** `decode()` auf jedes `<img>` **und** zwei
+  ruhige Bildwechsel, bevor ausgeloest wird
+- `prefers-reduced-motion: reduce` erzwungen, damit keine Animation halb im
+  Bild steht
+- fester Beschnitt je Ziel, Browserfassung ins Manifest
+
+**Eine Vorrichtung fuer alle Bilder, auch die uebernommenen.** Die vier
+App-Screenshots aus `Frostbreaker_Website/public/screenshots/` und die
+Aufnahme von frostbreaker.app laufen durch denselben Erzeuger und stehen mit
+denselben Feldern im Manifest. Kein Bild kommt an der Vorrichtung vorbei.
+
+`public/arbeiten/manifest.json` fuehrt je Bild: Datei, Masse, Bytes,
+Quelle, Quellstand, Ausgabeformat.
+
+**Formatweg, eindeutig:** Quelldateien bleiben PNG aus der Aufnahme.
+Die Auslieferung macht `next/image` mit
+`images.formats = ["image/avif", "image/webp"]`. Es gibt **kein** von Hand
+gebautes `<picture>` und keine zwei parallel gepflegten Ableitungen.
+Gemessen wird, was wirklich ausgeliefert wird.
+
+**Jede Aufnahme hat genau einen Platz, und keine wird umgeschaltet.** Die
+390er- und die 1440er-Aufnahme zeigen zwei verschiedene Layouts derselben
+Seite, das ist Bildregie und nicht Aufloesung; `sizes` kann so etwas nicht
+entscheiden, es waehlt nur die Kodierungsgroesse **einer** Quelle. Fassung 3
+hatte dafuer keinen Abnehmer benannt. Deshalb bekommt jede Aufnahme ihren
+festen Platz, und es wird an keiner Stelle zwischen zwei Layouts gewechselt:
+
+| Aufnahme | Platz |
 |---|---|
-| Grundton hell | warmes Papier, kein reines Weiß |
-| Grundton dunkel | tiefe Tinte, kein reines Schwarz, vollwertiges Pendant |
-| Display-Schrift | Serif mit Charakter, groß und selbstbewusst gesetzt |
-| Fließ- und UI-Schrift | präzise Grotesk (Inter Variable, wie im Hauptprojekt) |
-| Messschilder | Monoschrift, ~10px, weit gesperrt, Versalien |
-| Akzent | **genau einer**, kräftig, für CTA und Befund-Marker |
-| Flächen | Haarlinien statt Kästen, Eckwinkel statt Rahmen, kaum Schatten |
-| Verläufe | nur wo etwas Material darstellt, nie als Zierde |
+| 390px, Elektro Musterhaus neu | Telefonrahmen im Hero |
+| 390px, Dach Musterhoehe alt und neu | Vergleich Fall 3 (der Fall handelt vom Telefon) |
+| 1440px, Elektro Musterhaus alt und neu | Vergleich Fall 1 |
+| 1440px, Bau Mustergrund alt und neu | Vergleich Fall 2 |
+| 1440px, frostbreaker.app | Leitbild des echten Falls |
+| App-Screenshots | Beweisstreifen, klein |
 
-Die konkreten Werte (Hex, Typo-Skala, Font-Pairing, Spacing-Skala) legt der
-ui-designer fest, mit `frontend-design` und `ui-ux-pro-max`. Bindend ist die
-Token-Architektur nach Frostbreaker-Vorbild: CSS-Variablen auf `:root` und
-`.dark`, per `@theme inline` an Tailwind v4 gebunden, `@custom-variant dark`.
-Keine Hex-Werte in Komponenten.
+Ein Telefonrahmen zeigt also in jeder Fensterbreite dieselbe Telefonaufnahme,
+nur kleiner. `sizes` regelt allein, wie gross sie kodiert ausgeliefert wird.
+Damit gibt es kein `<picture>`, keine Bildregie und keinen ungenutzten
+Aufnahmesatz.
 
-Schriften über `@fontsource-variable`-Pakete, nicht über ein CDN. Dieselbe
-Entscheidung wie im Hauptprojekt und Voraussetzung dafür, dass die Seite ohne
-fremde Anfrage lädt.
+**Vorher/Nachher-Paare** entstehen durch dieselbe Vorrichtung. Weichen die
+Masse eines Paares voneinander ab, bricht die Erzeugung ab.
 
-## 4. Bewegungskonzept
+**Budget** (feste Masse verhindern den Sprung, nicht das Gewicht):
 
-> **Für die Startseite überholt (2026-08-25).** Die drei Momente unten
-> beschreiben den alten One-Pager. Die Bewegung der Startseite kommt jetzt aus
-> der scrollcraft-Engine: gepinnte und fließende Akte, ein seitlicher Schwenk,
-> ein wandernder Grundton, und in Akt 4 der Signature Move. Die Regeln
-> darunter gelten trotzdem alle weiter, besonders diese:
-> `prefers-reduced-motion: reduce` zeigt den **Endzustand**, nicht eine
-> gedämpfte Fassung, und das Ruckeln der schlechten Demo verschwindet dabei
-> vollständig. Es ist der Beweis der Seite, aber es ist auch Bewegung, und für
-> jemanden mit Bewegungsempfindlichkeit hat es nichts zu suchen.
+| | Grenze |
+|---|---|
+| Hero-Bild | 120 kB |
+| jedes weitere Bild | 80 kB |
+| alle Bilder zusammen | 700 kB |
+| Erstbild insgesamt | unter 1,2 MB |
 
-Motion-Budget bewusst gedeckelt. Drei Momente tragen die Seite, alles andere
-ist ruhig:
+`sizes` an jedem `next/image`, kartengenaue Zuschnitte statt einer skalierten
+Vollseite, `priority` **nur** am Hero-Bild, alles andere `loading="lazy"`.
+Reisst ein Bild sein Budget, wird es zugeschnitten, nicht das Budget erhoeht.
 
-1. **Der Einstieg.** Die Überschrift setzt sich, das Haarlinien-Raster zeichnet
-   sich einmal. Einmalig, unter 900ms, danach steht es.
-2. **Der Umschlag.** Vorher zu Nachher. Der eine Moment, für den die Seite
-   gebaut ist. Er muss sich anfühlen, als ob Material bewegt wird, und er muss
-   unterbrechbar sein: wer den Schieber zurückzieht, bekommt ihn sofort zurück.
-3. **Der Befund.** Die Messschilder zeichnen sich gestaffelt auf die schlechte
-   Fassung, wenn die Sektion in den Blick kommt. Einmal, nicht bei jedem Scroll.
+## 5. Die sieben Flaechen
 
-Regeln, aus dem Hauptprojekt übernommen:
-
-- Standard-Easing `cubic-bezier(0.2, 0.7, 0.3, 1)`.
-- Nur `opacity`, `transform`, `clip-path`, `stroke-dashoffset` animieren.
-- **Keine Dauerschleifen im Sichtfeld**, mit einer möglichen Ausnahme im Hero.
-- `prefers-reduced-motion: reduce` schaltet jede Animation ab und zeigt den
-  Endzustand. Kein „dezenteres" Fallback, sondern der fertige Zustand.
-- Scroll-Reveals über `IntersectionObserver`, jedes Element genau einmal.
-
-Der ui-designer nutzt dafür `animate` und `animation-vocabulary`, für Material
-und Zurückhaltung `apple-design`.
-
-## 5. Seitenstruktur
-
-Bewusst klein. Fünf Routen, davon zwei rechtlich.
-
-### `/` (One-Pager)
-
-> **Überholt (2026-08-25).** Die sieben Sektionen sind durch die neun Akte
-> oben ersetzt, die Komponenten unter `components/sections/` sind gelöscht.
-> Die Zuordnung ist im Kern erhalten geblieben: aus Sektion 3 (Showcase) sind
-> die Akte 3 bis 5 geworden, und der Fuß ist in Akt 9 eingefaltet statt im
-> Layout.
-
-| # | Sektion | Aufgabe | Besonderheit |
+| # | Flaeche | was sie zeigt | Bild zu Text |
 |---|---|---|---|
-| 1 | Hero | In sieben Sekunden klarmachen, was hier passiert | Display-Serif, Haarlinienraster, ein CTA |
-| 2 | Der Befund | Die Weckung: was an alten Websites Geld kostet | Messschild-Sprache, keine Zahlen ohne Quelle |
-| 3 | **Showcase** | Vorher/Nachher, begehbar | **Das Herzstück.** 3 Demo-Projekte |
-| 4 | Leistungen | Was Youssef baut | knapp, drei bis vier Blöcke |
-| 5 | Prozess | Wie es abläuft, Angst nehmen | vier Schritte, nummeriert |
-| 6 | Über Youssef | Warum ausgerechnet er | ehrlich, ohne Agentur-Plural |
-| 7 | Kontakt | Der nächste Schritt | ein Weg, nicht drei |
-| 8 | Fuß | Rechtliches, Nachtmodus | |
+| 0 | Kopfleiste | ab 768px: Wortmarke, zwei Ankerlinks, Modus-Gruppe, schwarzer Pill-CTA. Darunter nur Wortmarke und Pill (siehe unten) | |
+| 1 | Hero | Ueberschrift in Fraunces mit einem kursiven Sky-Wort, ein Vorspannsatz, Pill plus Textlink, daneben ein Geraeteaufbau mit einer echten Seite darin | 70/30 |
+| 2 | Beweisstreifen | ein Satz plus zwei anklickbare Kapseln auf frostbreaker.app und app.frostbreaker.app | 20/80 |
+| 3 | Arbeiten | Frostbreaker zuerst als echter Fall, darunter die drei Handwerksfaelle mit Vergleichsregler, Tag-Kapseln, Kennzeichen | 85/15 |
+| 4 | Was dich Anrufe kostet | Coral. Drei Maengel als annotierte Bildausschnitte | 80/20 |
+| 5 | Wie es laeuft | drei nummerierte Schritte an Haarlinien | 40/60 |
+| 6 | Wer die Arbeit macht | echtes Portraet, zwei Saetze | 50/50 |
+| 7 | Schluss und Fuss | Call buchen, Impressum, Datenschutz | |
 
-### `/arbeit/[slug]`
+**Die Kopfleiste bei 390px, ausgerechnet statt gehofft.** Bei 390px stehen
+abzueglich der Seitenraender rund 350px zur Verfuegung. Wortmarke (rund
+150px), zwei Ankerlinks, eine Dreiergruppe fuer den Modus (drei Ziele zu
+44px sind allein 132px) und ein CTA passen dort nicht nebeneinander, ohne
+Trefferflaechen zu unterschreiten. Also:
 
-Drei Detailseiten, eine je Demo-Projekt. Hier lebt die Tiefe: die schlechte
-Fassung ganzflächig mit allen Befunden, die neue Fassung ganzflächig, dazwischen
-die Begründung jeder Entscheidung. Zweiter großer Gestaltungsmoment nach dem
-Hero.
+| Breite | Kopfleiste traegt | wohin der Rest geht |
+|---|---|---|
+| ab 768px | Wortmarke, zwei Ankerlinks, Modus-Gruppe, Pill-CTA | |
+| unter 768px | Wortmarke und Pill-CTA, beide 44px | Ankerlinks entfallen, Modus-Gruppe steht im Fuss |
 
-> **Nachtrag (2026-08-25).** Die Route steht noch, ist aber deutsch geblieben,
-> während die Startseite englisch spricht, und von der Startseite führt kein
-> Link mehr dorthin. Sie trägt deshalb `robots: { index: false }`. Ob sie
-> übersetzt oder entfernt wird, ist offen. Der Grund für den Aufschub: von der
-> Kaltakquise-Mail führt der Klick auf `/`, und der Beweis liegt seit dem
-> Redesign vollständig in Akt 4. Drei tiefe Unterseiten zu übersetzen wäre die
-> teuerste Arbeit an der Stelle mit der geringsten Wirkung.
+**Kein Menueknopf.** Ein One-Pager mit sieben Flaechen, den man in einer
+Wischbewegung durchlaeuft, braucht keine Navigation zu zwei Ankern; ein
+Hamburger waere ein Bedienelement fuer ein Problem, das es nicht gibt. Der
+Modus-Schalter ist im Fuss vollstaendig vorhanden und ueber die Tastatur
+erreichbar, also geht nichts verloren.
 
-### `/impressum` und `/datenschutz`
+**Wem welcher Text gehoert:**
 
-Pflicht in Deutschland und bei dieser Zielgruppe ein Glaubwürdigkeitsloch, wenn
-sie fehlen. Youssefs echte Daten sind nicht bekannt, deshalb **klar markierte
-Platzhalter** mit einem Hinweisbalken, den er vor dem Livegang entfernt.
+| Quelle | besitzt |
+|---|---|
+| `content/start.ts` | jeden Satz, den die Startseite rendert: Ueberschriften, Fallnamen, Bildunterschriften, Tag-Kapseln, das Kennzeichen "Fictional demo. Not a real business.", jedes `alt` |
+| `content/projekte.ts` | nur den Text INNERHALB der Demo-Seiten, also das, was im Screenshot abgebildet ist |
 
-### Was bewusst fehlt
+Das Kennzeichen steht auf jeder Karte und kommt aus `start.ts`. Es darf nicht
+Teil eines Bildes sein: ein Kennzeichen, das nur im Screenshot steht, ist fuer
+einen Screenreader nicht vorhanden.
 
-Blog, Preisseite, Kontaktformular mit Backend, CMS, Sprachumschalter,
-Cookie-Banner, Kundenlogos, Testimonials, Zahlen-Ticker.
+**Zum Vorher/Nachher:** In `Lehren/checkliste.md` steht "kein
+Vorher/Nachher-Regler". Diese Regel gilt fuer den **Entwurf, der an einen Lead
+geht**, wo der Prototyp die Website ist und die Argumentation in die Mail
+gehoert. Sie gilt nicht fuer die eigene Verkaufsseite, wo der Vergleich das
+Argument ist.
 
-Zum Sprachumschalter: **nein, aber die Begründung hat sich umgedreht
-(2026-08-25).** Der alte Grund steht unten und gilt nicht mehr: die Seite ist
-seit dem scrollcraft-Redesign englisch. Der Umschalter fehlt trotzdem, und
-zwar aus genau demselben Argument, nur andersherum gelesen: es gibt eine
-Sprache, und sie ist gepflegt. Ein halbgepflegter zweiter Zweig, egal in
-welche Richtung, wäre ein Qualitätsrisiko genau dort, wo die Seite Qualität
-beweisen soll. Wer eine deutsche Fassung will, baut sie als eigenes Vorhaben.
+**Der Vergleichsregler, ausspezifiziert:**
 
-Der überholte Wortlaut, zur Nachvollziehbarkeit: *„Die Zielkunden sind
-deutschsprachig. Ein halbgepflegter englischer Zweig wäre ein Qualitätsrisiko
-genau dort, wo die Seite Qualität beweisen soll. Weniger Fläche, mehr
-Politur."*
+- natives `<input type="range">`, `min=0 max=100 step=1`, Startwert 50
+- `aria-label="Compare before and after"`, dazu `aria-valuetext`, das den
+  Zustand in Worten sagt: bei 0 "Before", bei 100 "After", dazwischen
+  "50 percent after". Eine nackte Zahl sagt niemandem, was er sieht.
+- sichtbarer Fokusring, Griff mit 44px Trefferflaeche
+  (Muster `.range-touch` aus dem Frostbreaker-Stylesheet)
+- `touch-action: pan-y` auf dem Regler: eine senkrechte Wischgeste, die auf
+  ihm beginnt, scrollt die Seite und bleibt nicht haengen
+- **zusaetzlich zwei Knoepfe "Before" und "After"** mit je 44px. Wer nicht
+  ziehen will oder kann, springt. Der Regler ist damit nie der einzige Weg.
+- ohne JavaScript stehen beide Aufnahmen als zwei `<figure>` mit
+  Bildunterschrift untereinander
 
-Ein Rest davon bleibt offen und gehört ehrlich benannt: die Zielkunden **sind**
-deutschsprachige Betriebe, und die Seite spricht sie jetzt auf Englisch an.
-Das ist eine bewusste Entscheidung des Nutzers, kein Versehen. Ob sie sich in
-der Antwortquote rechnet, ist ungemessen und lässt sich nur an echten Zahlen
-aus der Kaltakquise entscheiden, nicht am Schreibtisch.
+## 6. Bewegung, mit zwei Grenzen
 
-Zum Kontaktformular: ohne Deployment gibt es keinen Empfänger. Also `mailto:`
-mit vorbereitetem Betreff plus ein deutlich markierter Platz für einen
-Terminlink. Ein Formular, das ins Leere schreibt, wäre schlimmer als keines.
+Grenze eins: **keine Bewegung nimmt jemandem das Scrollen ab.** Kein Pinning,
+keine entfuehrte Scrollachse, kein Bild-fuer-Bild-Video.
 
-## 6. Die drei Demo-Projekte
+Grenze zwei: **kein echter Scrollcontainer im Seiteninhalt.** Ein scrollbarer
+Kasten mitten auf der Seite faengt auf dem Telefon die Wischgeste ab, und das
+ist die Scroll-Entfuehrung, die schon einmal verworfen wurde. Wo eine Seite
+"scrollt", verschiebt ein `transform` ein statisches Bild in einem
+`overflow: hidden`-Rahmen.
 
-Fiktive Betriebe aus Branchen, die Youssefs Zielgruppe entsprechen. Vorschlag
-für die Zuschnitte, Namen und Texte macht der copywriter.
+| # | Bewegung | Traeger | ohne JS | unter `reduce` |
+|---|---|---|---|---|
+| 1 | Ueberschrift zeilenweise aus der Maske, 90ms Versatz | CSS-Animation | sichtbar | Endzustand |
+| 2 | Hero-Verlauf folgt dem Zeiger | Client-Insel, nur `pointer: fine` | statisch | aus |
+| 3 | Seite im Geraeterahmen wandert | `transform`, kein Scrollcontainer | statisch | aus |
+| 4 | Abschnitte blenden gestaffelt ein | IntersectionObserver | sichtbar | Endzustand |
+| 5 | Fallkarte hebt sich, Bild wandert | CSS-Hover, `hoverfine` | statisch | ohne Wanderung |
+| 6 | Vergleichsregler | natives `range` | zwei Figuren | sofort |
+| 7 | Pill-CTA, Pfeil laeuft | CSS-Hover, `hoverfine` | statisch | nur Farbe |
+| 8 | Modus-Wechsel blendet Tokens ueber | CSS-Transition | sofort | **sofort, ohne Uebergang** |
+| 9 | Haarlinie der Schritte zeichnet sich | CSS + Observer | gezeichnet | gezeichnet |
+| 10 | mitlaufende Abschnittsmarke ab `lg` | Observer | ausgeblendet | ohne Bewegung |
 
-> **Korrigiert (2026-08-25).** Der Zielgruppen-Pivot hat Gastronomie und
-> Kanzlei gestrichen. Es sind drei Gewerke, und alle drei sind Handwerk:
->
-> 1. **Elektro.** Typisch: Baukasten-Seite von 2012, Telefonnummer als Bild,
->    kein Formular, mobil unbrauchbar.
-> 2. **Bau.** Typisch: Referenzen unsichtbar oder gar nicht vorhanden, kein
->    erkennbarer nächster Schritt.
-> 3. **Dach.** Typisch: Notdienst nicht auffindbar, Anruf-Knopf zu klein für
->    einen Daumen.
->
-> Das gilt für die drei Fallstudien unter `/arbeit` **und** für die Demos auf
-> der Startseite: Akt 4 zeigt einen Elektriker, Akt 5 ein Bauunternehmen und
-> einen Dachdecker.
+**Punkt 3 im Detail, weil Fassung 2 sich dort widersprach.** Sie sagte
+gleichzeitig "pausiert bei Hover und Fokus" und "`pointer-events: none`", und
+damit gab es keine Flaeche, die Hover oder Fokus je empfangen haette.
+Korrigiert:
 
-Der überholte Zuschnitt, zur Nachvollziehbarkeit:
+- **Der einzige Tabstopp ist ein beschrifteter Knopf** ("Pause"/"Play"), 44px,
+  am Rahmen. Der Rahmen selbst bekommt **kein** `tabindex`: eine
+  Zierflaeche, die nur deshalb fokussierbar waere, um eine Pause zu
+  empfangen, ist ein unbenannter Tabstopp und macht die Tastaturbedienung
+  schlechter, nicht besser. Fassung 3 lief genau darauf zu.
+- Angehalten wird ueber `:hover` und `:focus-within` am Rahmen. Fokussiert
+  jemand den Pause-Knopf, steht die Bewegung schon, bevor er ihn drueckt.
+- Der Knopf ist **bei Hover und bei Fokus sichtbar**, nicht nur bei Fokus.
+  Wer mit der Maus kommt, soll ihn finden, ohne zu raten.
+- Nur die bewegte Bildebene traegt `pointer-events: none`, damit sie den
+  Hover des Rahmens nicht abfaengt.
+- Die Bewegung laeuft nicht, solange der Abschnitt nicht im Bild ist.
 
-1. **Handwerk** (Elektro, Sanitär, Dach). Typisch: Baukasten-Seite von 2012,
-   Telefonnummer als Bild, kein Formular, mobil unbrauchbar.
-2. **Gastronomie**. Typisch: Speisekarte als PDF, Startbild 4 MB, Öffnungszeiten
-   nur auf Facebook aktuell.
-3. **Kanzlei oder Praxis**. Typisch: Textwüste, Serifen in 11px, kein
-   Terminweg, Stockfoto mit Handschlag.
+Regeln fuer alle zehn:
 
-**Harte Regel: keine erfundenen Referenzen.** Jeder Name muss auch ohne Label
-als Beispiel erkennbar sein, **und** jede Karte, jede Detailseite trägt ein
-sichtbares Kennzeichen „Demo, fiktives Beispiel". Keine Logos, die wie echte
-Marken aussehen. Keine Testimonials. Keine Kennzahlen wie „+340 % Anfragen".
+- **Der Ausgangszustand ist sichtbar.** Der unsichtbare Startzustand haengt an
+  `@media (scripting: enabled)`, wie `CLAUDE.md` es vorschreibt.
+- **Vier Client-Inseln, mehr nicht:** Zeiger-Verlauf, Observer,
+  Vergleichsregler, Modus-Gruppe. Alles andere bleibt Server Component.
+- **Jeder Observer und jeder Listener wird im Aufraeumen entfernt.**
+- Keine Bibliothek. `magicuidesign` bleibt ungenutzt, weil es Framer Motion
+  nachzieht.
 
-Die Befunde in den Messschildern beschreiben, was in der gezeigten schlechten
-Fassung **tatsächlich zu sehen ist** (Kontrastwert, Schriftgröße, Tap-Ziel in
-Pixeln). Keine erfundenen Ladezeiten.
+## 7. Dunkelmodus: die Abnahmematrix
 
-## 7. Komponentenarchitektur
+Geprueft wird bei 390, 768 und 1440, hell und dunkel, jede Zeile einzeln:
 
-> **Überholt (2026-08-25).** Der Baum unten beschreibt den alten One-Pager.
-> Der aktuelle steht in `README.md` und in `CLAUDE.md`. Zwei Regeln sind neu
-> dazugekommen und wiegen schwerer als alles im Baum:
->
-> - **Die `data-sc-*`-Attribute im Markup sind der Vertrag mit der Engine.**
->   Sie liest genau diese Struktur. Ein umsortiertes oder eingespartes Element
->   bricht einen Akt, ohne dass TypeScript etwas merkt.
-> - **Die Stylesheets der Startseite werden aus `app/page.tsx` importiert,
->   nie aus einem Layout.** Sonst färben ihre Tokens das Impressum ein.
->
-> Die Regel zur `.alt-fassung`-Insel unten gilt weiter, und die Startseite
-> macht dasselbe noch strenger: die zwei Mini-Websites in Akt 4 leben in
-> `.demo-track--bad` und `.demo-track--good`, und nichts von dort darf nach
-> außen wirken. Die schlechte Fassung erbt bewusst Times New Roman von ihrem
-> Rahmen, damit sie aussieht wie das, was sie darstellt.
+| Kippstelle | Massnahme |
+|---|---|
+| Screenshots heller Websites | nicht invertieren, nicht filtern. Im Dunklen in einem Geraeterahmen mit heller Blende, damit sie als Bildschirm lesen |
+| Wortmarke | beide Fassungen liegen vor (`frostbreaker-marke.svg`, `-dunkel.svg`), Umschaltung ueber CSS |
+| Vergleichsregler | Bahn, Griff und Fokusring haben eigene dunkle Tokens (Abschnitt 1) |
+| Fokusring | zweifarbig, gemessen ueber alle Flaechen (Abschnitt 1), schlechtester Fall 4,94:1 |
+| Modus-Gruppe im Fuss | eigene dunkle Fassung, `:checked` muss in beiden Modi erkennbar sein |
+| Auswahlfarbe | eigener Wert je Modus |
+| SVG-Zeichnungen | Farbe als Klasse, nie als Praesentationsattribut |
+| Body-Grundregeln aus `start.css` | duerfen die dunklen Tokens nicht ueberschreiben |
+| Portraet und OG-Bild | ein Motiv fuer beide Modi, kein transparentes PNG mit dunklem Rand |
+| Coral-Abschnitt | Waschung `#2b1713`, Coral-Text `#fb9a8c`, gemessen in Abschnitt 1 |
+| Pause-Knopf am Geraeterahmen | eigene dunkle Fassung, sonst verschwindet er auf der Bildebene |
 
-```
-app/
-  layout.tsx              Schriften, Theme-Skript, Metadata
-  globals.css             Tokens, @theme inline, Keyframes
-  page.tsx                One-Pager: setzt Sektionen zusammen
-  arbeit/[slug]/page.tsx  Fallstudie
-  impressum/page.tsx
-  datenschutz/page.tsx
-components/
-  chrome/                 Kopfleiste, Fuß, Nachtmodus-Schalter
-  sections/               hero, befund, showcase, leistungen,
-                          prozess, ueber, kontakt
-  showcase/
-    vorher-nachher.tsx    Schiebe-/Umschaltmechanik
-    befund-marker.tsx     Messschild mit Linie
-    demos/
-      <slug>-alt.tsx      die bewusst schlechte Fassung
-      <slug>-neu.tsx      die neue Fassung
-  ui/                     Knopf, Marke, Abschnittsmarke, Reveal
-content/
-  projekte.ts             Demo-Projekte, Befunde, Fallstudientexte
-  seite.ts                alle übrigen Texte
-lib/
-  reveal.ts               IntersectionObserver-Hook
-  cn.ts
-```
+## 8. Mobil
 
-**Regel für die Demo-Fassungen:** die schlechte Fassung wird in einer
-`.alt-fassung`-Insel gerendert, deren Stile ausschließlich innerhalb dieser
-Klasse gelten. Kein Token, keine Schrift und keine Regel von dort darf nach
-außen wirken. Dasselbe Vorgehen wie `.fb-hud` im Hauptprojekt.
+Entworfen bei 390px, geprueft bei 390, 768 und 1440, hell und dunkel.
+Kein Klickziel unter 44px. Kein waagerechtes Scrollen in irgendeiner Breite.
+Die Untergrenzen der `clamp()`-Werte werden bei 390px nachgerechnet.
+Kein Element faengt die senkrechte Wischgeste ab (Grenze zwei in 6, plus
+`touch-action: pan-y` am Regler).
 
-## 8. Technische Festlegungen
+## 9. Umfang: was mit jeder Datei passiert
 
-- Next.js 15 App Router, React 19, TypeScript strict, Tailwind v4 über
-  `@tailwindcss/postcss`. Konfigurationsdateien 1:1 nach dem Vorbild in
-  `apps/web` (`next.config.mjs`, `postcss.config.mjs`, `tsconfig.json` mit
-  `@/*`-Alias).
-- **Keine** Supabase-, Stripe-, Auth- oder Middleware-Abhängigkeit.
-- Server Components als Standard. `"use client"` nur dort, wo Zeiger, Tastatur
-  oder `IntersectionObserver` gebraucht werden: Vorher/Nachher, Reveal,
-  Nachtmodus-Schalter, Kopfleiste, dazu seit dem Redesign der Skriptlader
-  `components/start/skripte.tsx`. Die neun Akte selbst sind statisches Markup
-  und bleiben Server Components.
-- Nachtmodus wie im Hauptprojekt: `localStorage`-Skript im `<head>` setzt
-  `.dark` vor dem ersten Bild, `suppressHydrationWarning`. Gilt für die
-  Rechts- und Fallstudienseiten. Die Startseite ist nur dunkel: eine
-  Kinoseite hat keine Tagfassung.
-- Bilder: keine fremden Stockfotos. Alles Sichtbare ist gebaut (CSS, SVG,
-  Typografie). Das ist gleichzeitig die Performance-Entscheidung und die
-  ehrlichste Demonstration. **Nachtrag (2026-08-25):** zwei generierte Stills
-  kommen dazu (Hero, Über), beide zeigen Werkzeug auf einem Tisch, keine
-  Person, kein Stockfoto, kein erfundenes Porträt.
-- Schriften über `@fontsource-variable`-Pakete, nie über ein CDN. Die Seite
-  stellt keine Anfrage an eine fremde Domain, und der Datenschutztext
-  behauptet genau das. Der scrollcraft-Build lud Fraunces und Archivo noch von
-  Google und musste beim Portieren umgestellt werden.
-- **Keine Animationsbibliothek, mit einer Ausnahme (2026-08-25): die
-  scrollcraft-Engine.** Kein React-Framework wie Framer Motion, sondern eigenes
-  Vanilla JS und CSS ohne Abhängigkeiten, statisch in `public/scrollcraft/`,
-  lädt nur auf `/`. Der Nutzer hat sie für dieses Redesign ausdrücklich
-  freigegeben, weil der Signature Move ohne eine Scroll-Engine nicht baubar
-  ist. Das alte Argument gilt eine Ebene höher weiter: ein Portfolio, das
-  40 kB Framer Motion für einen Schieber lädt, widerlegt sich selbst. Bevor
-  eine **weitere** Abhängigkeit dazukommt, prüfen, ob CSS, Web Animations oder
-  die vorhandene Engine reichen.
-- Engine und Signature Move (`scrollcraft.css`, `scrollcraft.js`, `page.js`)
-  sind byte-identisch aus dem verifizierten Build übernommen und bleiben es.
-  Wer sie „verbessert", verliert die Verifikation.
-- Ziel: kein Layout-Sprung beim Laden, Tastaturbedienung überall, sichtbarer
-  Fokusring, `npx tsc --noEmit` und `npm run build` fehlerfrei.
+| Datei | was damit geschieht |
+|---|---|
+| `app/page.tsx` | neu, sieben Flaechen, importiert Fraunces, Space Grotesk und `start.css` |
+| `components/start/*` | neu gebaut, Ordner bleibt |
+| `components/start/tokens.css` | **entfaellt**, Inhalt teilt sich auf `globals.css` und den Kopf von `start.css` auf |
+| `content/start.ts` | neu geschrieben |
+| `app/globals.css` | Primitive und Semantik umgerichtet, Architektur bleibt |
+| `app/layout.tsx` | `metadataBase`, Theme-Skript korrigiert. **Schriften bleiben** (Inter, Newsreader, JetBrains) |
+| `app/opengraph-image.tsx` | **neu**, existiert bisher nicht |
+| `next.config.mjs` | `pageExtensions` und `images.formats` |
+| `scripts/aufnahmen.mjs` | **neu** |
+| `app/(mit-chrome)/impressum,datenschutz` | bleiben, erben die neuen Tokens |
+| `app/(mit-chrome)/arbeit/[slug]/` | **entfaellt** |
+| `components/showcase/demos/*` | bleiben als Bildquelle |
+| `components/showcase/vorher-nachher.tsx` | wird zum Vergleichsregler umgebaut |
+| `components/showcase/befund-marker.tsx` | **bleibt und wird umgebaut.** Fassung 2 wollte es loeschen, aber Flaeche 4 braucht genau das: annotierte Bildausschnitte. Was der Mentor gestrichen hat, war die Beweisschicht auf einem LEAD-Entwurf, nicht der Mechanismus als solcher |
+| `content/projekte.ts` | bleibt als Datenquelle der Demo-Seiten |
+| `components/chrome/*`, `lib/*` | bleiben |
+| `package.json` | Space Grotesk dazu, Archivo raus |
+| `scrollcraft/`, `graphify-out/` | unangetastet |
 
-## 9. Reihenfolge und Zuständigkeit
+Vor jeder Loeschung wird geprueft, wer die Datei noch importiert. Keine
+Loeschung auf Verdacht.
 
-Aufgeteilt nach Dateibesitz, damit sich zwei Agenten nie in derselben Datei
-begegnen.
+**Metadaten sind Arbeitsschritte:**
+`metadataBase: new URL("https://marketing.frostbreaker.app")` in
+`app/layout.tsx`, `alternates.canonical` auf jeder Route und jede zeigt auf
+sich selbst, `app/opengraph-image.tsx` erzeugt 1200x630, `icon.svg` plus
+`apple-icon`. Im gebauten HTML wird nachgesehen, dass Canonical und
+`og:image` absolut sind.
 
-| Zug | Wer | Auftrag | Fertig, wenn |
-|---|---|---|---|
-| 1a | ui-designer | Designsystem: `app/globals.css` mit allen Tokens, Typo-Skala, Keyframes, Dark Mode. Font-Pairing festlegen. | CSS liegt, Fontpakete benannt |
-| 1b | copywriter | `content/seite.ts` und `content/projekte.ts`, alle Texte deutsch | Dateien liegen, typisiert |
-| 1c | senior-developer | Projektgerüst: package.json, Konfigs, layout.tsx, leere Routen, Nachtmodus, `lib/` | `npm run dev` läuft |
-| 2a | senior-developer | Mechanik: `vorher-nachher.tsx`, `befund-marker.tsx`, Reveal-Hook, Fallstudien-Route | Schieber funktioniert, Tastatur bedienbar |
-| 2b | ui-designer | Die sechs Demo-Fassungen (drei alt, drei neu) | Kontrast wirkt |
-| 3 | ui-designer | Alle Sektionen gestalten und in Bewegung setzen | Seite steht |
-| 4 | ui-designer | Prüfung: Zugänglichkeit, schmale Fenster, Nachtmodus, reduced-motion | Befunde behoben |
-| 5 | senior-developer | Verifikation: `npm install`, `npm run dev`, `tsc --noEmit`, `npm run build` | Alles grün |
+## Toolchain
 
-## 10. Sprachregeln für alle Beteiligten
+Auf der Claude-Bank verzeichnet (`ls ~/.claude/skills/`): `impeccable`,
+`frontend-design`, `ui-ux-pro-max`, `ui-styling`, `design-system`, `brand`,
+`emil-design-eng`, `apple-design`, `animate`, `review-animations`,
+`playwright-tester`.
 
-> **Erste Zeile überholt (2026-08-25).** Sichtbarer Seitentext ist Englisch,
-> alles andere bleibt Deutsch. Die Tabelle dazu steht in `CLAUDE.md`,
-> Abschnitt „Sprache". Die vier Regeln darunter gelten unverändert weiter, in
-> jeder Sprache, und die dritte hat beim Redesign drei Fundstellen gehabt:
-> zwei Häufigkeitsangaben im Befund-Akt und die aufgedruckten Messwerte über
-> den Demos. Messwerte über einer Demo sind nur zulässig, wenn die Demo
-> daneben wirklich so gerendert wird.
+| Strecke | laedt | wofuer |
+|---|---|---|
+| Gestaltung | `impeccable`, `frontend-design` | Hierarchie, Typografie, Flaechen |
+| Farbe und Tokens | `ui-ux-pro-max` | Palettenpruefung und Schriftpaarung |
+| Bewegung | `animate`, `emil-design-eng` | Kurven und Dauern statt geratener Werte |
+| Nachpruefung | `review-animations` | die zehn Punkte gegenlesen |
+| Messung | MCP `chrome-devtools` | Aufnahmen, Kontraste, Layout-Sprung |
+| Abnahme | `Lehren/checkliste.md` | die Liste aus echten Rueckmeldungen |
 
-- Alle Texte, Kommentare und Bezeichner-Kommentare deutsch. Bezeichner selbst
-  englisch, wie im Hauptprojekt.
-- **Keine Gedankenstriche („—") in sichtbaren Texten.** Doppelpunkt, Komma oder
-  Klammer stattdessen.
-- Kein Agentur-Plural („wir gestalten digitale Erlebnisse"). Es ist eine Person.
-- Keine erfundenen Zahlen: keine Prozentwerte, keine Ladezeiten, keine
-  Kundenzahlen, keine Preise, die nicht abgestimmt sind.
+`find-animation-opportunities` gestrichen: es sucht fehlende Bewegung in
+bestehendem Code, hier entsteht alles neu.
+
+Nicht benutzt: `magicuidesign` (Framer Motion), `nateherk-design:scrollcraft`
+(das verworfene Design), Figma und Canva (die Seite wird im Code entworfen).
+
+**Codex bleibt Kritiker, nicht Erbauer.** Seit Runde 1 ist belegt, dass Codex
+unter Windows im read-only-Sandkasten keine Datei lesen kann: jeder Leseweg
+geht ueber PowerShell, und PowerShell wird per Policy abgewiesen
+(`CreateProcess ... rejected: blocked by policy`). Der Kontext wird ueber
+stdin eingespeist. Ein Codex-Build-Track ist ausgeschlossen.
+
+## Annahmen
+
+| # | Annahme | Beleg |
+|---|---|---|
+| 1 | Repo `Websites/agentur`, Branch `main`, sauber bei `72f046b` | `git status`, `git log` |
+| 2 | `package.json` fordert `next ^15.3.0`, aufgeloest laeuft 15.5.23 | Deklaration plus Startbanner des Dev-Servers auf Port 3200 |
+| 3 | Frostbreakers Tokens und Schriftpaarung wie in Abschnitt 1 | `Frostbreaker_Website/app/globals.css`, `app/_ui.tsx` |
+| 4 | Zwei-Modus-System vorhanden, folgt aber **nicht** der Systemeinstellung | `app/globals.css` Zeilen 1 bis 190, Theme-Skript in `app/layout.tsx` |
+| 5 | Sechs Demo-Seiten, 1.238 Zeilen | `wc -l components/showcase/demos/*.tsx` |
+| 6 | Portraet und beide Wortmarkenfassungen liegen vor | `ls Frostbreaker_Website/public/team/`, `.../marke/` |
+| 7 | Lead-Entwuerfe ohne Zustimmung nicht als Referenz | `Website_Business/README.md`, woertlich |
+| 8 | CI faehrt `typecheck` und `build`, deployt nicht | **nur aus `CLAUDE.md`.** Wird beim Bau gegen `.github/workflows/ci.yml` geprueft |
+| 9 | Keine Animationsbibliothek, keine Stockfotos, keine erfundenen Zahlen | `CLAUDE.md` |
+| 10 | Codex CLI 0.151.0, Modell `gpt-5.6-terra` | `codex --version`, Kopfzeile des Laufs |
+
+## Risiken und offene Punkte
+
+1. **Der Dunkelmodus ist neu fuer diese Marke.** Zehn Kippstellen. Erst die
+   Messung entscheidet.
+2. **"Bewegung ausbauen" gegen die scrollcraft-Absage.** Die zwei Grenzen
+   halten uns fern vom verworfenen Design, bleiben aber Geschmacksfrage.
+3. **Ein einziger echter Beleg.** Die Glaubwuerdigkeit haengt an Frostbreaker.
+4. **Englischer Text fuer eine deutschsprachige Zielgruppe.** Vom Nutzer
+   gesperrt, als Konversionsrisiko festgehalten.
+5. **Bildgewicht.** Budget in Abschnitt 4, wird an der Auslieferung gemessen.
+6. **`pageExtensions` beruehrt den ganzen Bau.** Ein Tippfehler dort macht
+   jede Seite unsichtbar. Wird als Erstes geprueft, nicht als Letztes.
+
+## Nachweise vor dem Push
+
+- `npm run typecheck` und `npm run build` fehlerfrei
+- Produktionsbau ohne `CAPTURE=1`: keine Erfassungsseite im Routen-Manifest
+- im gebauten HTML von `/impressum` keine `.st-`-Regel, Inter und Newsreader
+  weiterhin gesetzt
+- Aufnahmen bei 390, 768, 1440, hell und dunkel, kein waagerechtes Scrollen
+- alle zehn Kippstellen aus Abschnitt 7 einzeln durchgesehen
+- kein Layout-Sprung, Fokusring ueberall sichtbar, Tastatur ueberall
+- Vergleichsregler: `aria-valuetext` sagt den Zustand, `touch-action: pan-y`
+  laesst senkrecht scrollen, beide Sprungknoepfe erreichbar
+- Geraeterahmen: Pause-Knopf per Tastatur erreichbar und beschriftet, der
+  Rahmen selbst **kein** Tabstopp, Anhalten auch ueber `:focus-within`
+- Kopfleiste bei 390px: Wortmarke und CTA passen mit 44px nebeneinander,
+  Modus-Gruppe im Fuss vollstaendig bedienbar
+- Fokusring auf jeder Flaeche sichtbar, ausdruecklich auf dem Pill-CTA und
+  auf der Coral-Flaeche
+- `prefers-reduced-motion: reduce` zeigt Endzustaende, Modus-Wechsel ohne
+  Uebergang
+- ohne JavaScript steht die Seite, der Vergleich als zwei Figuren
+- Bildbudget an der **ausgelieferten** Groesse gemessen, Manifest liegt vor
+- jeder Token-Kontrast gerechnet und im Kommentar belegt
+- Canonical und `og:image` absolut im ausgelieferten HTML
+- `Lehren/checkliste.md` abgehakt, ohne die Punkte, die nur fuer Lead-Entwuerfe
+  gelten
+
+## Nicht im Umfang
+
+Deployment und DNS. Ein Sprachumschalter. Formular, CRM-Anbindung, Analytics.
+Preisangaben. Ein Blog. Weitere Unterseiten. Ein Neuaufbau von `scrollcraft/`.
+Echte Kundenreferenzen, solange keine zugestimmt hat.
