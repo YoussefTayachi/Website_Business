@@ -213,9 +213,23 @@ export const seite = {
         ueberschrift: "Hosting and server log data",
         text: "[Insert name and address of the hosting provider once the site is live]. When you visit this website, the hosting provider automatically collects the access data technically required to deliver the page.",
       },
+      /* GEAENDERT AM 2026-09-01. Hier stand "sets no cookies and loads no
+         content from third-party servers", und das stimmt seit dem
+         eingebetteten Kalender nicht mehr uneingeschraenkt. Der Kalender
+         laedt aber ERST AUF KLICK (components/start/kalender.tsx), und genau
+         diesen Unterschied muessen die zwei Abschnitte sauber benennen: ohne
+         Klick bleibt die Aussage von vorher richtig.
+
+         WER DEN KALENDER AUF SOFORTIGES LADEN UMSTELLT, muss diese beiden
+         Abschnitte neu schreiben und braucht dann eine echte Einwilligung
+         vor dem Laden. */
       {
         ueberschrift: "Cookies and embedded content",
-        text: "This website sets no cookies and loads no content from third-party servers. Fonts are bundled locally, not fetched from an external domain.",
+        text: "Unless you open the booking calendar, this website sets no cookies and loads nothing from third-party servers. Fonts are bundled locally, not fetched from an external domain. If you switch the page between light and dark, that choice is stored in your browser so the page looks the same on your next visit. It is not sent anywhere.",
+      },
+      {
+        ueberschrift: "Booking calendar (Calendly)",
+        text: "The booking calendar is provided by Calendly LLC, 271 17th St NW, Atlanta, GA 30363, USA. It is not loaded until you click to open it. Once you do, your browser connects to Calendly, which receives your IP address and can set cookies, and any details you enter to book a call are processed by Calendly on my behalf. You can book by email instead if you prefer.",
       },
       {
         ueberschrift: "Contact by email",

@@ -1,12 +1,12 @@
 /* ============================================================================
-   DIE ENTWUERFE. Drei Bauformen fuer die Website-Gestaltungen, die auf der
-   Startseite als Galerie stehen.
+   DIE ENTWUERFE. Sechs Bauformen fuer sechs Website-Gestaltungen.
 
-   DIESE DATEI IST EINE INSEL. Sie wird ausschliesslich von der
-   Erfassungsroute geladen (app/erfassung/entwurf/[slug]/), niemals von der
-   Startseite. Auf der Startseite stehen nur die fertigen Aufnahmen.
+   AM 2026-09-01 VON DREI AUF SECHS BAUFORMEN UMGESTELLT. Die Begruendung
+   steht in content/entwuerfe.ts: drei Skelette fuer sechs Entwuerfe sahen von
+   aussen aus wie eine gekaufte Vorlage, und genau so hat es Youssefs Mentor
+   auch gelesen.
 
-   NICHTS VON AUSSEN WIRKT HINEIN, NICHTS VON INNEN WIRKT HINAUS:
+   DIESE DATEI IST EINE INSEL:
    - Jede Regel steht unter `.ew`, jede Klasse traegt das Praefix `.ew-`.
    - Kein einziger Farbwert steht hier. Alle Farben kommen als `--ew-*` und
      werden von der Komponente je Entwurf gesetzt, aus content/entwuerfe.ts.
@@ -15,11 +15,13 @@
      sechsmal wie diese Seite.
    - Auch die Schrift kommt je Entwurf, als `--ew-display` und `--ew-text`.
 
-   MASSSTAB: Die Entwuerfe werden bei 1440px aufgenommen und danach als Bild
-   auf ein Drittel verkleinert. Trotzdem gelten hier die gewoehnlichen
-   Groessen und Trefferflaechen, nicht kleinere: es sind vollstaendige
-   Seiten, und wenn Youssef eine davon als Ausgangspunkt fuer einen echten
-   Auftrag nimmt, soll sie stimmen und nicht erst repariert werden muessen.
+   GELADEN WIRD SIE AN ZWEI ORTEN: von /work/[slug] (echte Seite) und von der
+   Erfassungsroute (Bilder fuer die Galerie). Nie von der Startseite.
+
+   DIE ENTWUERFE SIND VOLLSTAENDIGE SEITEN, keine Attrappen: gewoehnliche
+   Schriftgroessen, 48px Trefferflaechen, und ab 60rem abwaerts eine eigene
+   Telefonfassung. Wenn Youssef eine davon als Ausgangspunkt fuer einen
+   echten Auftrag nimmt, soll sie stimmen und nicht erst repariert werden.
    ========================================================================== */
 
 .ew {
@@ -28,6 +30,7 @@
   font-family: var(--ew-text);
   font-size: 17px;
   line-height: 1.55;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -58,15 +61,10 @@
   padding-inline: 56px;
 }
 
-/* ── Kopfleiste, in allen drei Bauformen gleich gebaut ──────────────────── */
-.ew-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 32px;
-  padding-block: 22px;
-}
-
+/* ── Die geteilten Bausteine ───────────────────────────────────────────────
+   Bewusst wenige: Marke, Navigation, Knopf, Augenbraue, Lead, Bildflaeche.
+   Das ist das, was in sechs Handschriften keinen Unterschied machen darf.
+   Alles, was den AUFBAU ausmacht, steht je Bauform weiter unten. */
 .ew-marke {
   font-family: var(--ew-display);
   font-size: 21px;
@@ -100,7 +98,7 @@
 .ew-knopf--leise {
   background: transparent;
   color: var(--ew-tinte);
-  border: 1px solid var(--ew-leise);
+  border: 1px solid var(--ew-linie);
 }
 
 .ew-augenbraue {
@@ -143,439 +141,932 @@
   height: 100%;
 }
 
-/* ══ BAUFORM 1: SPLIT ════════════════════════════════════════════════════
-   Ueberschrift links, Bildflaeche rechts, darunter nummerierte Leistungen
-   an Haarlinien. Die kraeftigste der drei, gedacht fuer dunkle Marken. */
-.ew-split__held {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: 56px;
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. OVERLAY (Northline, Bau)
+   ───────────────────────────────────────────────────────────────────────────
+   Der Held fuellt die Flaeche randlos, die Navigation liegt IM Bild, die
+   Schlagzeile steht unten links. Kein Kasten, keine Karte, keine zweite
+   Spalte: eine Flaeche, auf der Text liegt.
+
+   DER VERLAUF UEBER DEM BILD IST NICHT ZIERDE. Ohne ihn stuende weisse
+   Schrift auf einer Stelle, deren Helligkeit vom Motiv abhaengt. Der Verlauf
+   macht die untere Haelfte planbar dunkel, und damit wird der Kontrast eine
+   Rechnung statt eine Hoffnung.
+   ═══════════════════════════════════════════════════════════════════════ */
+.ew--overlay .ew-wrap {
+  max-width: none;
+  padding-inline: 0;
+}
+
+.ew-ov__held {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 660px;
+  padding: 26px 56px 56px;
+  isolation: isolate;
+}
+
+.ew-ov__bild {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  border-radius: 0;
+  /* EIGENER VERLAUF, nicht der von .ew-bild. Der gemeinsame setzt den hellen
+     Ton als grosse radiale Flaeche ueber fast das ganze Feld. Auf einer
+     Kachel ist das richtig, hier war es die ganze erste Ansicht: die Aufnahme
+     vom 2026-09-01 zeigte weisse Schrift auf flaechigem Bernstein, und der
+     Fliesstext darunter war praktisch nicht zu lesen.
+     Jetzt liegt der helle Ton als Ecke oben rechts, der Rest laeuft in den
+     Seitengrund. */
+  background:
+    radial-gradient(58% 52% at 84% 0%, var(--ew-bild2), transparent 66%),
+    linear-gradient(155deg, var(--ew-bild1) 0%, var(--ew-grund) 78%);
+}
+
+.ew-ov__held::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  /* Der Schleier macht die untere Haelfte planbar dunkel. Damit ist der
+     Kontrast der Schlagzeile eine Rechnung und keine Hoffnung: unten liegen
+     mindestens 92 Prozent Seitengrund unter dem Text. */
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--ew-grund) 62%, transparent) 0%,
+    color-mix(in srgb, var(--ew-grund) 34%, transparent) 26%,
+    color-mix(in srgb, var(--ew-grund) 78%, transparent) 62%,
+    color-mix(in srgb, var(--ew-grund) 96%, transparent) 100%
+  );
+}
+
+.ew-ov__leiste {
+  display: flex;
   align-items: center;
-  /* ENG GESTELLT. Bei 64/88 Innenabstand und einer 4:5-Bildflaeche begann
-     die Ueberschrift erst bei einem Drittel der Seitenhoehe, und die
-     Leistungen fielen aus der 900px-Aufnahme heraus. Eine Galeriekarte zeigt
-     den ersten Bildschirm, und der muss die Leistungen enthalten. */
-  padding-block: 28px 52px;
+  justify-content: space-between;
+  gap: 32px;
 }
 
-.ew-split__held h1 {
-  margin-top: 14px;
-  font-size: 62px;
-  font-weight: 700;
+.ew-ov__leiste .ew-nav {
+  color: color-mix(in srgb, var(--ew-tinte) 78%, transparent);
 }
 
-.ew-split__bild {
-  /* Quadratisch statt hochkant, aus demselben Grund: hochkant diktierte die
-     Bildflaeche die Hoehe des ganzen Helden. */
-  aspect-ratio: 1 / 1;
+.ew-ov__text {
+  margin-top: 120px;
+  max-width: 22ch;
 }
 
-.ew-split__liste {
+.ew-ov__text h1 {
+  margin-top: 18px;
+  font-size: clamp(46px, 5.4vw, 74px);
+}
+
+.ew-ov__text .ew-lead {
+  max-width: 44ch;
+}
+
+.ew-ov__band {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0;
-  border-top: 1px solid color-mix(in srgb, var(--ew-leise) 40%, transparent);
+  border-top: 1px solid var(--ew-linie);
+  background: var(--ew-flaeche);
 }
 
-.ew-split__punkt {
-  padding: 30px 26px 34px 0;
-  border-right: 1px solid color-mix(in srgb, var(--ew-leise) 40%, transparent);
+.ew-ov__punkt {
+  padding: 40px 44px;
+  border-right: 1px solid var(--ew-linie);
 }
 
-.ew-split__punkt:last-child {
+.ew-ov__punkt:last-child {
   border-right: 0;
 }
 
-.ew-split__nr {
+.ew-ov__nr {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--ew-akzent);
+}
+
+.ew-ov__punkt h3 {
+  margin-top: 14px;
+  font-size: 24px;
+}
+
+.ew-ov__punkt p {
+  margin-top: 10px;
+  color: var(--ew-leise);
+  font-size: 16px;
+}
+
+.ew-ov__fuss {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px 40px;
+  padding: 26px 56px;
+  border-top: 1px solid var(--ew-linie);
+  font-size: 15px;
+  color: var(--ew-leise);
+}
+
+.ew-ov__tel {
+  margin-left: auto;
   font-family: var(--ew-display);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ew-akzent);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. SEITENLEISTE (Voltas, Elektro)
+   ───────────────────────────────────────────────────────────────────────────
+   Senkrechte Leiste links, Inhalt rechts. Die Nummer sitzt am FUSS der
+   Leiste: ein Elektriker wird angerufen, und die Nummer soll nicht im Text
+   gesucht werden muessen.
+
+   position: sticky an der Leiste und nicht fixed. Fixed nimmt das Element
+   aus dem Fluss und legt es ueber den Inhalt, sobald das Fenster schmal
+   wird. Sticky faellt unter 60rem einfach in den normalen Fluss zurueck.
+   ═══════════════════════════════════════════════════════════════════════ */
+.ew-sl {
+  display: grid;
+  grid-template-columns: 296px minmax(0, 1fr);
+  min-height: 100%;
+}
+
+.ew-sl__rail {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 34px 32px 34px 48px;
+  border-right: 1px solid var(--ew-linie);
+  background: var(--ew-flaeche);
+  position: sticky;
+  top: 0;
+  align-self: start;
+  min-height: 100vh;
+}
+
+.ew-sl__marke {
+  display: block;
+  color: var(--ew-akzent);
+}
+
+.ew-sl__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 16px;
+  color: var(--ew-leise);
+}
+
+.ew-sl__nav span {
+  padding-block: 9px;
+  border-bottom: 1px solid var(--ew-linie);
+}
+
+.ew-sl__ruf {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: auto;
+  padding: 22px;
+  border-radius: 16px;
+  background: var(--ew-akzent);
+  color: var(--ew-auf-akzent);
+}
+
+.ew-sl__ruf .ew-augenbraue {
+  color: color-mix(in srgb, var(--ew-auf-akzent) 82%, transparent);
+}
+
+.ew-sl__tel {
+  font-family: var(--ew-display);
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ew-sl__notiz {
+  font-size: 14px;
+  color: color-mix(in srgb, var(--ew-auf-akzent) 82%, transparent);
+}
+
+.ew-sl__haupt {
+  padding: 72px 56px 56px;
+}
+
+.ew-sl__haupt h1 {
+  margin-top: 16px;
+  max-width: 15ch;
+  font-size: clamp(44px, 5vw, 66px);
+}
+
+.ew-sl__kacheln {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 52px;
+}
+
+.ew-sl__kachel {
+  padding: 26px;
+  border: 1px solid var(--ew-linie);
+  border-radius: 18px;
+  background: var(--ew-flaeche);
+}
+
+/* Die erste Kachel traegt das Bild und laeuft ueber beide Spalten. Damit hat
+   das Raster einen Anfang statt vier gleicher Kaesten, und die Bildflaeche
+   braucht keinen eigenen Abschnitt. */
+.ew-sl__kachel--voll {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  gap: 26px;
+  align-items: center;
+  padding: 0 26px 0 0;
+  overflow: hidden;
+}
+
+.ew-sl__kachelbild {
+  height: 100%;
+  min-height: 168px;
+  border-radius: 0;
+}
+
+.ew-sl__kachelwort {
+  min-width: 0;
+}
+
+.ew-sl__kachel h3 {
+  font-size: 21px;
+}
+
+.ew-sl__kachel p {
+  margin-top: 8px;
+  color: var(--ew-leise);
+  font-size: 16px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. MITTE (Ridge & Eaves, Dach)
+   ───────────────────────────────────────────────────────────────────────────
+   Zeitschriftensatz. Alles zentriert, Haarlinien statt Kaesten, Serife in
+   der Schlagzeile. Die einzige Bauform ohne eine linksbuendige Kante im
+   ersten Bildschirm, und deshalb die, die sofort anders aussieht.
+   ═══════════════════════════════════════════════════════════════════════ */
+.ew-mi {
+  padding-block: 30px 0;
+  text-align: center;
+}
+
+.ew-mi__kopf {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--ew-linie);
+}
+
+.ew-mi__marke {
+  font-size: 25px;
+  letter-spacing: 0.01em;
+}
+
+.ew-mi__nav {
+  display: flex;
+  gap: 34px;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ew-leise);
+}
+
+.ew-mi__held {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block: 62px 54px;
+}
+
+.ew-mi__held h1 {
+  margin-top: 20px;
+  max-width: 15ch;
+  font-size: clamp(48px, 5.8vw, 78px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+.ew-mi__held .ew-lead {
+  max-width: 52ch;
+}
+
+.ew-mi__bild {
+  height: 300px;
+  border-radius: 4px;
+}
+
+.ew-mi__spalten {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 60px;
+  border-top: 1px solid var(--ew-linie);
+}
+
+.ew-mi__spalte {
+  padding: 34px 28px;
+  border-right: 1px solid var(--ew-linie);
+}
+
+.ew-mi__spalte:last-child {
+  border-right: 0;
+}
+
+.ew-mi__spalte h3 {
+  font-size: 23px;
+}
+
+.ew-mi__spalte p {
+  margin-top: 10px;
+  color: var(--ew-leise);
+  font-size: 16px;
+}
+
+.ew-mi__fuss {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-block: 34px 40px;
+  border-top: 1px solid var(--ew-linie);
+  font-size: 15px;
+  color: var(--ew-leise);
+}
+
+.ew-mi__tel {
+  font-family: var(--ew-display);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--ew-akzent);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. STREIFEN (Clearflow, Sanitaer)
+   ───────────────────────────────────────────────────────────────────────────
+   Notdienstband ganz oben, ueber der Marke. Darunter Bildspalte links und
+   Leistungen als ZEILEN rechts. Keine Kacheln: eine Liste wird in einem
+   Durchgang von oben nach unten gelesen, ein Raster verlangt eine Wahl.
+   ═══════════════════════════════════════════════════════════════════════ */
+.ew-st__notruf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 13px 56px;
+  background: var(--ew-akzent);
+  color: var(--ew-auf-akzent);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ew-st__notruf-zusatz {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.82;
+}
+
+.ew-st__leiste {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding-block: 22px;
+  border-bottom: 1px solid var(--ew-linie);
+}
+
+.ew-st__haupt {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 52px;
+  padding-block: 56px;
+}
+
+.ew-st__bild {
+  min-height: 520px;
+}
+
+.ew-st__inhalt h1 {
+  max-width: 13ch;
+  font-size: clamp(44px, 5.2vw, 68px);
+}
+
+.ew-st__zeilen {
+  list-style: none;
+  margin: 44px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--ew-linie);
+}
+
+.ew-st__zeile {
+  display: grid;
+  grid-template-columns: 56px 210px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 16px;
+  padding-block: 20px;
+  border-bottom: 1px solid var(--ew-linie);
+}
+
+.ew-st__nr {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.1em;
   color: var(--ew-akzent);
 }
 
-.ew-split__punkt h3 {
-  margin-top: 10px;
-  font-size: 24px;
-  font-weight: 600;
+.ew-st__zeile h3 {
+  font-size: 21px;
 }
 
-.ew-split__punkt p {
-  margin-top: 8px;
+.ew-st__zeile p {
+  color: var(--ew-leise);
   font-size: 16px;
+}
+
+.ew-st__fuss {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding-block: 26px;
+  border-top: 1px solid var(--ew-linie);
+  font-size: 15px;
   color: var(--ew-leise);
 }
 
-.ew-split__fuss {
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. UEBERLAPPUNG (Stoneleaf, Garten)
+   ───────────────────────────────────────────────────────────────────────────
+   Das Bild laeuft rechts aus dem Fenster, die Textkarte ueberlappt es von
+   links. Darunter vier hohe, schmale Kacheln.
+
+   DIE UEBERLAPPUNG IST DAS GANZE ARGUMENT DIESER BAUFORM und der Grund, warum
+   sie ueberhaupt existiert: sie erzeugt Tiefe ohne einen einzigen Schatten
+   und ohne eine zweite Farbe. Wer sie herausnimmt, hat wieder eine
+   zweispaltige Seite wie tausend andere.
+   ═══════════════════════════════════════════════════════════════════════ */
+.ew-ub__leiste {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  margin-top: 8px;
-  padding-block: 30px;
-  border-top: 1px solid color-mix(in srgb, var(--ew-leise) 40%, transparent);
-  font-size: 16px;
-  color: var(--ew-leise);
+  gap: 32px;
+  padding-block: 24px;
 }
 
-.ew-split__tel {
-  font-family: var(--ew-display);
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--ew-tinte);
-  letter-spacing: -0.01em;
-}
-
-/* ══ BAUFORM 2: BAND ═════════════════════════════════════════════════════
-   Mittiger Kopf, breites Farbband, darauf eine weisse Karte, die
-   ueberlappt. Die ruhigste der drei, gedacht fuer Serifen-Marken. */
-.ew-band__held {
+.ew-ub__held {
   position: relative;
-  margin-top: 8px;
-  padding: 92px 56px 150px;
-  text-align: center;
-  border-radius: 24px;
-  overflow: hidden;
-}
-
-.ew-band__held h1 {
-  position: relative;
-  margin-top: 16px;
-  font-size: 60px;
-  font-weight: 500;
-  color: var(--ew-auf-akzent);
-}
-
-.ew-band__held .ew-augenbraue {
-  position: relative;
-  color: color-mix(in srgb, var(--ew-auf-akzent) 80%, transparent);
-}
-
-.ew-band__karte {
-  position: relative;
-  z-index: 2;
-  margin: -96px auto 0;
-  max-width: 760px;
-  padding: 38px 42px;
-  border-radius: 20px;
-  background: var(--ew-flaeche);
-  box-shadow: 0 24px 60px -30px rgb(0 0 0 / 0.35);
-  text-align: center;
-}
-
-.ew-band__karte .ew-lead {
-  margin-inline: auto;
-  margin-top: 0;
-}
-
-.ew-band__karte .ew-knoepfe {
-  justify-content: center;
-}
-
-.ew-band__liste {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 40px;
-  padding-block: 76px 20px;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  min-height: 560px;
+  margin-top: 8px;
 }
 
-.ew-band__punkt h3 {
-  font-size: 26px;
-  font-weight: 500;
+/* Laeuft rechts aus dem Fenster: rechts kein Radius, und die Breite geht
+   ueber den Rand hinaus. Das ist der Effekt, nicht ein Ueberlauf. */
+.ew-ub__bild {
+  grid-area: 1 / 1;
+  justify-self: end;
+  width: 74%;
+  height: 100%;
+  border-radius: 24px 0 0 24px;
 }
 
-.ew-band__punkt p {
-  margin-top: 10px;
-  font-size: 16px;
+.ew-ub__karte {
+  grid-area: 1 / 1;
+  z-index: 1;
+  justify-self: start;
+  width: min(560px, 58%);
+  margin-left: max(calc((100vw - 1180px) / 2 + 56px), 56px);
+  padding: 44px 44px 48px;
+  border-radius: 22px;
+  background: var(--ew-flaeche);
+  border: 1px solid var(--ew-linie);
+}
+
+.ew-ub__karte h1 {
+  margin-top: 18px;
+  font-size: clamp(40px, 4.4vw, 58px);
+  letter-spacing: -0.02em;
+}
+
+.ew-ub__karte .ew-lead {
+  max-width: 38ch;
+}
+
+.ew-ub__reihe {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 64px;
+}
+
+.ew-ub__kachelbild {
+  height: 150px;
+  border-radius: 14px;
+  background:
+    radial-gradient(100% 120% at 30% 0%, var(--ew-bild2), transparent 64%),
+    linear-gradient(170deg, var(--ew-bild1), var(--ew-bild2));
+}
+
+.ew-ub__kachel h3 {
+  margin-top: 16px;
+  font-size: 21px;
+}
+
+.ew-ub__kachel p {
+  margin-top: 8px;
   color: var(--ew-leise);
+  font-size: 16px;
 }
 
-.ew-band__regel {
-  width: 44px;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--ew-akzent);
-  margin-bottom: 18px;
-}
-
-.ew-band__fuss {
+.ew-ub__fuss {
   display: flex;
   align-items: baseline;
-  justify-content: center;
-  gap: 14px;
-  padding-block: 26px 40px;
-  font-size: 16px;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 60px;
+  padding-block: 28px 40px;
+  border-top: 1px solid var(--ew-linie);
+  font-size: 15px;
   color: var(--ew-leise);
 }
 
-.ew-band__tel {
+.ew-ub__tel {
   font-family: var(--ew-display);
   font-size: 24px;
   font-weight: 600;
-  color: var(--ew-tinte);
-}
-
-/* ══ BAUFORM 3: KACHEL ═══════════════════════════════════════════════════
-   Ueberschrift links, farbige Kontaktkarte rechts, darunter vier Kacheln.
-   Die sachlichste der drei, gedacht fuer Betriebe, die vom Anruf leben. */
-.ew-kachel__held {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  gap: 48px;
-  align-items: start;
-  padding-block: 56px 68px;
-}
-
-.ew-kachel__held h1 {
-  margin-top: 14px;
-  font-size: 62px;
-  font-weight: 700;
-}
-
-/* Die Kontaktkarte. Sie ist der Grund fuer diese Bauform: die Nummer steht
-   im ersten Bildschirm, gross, und ist ein Ziel und kein Bild. */
-.ew-kachel__karte {
-  padding: 30px;
-  border-radius: 20px;
-  background: var(--ew-akzent);
-  color: var(--ew-auf-akzent);
-}
-
-.ew-kachel__karte .ew-augenbraue {
-  color: color-mix(in srgb, var(--ew-auf-akzent) 82%, transparent);
-}
-
-.ew-kachel__tel {
-  display: block;
-  margin-top: 10px;
-  font-family: var(--ew-display);
-  font-size: 40px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--ew-auf-akzent);
-}
-
-.ew-kachel__notiz {
-  margin-top: 12px;
-  font-size: 15px;
-  color: color-mix(in srgb, var(--ew-auf-akzent) 84%, transparent);
-}
-
-.ew-kachel__karte .ew-knopf {
-  margin-top: 22px;
-  width: 100%;
-  background: var(--ew-auf-akzent);
   color: var(--ew-akzent);
 }
 
-.ew-kachel__bild {
-  margin-top: 20px;
-  aspect-ratio: 16 / 7;
-}
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. TYPO (Fox & Co, Maler)
+   ───────────────────────────────────────────────────────────────────────────
+   Kein Held-Bild. Die Schlagzeile fuellt den ersten Bildschirm, darunter der
+   Fliesstext links und die Leistungen rechts, dann ein Farbband ueber die
+   volle Breite.
 
-.ew-kachel__liste {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  padding-bottom: 56px;
-}
-
-.ew-kachel__punkt {
-  position: relative;
-  padding: 26px 22px 28px;
-  border-radius: 16px;
-  background: var(--ew-flaeche);
-  overflow: hidden;
-}
-
-/* Die farbige Ecke. Ein Zeichen, das die Kacheln zusammenbindet, ohne dass
-   vier Piktogramme erfunden werden muessen, die nichts bedeuten. */
-.ew-kachel__punkt::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 46px;
-  height: 46px;
-  background: var(--ew-akzent);
-  clip-path: polygon(100% 0, 0 0, 100% 100%);
-  opacity: 0.16;
-}
-
-.ew-kachel__punkt h3 {
-  font-size: 21px;
-  font-weight: 600;
-}
-
-.ew-kachel__punkt p {
-  margin-top: 8px;
-  font-size: 15px;
-  color: var(--ew-leise);
-}
-
-.ew-kachel__fuss {
+   DIE EINZIGE BAUFORM OHNE BILD OBEN, und das ist eine Behauptung, die sie
+   einloest: die Seite ist lesbar, bevor ein Foto ueberhaupt angekommen
+   waere. Ein Maler hat ausserdem kein ehrliches Stockfoto.
+   ═══════════════════════════════════════════════════════════════════════ */
+.ew-ty__leiste {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 32px;
+  padding-block: 24px;
+  border-bottom: 1px solid var(--ew-linie);
+}
+
+.ew-ty__tel {
+  font-family: var(--ew-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ew-akzent);
+}
+
+.ew-ty__augenbraue {
+  margin-top: 64px;
+}
+
+.ew-ty__zeile {
+  margin-top: 22px;
+  max-width: 16ch;
+  font-size: clamp(56px, 7.4vw, 104px);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+
+.ew-ty__unter {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 56px;
+  margin-top: 64px;
+  padding-block: 40px 64px;
+  border-top: 1px solid var(--ew-linie);
+}
+
+.ew-ty__unter .ew-lead {
+  margin-top: 0;
+  font-size: 21px;
+  color: var(--ew-tinte);
+}
+
+.ew-ty__punkt {
+  padding-block: 16px;
+  border-bottom: 1px solid var(--ew-linie);
+}
+
+.ew-ty__punkt:first-child {
+  padding-top: 0;
+}
+
+.ew-ty__punkt h3 {
+  font-size: 19px;
+}
+
+.ew-ty__punkt p {
+  margin-top: 6px;
+  color: var(--ew-leise);
+  font-size: 16px;
+}
+
+.ew-ty__band {
+  position: relative;
+  isolation: isolate;
+  background: var(--ew-akzent);
+  color: var(--ew-auf-akzent);
+  overflow: hidden;
+}
+
+.ew-ty__bandbild {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 0;
+  opacity: 0.55;
+}
+
+.ew-ty__bandin {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
   gap: 24px;
-  padding-block: 26px 36px;
-  border-top: 1px solid color-mix(in srgb, var(--ew-leise) 34%, transparent);
+  padding-block: 64px;
+}
+
+.ew-ty__bandin h2 {
+  font-size: clamp(36px, 4vw, 54px);
+}
+
+.ew-ty__bandin .ew-knopf--leise {
+  color: var(--ew-auf-akzent);
+  border-color: color-mix(in srgb, var(--ew-auf-akzent) 55%, transparent);
+}
+
+.ew-ty__fuss {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding-block: 28px 40px;
   font-size: 15px;
   color: var(--ew-leise);
 }
 
-/* ══ SCHMALE FENSTER ═════════════════════════════════════════════════════
-   Bis hierher waren die drei Bauformen reine Breitbildraster. Das fiel auf,
-   als die Telefonaufnahme fuer den Hero entstand: bei 420px quetschte das
-   zweispaltige Raster die Ueberschrift in eine Spalte von 180 Pixeln, und
-   "Power back on, same day." brach zu "Pow er back on, sam e day." um.
+/* ═══════════════════════════════════════════════════════════════════════════
+   DIE TELEFONFASSUNG
+   ───────────────────────────────────────────────────────────────────────────
+   Unter 60rem faellt jede Bauform auf eine Spalte. Das ist kein Nachtrag:
+   die Entwuerfe stehen unter /work/[slug] als echte Seiten, und die Haelfte
+   der Besucher kommt aus einer Mail auf einem Telefon.
 
-   Das ist nicht nur ein haessliches Bild. Eine Gestaltung, die auf einem
-   Telefon zerfaellt, waere in einem Angebot ueber mobile Websites die
-   schlechteste denkbare Arbeitsprobe, und Youssef koennte keinen dieser
-   Entwuerfe als Ausgangspunkt fuer einen echten Auftrag nehmen.
-
-   720px als Grenze und nicht 768: die Entwuerfe haben einen breiteren
-   Innenabstand als die Portfolio-Seite, ihre Spalten werden also frueher
-   zu eng. */
-@media (max-width: 720px) {
-  .ew {
-    font-size: 16px;
-  }
-
+   GEMESSEN WIRD AN 390px. Bei 1180px Wrap und 56px Innenabstand bleiben dort
+   sonst 278px fuer eine 66px-Schlagzeile, und "Renovation" bricht mitten im
+   Wort. Deshalb faellt hier auch der Innenabstand auf 20px.
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 60rem) {
   .ew-wrap {
-    padding-inline: 22px;
+    padding-inline: 20px;
   }
 
-  /* Die Navigation entfaellt, die Wortmarke und der Knopf bleiben. Ein
-     Menueknopf waere hier eine Behauptung: die Aufnahme zeigt einen
-     Zustand, kein bedienbares Menue. */
-  .ew-nav {
+  .ew h1 {
+    letter-spacing: -0.02em;
+  }
+
+  /* 1. Overlay */
+  .ew-ov__held {
+    min-height: 0;
+    padding: 20px 20px 44px;
+  }
+
+  .ew-ov__leiste .ew-nav,
+  .ew-ov__leiste .ew-knopf {
     display: none;
   }
 
-  .ew-bar {
-    padding-block: 16px;
+  .ew-ov__text {
+    margin-top: 72px;
+    max-width: none;
   }
 
-  .ew-lead {
-    font-size: 17px;
-    margin-top: 16px;
-  }
-
-  .ew-knoepfe {
-    margin-top: 24px;
-  }
-
-  .ew-knopf {
-    flex: 1 1 auto;
-    min-height: 50px;
-  }
-
-  /* Split: einspaltig, Bild unter den Text. */
-  .ew-split__held {
-    grid-template-columns: 1fr;
-    gap: 28px;
-    padding-block: 12px 36px;
-  }
-
-  .ew-split__held h1 {
-    font-size: 40px;
-  }
-
-  .ew-split__bild {
-    aspect-ratio: 16 / 11;
-  }
-
-  .ew-split__liste {
-    grid-template-columns: 1fr;
-  }
-
-  .ew-split__punkt {
-    padding: 20px 0 22px;
-    border-right: 0;
-    border-bottom: 1px solid color-mix(in srgb, var(--ew-leise) 40%, transparent);
-  }
-
-  .ew-split__punkt:last-child {
-    border-bottom: 0;
-  }
-
-  .ew-split__fuss {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  /* Band: flacheres Band, Karte ohne negativen Versatz. */
-  .ew-band__held {
-    padding: 48px 24px 64px;
-    border-radius: 18px;
-  }
-
-  .ew-band__held h1 {
-    font-size: 36px;
-  }
-
-  .ew-band__karte {
-    margin-top: -32px;
-    padding: 24px 22px;
-    border-radius: 16px;
-  }
-
-  .ew-band__liste {
-    grid-template-columns: 1fr;
-    gap: 28px;
-    padding-block: 44px 12px;
-  }
-
-  .ew-band__punkt h3 {
-    font-size: 22px;
-  }
-
-  /* Kachel: Kontaktkarte NACH OBEN, vor die Ueberschrift. Auf einem Telefon
-     ist die Nummer das Wichtigste, und der Betrieb, um den es hier geht,
-     lebt vom Anruf. Deshalb order und nicht nur Umbruch. */
-  .ew-kachel__held {
-    grid-template-columns: 1fr;
-    gap: 24px;
-    padding-block: 12px 36px;
-  }
-
-  .ew-kachel__karte {
-    order: -1;
-    padding: 22px;
-  }
-
-  .ew-kachel__tel {
-    font-size: 32px;
-  }
-
-  .ew-kachel__held h1 {
+  .ew-ov__text h1 {
     font-size: 38px;
   }
 
-  .ew-kachel__bild {
-    aspect-ratio: 16 / 9;
+  .ew-ov__band {
+    grid-template-columns: 1fr;
   }
 
-  .ew-kachel__liste {
+  .ew-ov__punkt {
+    padding: 26px 20px;
+    border-right: 0;
+    border-bottom: 1px solid var(--ew-linie);
+  }
+
+  .ew-ov__fuss {
+    padding: 22px 20px;
+  }
+
+  .ew-ov__tel {
+    margin-left: 0;
+  }
+
+  /* 2. Seitenleiste: die Leiste wird zur Kopfzeile. */
+  .ew-sl {
+    grid-template-columns: 1fr;
+  }
+
+  .ew-sl__rail {
+    position: static;
+    min-height: 0;
+    gap: 22px;
+    padding: 20px;
+    border-right: 0;
+    border-bottom: 1px solid var(--ew-linie);
+  }
+
+  .ew-sl__nav {
+    display: none;
+  }
+
+  .ew-sl__haupt {
+    padding: 36px 20px 44px;
+  }
+
+  .ew-sl__haupt h1 {
+    font-size: 38px;
+  }
+
+  .ew-sl__kacheln {
+    grid-template-columns: 1fr;
+  }
+
+  .ew-sl__kachel--voll {
+    grid-template-columns: 1fr;
+    padding: 0 0 26px;
+  }
+
+  .ew-sl__kachel--voll .ew-sl__kachelwort {
+    padding: 22px 26px 0;
+  }
+
+  .ew-sl__kachelbild {
+    min-height: 150px;
+  }
+
+  /* 3. Mitte */
+  .ew-mi__nav {
+    display: none;
+  }
+
+  .ew-mi__held {
+    padding-block: 40px 36px;
+  }
+
+  .ew-mi__held h1 {
+    font-size: 38px;
+  }
+
+  .ew-mi__bild {
+    height: 200px;
+  }
+
+  .ew-mi__spalten {
+    grid-template-columns: 1fr;
+  }
+
+  .ew-mi__spalte {
+    padding: 24px 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--ew-linie);
+  }
+
+  /* 4. Streifen */
+  .ew-st__notruf {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 12px 20px;
+  }
+
+  .ew-st__leiste .ew-nav,
+  .ew-st__leiste .ew-knopf {
+    display: none;
+  }
+
+  .ew-st__haupt {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-block: 34px;
+  }
+
+  .ew-st__bild {
+    min-height: 200px;
+  }
+
+  .ew-st__inhalt h1 {
+    font-size: 38px;
+  }
+
+  .ew-st__zeile {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 6px 12px;
+  }
+
+  .ew-st__zeile p {
+    grid-column: 2;
+  }
+
+  /* 5. Ueberlappung: die Karte ueberlappt nicht mehr, sie steht darunter.
+     Eine Ueberlappung auf 350px Breite ist keine Tiefe, sie ist ein
+     Textblock auf einem Bild, und darunter leidet der Kontrast. */
+  .ew-ub__leiste .ew-nav,
+  .ew-ub__leiste .ew-knopf {
+    display: none;
+  }
+
+  .ew-ub__held {
+    display: block;
+    min-height: 0;
+  }
+
+  .ew-ub__bild {
+    width: 100%;
+    height: 210px;
+    border-radius: 14px;
+  }
+
+  .ew-ub__karte {
+    width: auto;
+    margin: -34px 0 0;
+    padding: 28px 22px 32px;
+  }
+
+  .ew-ub__karte h1 {
+    font-size: 34px;
+  }
+
+  .ew-ub__reihe {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    padding-bottom: 36px;
+    gap: 16px;
+    margin-top: 40px;
   }
 
-  .ew-kachel__punkt {
-    padding: 18px 16px 20px;
+  .ew-ub__kachelbild {
+    height: 104px;
   }
 
-  .ew-kachel__punkt h3 {
-    font-size: 18px;
-  }
-
-  .ew-kachel__fuss {
+  .ew-ub__fuss {
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
+    margin-top: 40px;
+  }
+
+  /* 6. Typo */
+  .ew-ty__leiste .ew-nav {
+    display: none;
+  }
+
+  .ew-ty__augenbraue {
+    margin-top: 40px;
+  }
+
+  .ew-ty__zeile {
+    font-size: 42px;
+    max-width: none;
+  }
+
+  .ew-ty__unter {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-top: 40px;
+    padding-block: 28px 44px;
+  }
+
+  .ew-ty__unter .ew-lead {
+    font-size: 19px;
+  }
+
+  .ew-ty__bandin {
+    padding-block: 44px;
   }
 }

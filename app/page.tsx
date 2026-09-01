@@ -1,7 +1,6 @@
 /* ============================================================================
-   DIE STARTSEITE. Abnahme-Ausschnitt: Kopfleiste, Hero, Beweisstreifen, ein
-   Fall, Fuss. Die uebrigen Flaechen (Problem, Vorgehen, Wer die Arbeit macht,
-   Schluss) kommen nach der Abnahme dazu.
+   DIE STARTSEITE. Sieben Flaechen zwischen Kopfleiste und Fuss, in der
+   Reihenfolge weiter unten begruendet.
 
    WARUM DIE SCHRIFT- UND STYLESHEET-IMPORTE HIER STEHEN UND NICHT IM LAYOUT,
    und das ist der heikelste Punkt der ganzen Seite:
@@ -33,10 +32,10 @@ import "@/components/start/start.css";
 import type { Metadata } from "next";
 
 import StartAblauf from "@/components/start/ablauf";
+import StartArbeit from "@/components/start/arbeit";
 import StartBeweis from "@/components/start/beweis";
 import StartFuss from "@/components/start/fuss";
 import StartGalerie from "@/components/start/galerie";
-import StartGegenueber from "@/components/start/gegenueber";
 import StartHero from "@/components/start/hero";
 import StartLeiste from "@/components/start/leiste";
 import StartPerson from "@/components/start/person";
@@ -63,21 +62,23 @@ export default function Home() {
           traegt dasselbe id, damit die Sprungmarke auf jeder Route ein Ziel
           hat. */}
       {/* DIE REIHENFOLGE IST DAS ARGUMENT, nicht nur eine Anordnung:
-          1. Hero      was ich mache
-          2. Beweis    wer ich bin, nachpruefbar
-          3. Galerie   was moeglich ist, gezeigt statt beschrieben
-          4. Vergleich warum es sich lohnt
-          5. Ablauf    was auf dich zukommt
-          6. Person    wer das macht, mit Gesicht
-          7. Schluss   die Frage
-          Die Galerie steht VOR dem Vergleich: "was ist moeglich" kommt vor
-          "warum sollte ich", weil die zweite Frage sich erst stellt, wenn
-          die erste beantwortet ist. */}
+          1. Hero     was ich mache
+          2. Beweis   wer ich bin, nachpruefbar
+          3. Galerie  was moeglich ist, gezeigt statt beschrieben
+          4. Arbeit   was schon laeuft, oeffentlich nachpruefbar
+          5. Ablauf   was auf dich zukommt, sechs benannte Stufen
+          6. Person   wer das macht, mit Gesicht
+          7. Schluss  die Frage, mit dem Kalender daneben
+
+          AN PLATZ 4 STAND BIS ZUM 2026-09-01 DER VORHER/NACHHER-VERGLEICH.
+          Er ist ersatzlos gestrichen (Begruendung in arbeit.tsx) und durch
+          echte, laufende Arbeit ersetzt. Die Stelle bleibt dieselbe: erst
+          "was ist moeglich", dann "und was davon hat schon jemand gebaut". */}
       <main id={start.sprungmarke.zielId}>
         <StartHero />
         <StartBeweis />
         <StartGalerie />
-        <StartGegenueber />
+        <StartArbeit />
         <StartAblauf />
         <StartPerson />
         <StartSchluss />

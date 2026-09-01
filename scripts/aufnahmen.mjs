@@ -69,45 +69,53 @@ const AUFNAHMEN = [
   // verkleinerte Breitbildseite.
   { fall: "entwurf/voltas", datei: "hero-telefon", breite: 420, hoehe: 1400, platz: "Telefonrahmen im Hero" },
 
-  // Der Vergleich, ALS TELEFONANSICHT und nicht als Breitbild.
+  // ECHTE ARBEIT. Die einzige Aufnahme, die NICHT vom Dev-Server kommt.
   //
-  // WARUM DAS UMGESTELLT WURDE: der Vergleich lief bis zum 2026-08-31 auf
-  // zwei 1200px-Aufnahmen. Auf einem Telefon steht der Rahmen dann hochkant,
-  // und `object-fit: cover` schneidet aus jeder Breitbildseite einen
-  // senkrechten Streifen aus der Mitte heraus. Zu sehen war ein halber Satz
-  // links und eine halbe Schaltflaeche rechts: es sah kaputt aus, und es war
-  // auch kaputt.
+  // Hier standen bis zum 2026-09-01 die zwei Haelften des
+  // Vorher/Nachher-Vergleichs. Der ist gestrichen (Begruendung in
+  // components/start/arbeit.tsx), und an seiner Stelle steht jetzt die
+  // laufende Produktseite von Frostbreaker.
   //
-  // Zwei Telefonansichten loesen das an der Wurzel und sind zugleich das
-  // bessere Argument. Der Satz der Seite lautet "dein Kunde sucht dich auf
-  // dem Handy"; dann gehoert genau das in den Vergleich. Die alte Fassung
-  // ist eine Seite mit fester Breite aus den 2010ern, sie quetscht sich bei
-  // 390px zusammen, und man sieht ohne einen Satz Erklaerung, warum das ein
-  // Problem ist.
-  //
-  // FESTES FENSTERMASS statt elementweiser Aufnahme: beide Seiten eines
-  // Paares muessen exakt gleich gross sein, sonst springt der Regler.
-  { fall: "elektro-alt", datei: "vergleich-vorher", breite: 390, hoehe: 640, platz: "Vergleich, vorher" },
-  { fall: "entwurf/voltas", datei: "vergleich-nachher", breite: 390, hoehe: 640, platz: "Vergleich, nachher" },
+  // WARUM AUS DEM NETZ UND NICHT AUS DEM REPO: der Abschnitt behauptet "built,
+  // shipped, still running". Eine Aufnahme aus einem lokalen Bau koennte das
+  // nicht belegen, eine aus dem Netz schon. Nebenbei faellt so beim naechsten
+  // Aufnahmelauf auf, wenn sich die Seite geaendert hat.
+  {
+    extern: "https://www.frostbreaker.app/",
+    datei: "frostbreaker",
+    breite: 1200,
+    hoehe: 760,
+    platz: "Echte Arbeit, Produktseite",
+  },
 
-  // Die Metadaten-Bilder. Sie landen NICHT in public/arbeiten/, sondern
-  // neben app/layout.tsx: Next findet opengraph-image.png und apple-icon.png
-  // dort von selbst, ohne dass sie irgendwo eingetragen werden muessen.
   { fall: "og", datei: "opengraph-image", ordner: "app", breite: 1200, hoehe: 630, platz: "og:image und twitter:image" },
   { fall: "og?icon", datei: "apple-icon", ordner: "app", breite: 180, hoehe: 180, platz: "Symbol fuer iOS-Startbildschirm" },
 ];
 
 /** Wartet, bis die Seite wirklich fertig ist, statt eine Zahl abzuwarten. */
-async function ruhe(page) {
-  // 1. Der Aufbau selbst.
-  await page.waitForSelector("[data-erfassung]", { state: "attached" });
+async function ruhe(page, extern) {
+  // 1. Der Aufbau selbst. Die Marke gibt es nur auf den eigenen
+  //    Erfassungsseiten; bei einer fremden Adresse hat `networkidle` diese
+  //    Rolle bereits uebernommen.
+  if (!extern) await page.waitForSelector("[data-erfassung]", { state: "attached" });
   // 2. Die Schriften. Ohne das steht im Bild der Rueckfallstapel.
-  await page.evaluate(() => document.fonts.ready);
   // 3. Jedes Bild dekodiert. `complete` allein heisst nur geladen, nicht
   //    gezeichnet, und ein halb dekodiertes Bild landet als Luecke im PNG.
+  //
+  // BEIDES MIT EINER OBERGRENZE, und das ist keine Vorsicht auf Verdacht:
+  // page.evaluate hat in Playwright KEINE Zeitgrenze. Am 2026-09-01 hing der
+  // Lauf bei der ersten fremden Adresse (frostbreaker.app) minutenlang genau
+  // hier, ohne Fehler und ohne Ausgabe, weil dort eine Schrift oder ein Bild
+  // nie fertig meldete. Nach der Grenze wird aufgenommen, was da ist; das ist
+  // allemal besser als ein Lauf, der nie zurueckkommt.
   await page.evaluate(async () => {
+    const grenze = (v) => new Promise((r) => setTimeout(r, v));
+    await Promise.race([document.fonts.ready, grenze(8000)]);
     const bilder = Array.from(document.images);
-    await Promise.all(bilder.map((b) => (b.decode ? b.decode().catch(() => {}) : null)));
+    await Promise.race([
+      Promise.all(bilder.map((b) => (b.decode ? b.decode().catch(() => {}) : null))),
+      grenze(8000),
+    ]);
   });
   // 4. Zwei ruhige Bildwechsel. Danach hat der Browser mindestens einmal
   //    vollstaendig mit allem gezeichnet, was oben angekommen ist.
@@ -135,15 +143,25 @@ try {
       reducedMotion: "reduce",
     });
     const page = await kontext.newPage();
-    const url = `${BASIS}/erfassung/${a.fall}`;
-    const antwort = await page.goto(url, { waitUntil: "networkidle" });
+    const url = a.extern ?? `${BASIS}/erfassung/${a.fall}`;
+    // networkidle nur bei den eigenen Erfassungsseiten. Eine fremde,
+    // ausgelieferte Seite wird nie ruhig: Messpunkte, Vorabladungen und
+    // offene Verbindungen halten den Zaehler dauerhaft ueber null.
+    const antwort = await page.goto(url, {
+      waitUntil: a.extern ? "load" : "networkidle",
+      timeout: 45000,
+    });
     if (!antwort || !antwort.ok()) {
       throw new Error(
         `${url} antwortet mit ${antwort ? antwort.status() : "nichts"}. ` +
-          `Laeuft der Dev-Server mit CAPTURE=1?`,
+          (a.extern ? "Ist die Seite erreichbar?" : "Laeuft der Dev-Server mit CAPTURE=1?"),
       );
     }
-    await ruhe(page);
+    if (a.extern) {
+      // Ein Versuch auf Ruhe, aber mit Grenze und ohne Anspruch.
+      await page.waitForLoadState("networkidle", { timeout: 12000 }).catch(() => {});
+    }
+    await ruhe(page, Boolean(a.extern));
 
     const datei = `${a.datei}.png`;
     const ordner = a.ordner ?? ZIEL;
@@ -166,7 +184,7 @@ try {
     // Hero-Telefon (es wandert im Rahmen) und bei den Metadaten-Bildern. Die
     // Vergleichsaufnahmen brauchen dagegen ein FESTES Fenstermass, damit
     // beide Seiten des Paares exakt gleich gross sind.
-    const elementweise = a.datei === "hero-telefon" || a.fall.startsWith("og");
+    const elementweise = a.datei === "hero-telefon" || (a.fall ?? "").startsWith("og");
     // DAS ELEMENT MIT DER MARKIERUNG, nicht sein erstes Kind. Die
     // Vorgaengerfassung nahm `[data-erfassung] > *`, weil bei den Demos ein
     // Wrapper die Markierung trug. Beim OG-Bild sitzt sie direkt auf der
@@ -202,19 +220,6 @@ try {
     console.log(`${datei.padEnd(24)} ${(size / 1024).toFixed(0).padStart(5)} kB   ${a.platz}`);
 
     await kontext.close();
-  }
-
-  /* PAARE MUESSEN GLEICH GROSS SEIN. Weichen vorher und nachher in ihren
-     Massen voneinander ab, springt der Vergleich beim Ziehen, und das faellt
-     erst am fertigen Bau auf. Lieber hier abbrechen. */
-  const paare = [["vergleich-vorher.png", "vergleich-nachher.png"]];
-  for (const [a, b] of paare) {
-    const x = manifest.find((m) => m.datei === a);
-    const y = manifest.find((m) => m.datei === b);
-    if (!x || !y) continue;
-    if (x.fensterbreite !== y.fensterbreite || x.elementweise !== y.elementweise || x.fensterhoehe !== y.fensterhoehe) {
-      throw new Error(`Paar ${a} / ${b} wurde nicht gleich aufgenommen.`);
-    }
   }
 
   await writeFile(

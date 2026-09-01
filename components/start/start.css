@@ -57,6 +57,13 @@
   --st-fs-h3: 1.75rem; /* 28px */
   --st-fs-lead: clamp(1.1875rem, 1vw + 0.8rem, 1.5rem); /* 19px -> 24px */
   --st-fs-body: 1.125rem; /* 18px */
+  /* EIN GRAD FUER WORTMARKE UND LINKS. Vorher stand die Marke auf
+     clamp(18px, 1.4vw, 22px) und die Links auf 18px: in einem breiten Fenster
+     war die Marke groesser, in einem schmalen kleiner, und beides sah nach
+     Zufall aus. Youssefs Mentor hat es am 2026-09-01 als Fehler benannt
+     ("have the logo and quicklink the same font size"). Die Marke hebt sich
+     jetzt durch Gewicht und Farbe ab, nicht durch Groesse. */
+  --st-fs-nav: 1.0625rem; /* 17px */
   --st-fs-label: 0.875rem; /* 14px, nur Versalien mit Laufweite */
   --st-fs-tag: 0.9375rem; /* 15px */
 
@@ -222,7 +229,7 @@
      statt umzuziehen. */
   flex-wrap: nowrap;
   white-space: nowrap;
-  font-size: clamp(1.125rem, 1.4vw, 1.375rem);
+  font-size: var(--st-fs-nav);
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--c-accent);
@@ -255,7 +262,7 @@
   min-height: 44px;
   padding-inline: 0.75rem;
   border-radius: 0.5rem;
-  font-size: var(--st-fs-body);
+  font-size: var(--st-fs-nav);
   color: var(--c-soft);
   text-decoration: none;
   transition: color 0.18s var(--st-ease);
@@ -263,6 +270,16 @@
 
 .st-bar__link:hover {
   color: var(--c-ink);
+}
+
+/* Der Zurueckweg auf den Entwurfsseiten. Er steht dort, wo auf der
+   Startseite die zwei Ankerlinks stehen, und er ist der einzige Grund, warum
+   .st-bar__nav auf dem Telefon nicht komplett entfaellt: ein Anker weniger
+   ist verschmerzbar, ein fehlender Rueckweg nicht. */
+.st-bar__zurueck {
+  display: inline-flex;
+  gap: 0.4rem;
+  padding-inline: 0.75rem;
 }
 
 .st-bar__rechts {
@@ -338,46 +355,95 @@
    entscheidet die Reihenfolge im Stylesheet. Standen sie vorher, gewann
    `display: inline-flex` aus .st-pill, und der Knopf ragte bei 390px sichtbar
    aus der Leiste heraus. */
-/* ══ DIE KOPFLEISTE AUF DEM TELEFON, NACHGEMESSEN ═══════════════════════
-   Am 2026-08-31 im Browser gemessen, nicht geschaetzt:
+/* ══ DIE KOPFLEISTE AUF DEM TELEFON, ZWEIMAL NACHGEMESSEN ══════════════
+   Stand 2026-08-31, mit drei Modus-Knoepfen und grosser Wortmarke:
 
      Wortmarke mit Zusatz   186px
-     Modus-Gruppe           174px  (Beschriftungen 53/56/53)
-     Abstand dazwischen      16px
-     zusammen               376px
+     Modus-Gruppe           174px  (Beschriftungen "Auto/Light/Dark")
+     Abstand                 16px
+     zusammen               376px  bei 350px Platz
 
-   Verfuegbar sind bei 390px Fenster 350px, bei 360px 320px, bei 320px
-   280px. Die Gruppe ragte also aus dem Fenster, "Dark" klebte
-   angeschnitten am Rand. Aufgefallen ist es dem Nutzer auf seinem Telefon
-   und NICHT dem Pruefskript, weil `overflow-x: clip` auf .st-page den
-   Ueberlauf wegschneidet statt ihn scrollen zu lassen; die Pruefung sucht
-   seither nach Elementen ausserhalb des Fensters.
+   Die Gruppe ragte aus dem Fenster, "Dark" klebte angeschnitten am Rand.
+   Aufgefallen ist es dem Nutzer und NICHT dem Pruefskript, weil
+   `overflow-x: clip` auf .st-page den Ueberlauf wegschneidet statt ihn
+   scrollen zu lassen. Die Pruefung sucht seither nach Elementen ausserhalb
+   des Fensters (scripts/pruefbilder.mjs).
 
-   ZWEI EINGRIFFE, beide unter 48rem:
-     Zusatz "marketing" entfaellt   spart rund 75px
-     Modus-Gruppe enger gesetzt     spart rund 28px
-   Neu: 111 + 16 + 146 = 273px, passt mit Reserve auch bei 320px.
+   Stand 2026-09-01, nach dem Review: die Modus-Gruppe hat nur noch ZWEI
+   Zustaende und traegt Zeichen statt Woerter, die Wortmarke steht auf 17px
+   statt auf bis zu 22px. Neu gerechnet:
 
-   Der Zusatz faellt und nicht die Modus-Gruppe, weil die Gruppe eine
-   Funktion hat und der Zusatz eine Verzierung ist. Die vollstaendige
-   Wortmarke steht dafuer im Fuss, also auf jedem Telefon genau einmal. */
+     Wortmarke mit Zusatz  ~178px
+     Modus-Gruppe            86px  (zwei Ziele zu 40px, Rand und Rahmen)
+     Abstand                 16px
+     zusammen              ~280px  bei 350px Platz
+
+   Damit passt der Zusatz "marketing" wieder auf jedes gaengige Telefon, und
+   die Leiste zeigt auf 390px dasselbe wie auf dem Schreibtisch. Unter 22rem
+   (352px) faellt er weiterhin, denn dort wird es rechnerisch eng, und ein
+   angeschnittener Markenname ist schlimmer als ein kurzer.
+
+   Der Pill-CTA bleibt unter 48rem gestrichen: er steht im Hero 200 Pixel
+   darunter noch einmal. Die zwei Ankerlinks entfallen ebenfalls, und es
+   kommt kein Menueknopf an ihre Stelle: ein One-Pager, den man in einer
+   Wischbewegung durchlaeuft, braucht keine Navigation zu zwei Ankern. Der
+   Zurueckweg auf /work/[slug] ist davon ausgenommen (siehe unten). */
 .st-bar__cta {
   display: none;
 }
 
-.st-marke__zusatz {
-  display: none;
-}
-
-@media (min-width: 48rem) {
+@media (max-width: 21.9375rem) {
   .st-marke__zusatz {
-    display: inline;
+    display: none;
   }
 }
 
 @media (min-width: 48rem) {
   .st-bar__cta {
     display: inline-flex;
+  }
+}
+
+/* ══ DIE LEISTE AUF DEN ENTWURFSSEITEN, NACHGEMESSEN ═══════════════════
+   Der Zurueckweg ist auch auf dem Telefon da. Er ist keine Zierde: ohne ihn
+   kaeme man von einem Entwurf nur ueber die Wortmarke zurueck, und die fuehrt
+   auf den Seitenanfang und nicht zur Galerie.
+
+   Nur passte er zunaechst nicht. Der erweiterte Pruefdurchlauf vom
+   2026-09-01 hat es beim ersten Lauf gemeldet, bevor es jemand sehen konnte:
+
+     work-voltas-390-hell   FEHLER: st-modus (335..425)
+
+   Gerechnet: Wortmarke mit Zusatz 178 + "All designs" 130 + Gruppe 86 plus
+   zweimal 16 Abstand sind 426px bei 350px Platz.
+
+   ZWEI EINGRIFFE, beide nur unter 48rem und beide nur hier:
+     Zusatz "marketing" entfaellt      spart 75px
+     der Zurueckweg zeigt nur den Pfeil spart 86px
+   Neu: 103 + 44 + 86 + 32 = 265px, passt auch bei 320px Fenster.
+
+   Der Pfeil allein ist kein Verlust: das Wort steht weiter im Markup und
+   wird vorgelesen, nur nicht gezeichnet. */
+.st-bar__nav:has(.st-bar__zurueck) {
+  display: flex;
+}
+
+@media (max-width: 47.9375rem) {
+  .st-bar[data-variante="werk"] .st-marke__zusatz {
+    display: none;
+  }
+
+  .st-bar__wort {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .st-bar__zurueck {
+    padding-inline: 0.625rem;
   }
 }
 
@@ -454,9 +520,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* Quadratisch, seit der Schalter zwei ZEICHEN traegt und keine Woerter.
+     38 mal 40 plus dem Rand der Gruppe ergibt ein Ziel von 44px in der
+     Hoehe; in der Breite sind es 40px und damit deutlich mehr als die 24px
+     aus WCAG 2.5.8. */
   min-height: 38px;
-  min-width: 44px;
-  padding-inline: 0.6rem;
+  width: 40px;
   border-radius: var(--st-r-pill);
   font-size: var(--st-fs-tag);
   font-weight: 500;
@@ -472,23 +541,23 @@
   color: var(--c-ink);
 }
 
+/* Sichtbar ist das Zeichen, gelesen wird das Wort. Nicht display:none: das
+   naehme es aus der Ansage, und dann haette der Schalter zwei unbenannte
+   Ziele. */
+.st-modus__wort {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* Der Fokusring gehoert um die BESCHRIFTUNG, nicht um das unsichtbare Feld:
    ein Ring um ein Element mit Deckkraft 0 ist ein Ring um nichts. */
 /* Enger gesetzt auf dem Telefon. Die HOEHE bleibt: das Ziel misst weiter
    44px, nur die Breite gibt nach. Bei "Light" als laengstem Wort sind das
    noch rund 46px, deutlich ueber den 24px aus WCAG 2.5.8. */
-@media (max-width: 47.9375rem) {
-  .st-modus {
-    gap: 0;
-    padding: 0.125rem;
-  }
-
-  .st-modus__label {
-    min-width: 0;
-    padding-inline: 0.4rem;
-  }
-}
-
 .st-modus__eingabe:focus-visible + .st-modus__label {
   outline: 2px solid var(--c-focus-in);
   outline-offset: 2px;
@@ -772,7 +841,24 @@
   }
 }
 
+/* ══ DIE KARTE ═════════════════════════════════════════════════════════
+   AM 2026-09-01 UMGEBAUT, drei Punkte aus dem Review:
+
+   1. DIE DREI GRAUEN PUNKTE SIND WEG ("remove the fake computer button").
+      Sie behaupteten einen Browser, den es nicht gibt, und kosteten oben in
+      jeder Karte rund 40px, die dem Entwurf gehoerten.
+   2. DIE GANZE KARTE IST EIN WEG auf /work/<slug>.
+   3. DIE ANGABEN LIEGEN IN DER KARTE, nicht darunter, und schieben sich bei
+      einem feinen Zeiger von unten herein. */
+.st-karte__weg {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
 .st-karte__rahmen {
+  position: relative;
+  display: block;
   overflow: hidden;
   border: 1px solid var(--c-line2);
   border-radius: var(--st-r-card);
@@ -783,18 +869,17 @@
     border-color 0.28s var(--st-ease);
 }
 
-.st-karte__punkte {
-  display: flex;
-  gap: 0.3125rem;
-  padding: 0.625rem 0.75rem;
-  border-bottom: 1px solid var(--c-line);
+/* Der Fokusring gehoert um den RAHMEN und nicht um das Linkelement: der Link
+   ist ein Block ohne eigene Flaeche, ein Ring darum saesse an der falschen
+   Kante. */
+.st-karte__weg:focus-visible {
+  outline: none;
 }
 
-.st-karte__punkte span {
-  width: 0.4375rem;
-  height: 0.4375rem;
-  border-radius: 50%;
-  background: var(--c-line2);
+.st-karte__weg:focus-visible .st-karte__rahmen {
+  outline: 2px solid var(--c-focus-in);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 2px var(--c-focus-out);
 }
 
 .st-karte__bild {
@@ -810,35 +895,37 @@
   transition: transform 0.5s var(--st-ease);
 }
 
-/* Beim Ueberfahren hebt sich die Karte und das Bild wandert ein Stueck nach
-   oben, zeigt also mehr von der Seite. Das ist der Sinn: eine Galeriekarte,
-   die auf Zeigen mehr zeigt, ist ein Versprechen, kein Effekt.
-   Nur bei feinem Zeiger: auf dem Telefon gibt es kein Ueberfahren, und ein
-   Bild, das beim Tippen springt, stoert. */
-@media (hover: hover) and (pointer: fine) {
-  .st-karte:hover .st-karte__rahmen {
-    transform: translateY(-4px);
-    border-color: var(--c-line3);
-  }
-
-  .st-karte:hover .st-karte__bild {
-    transform: translateY(-4%);
-  }
+/* Die Tafel. Liegt IN der Karte, damit die Karte ein Bild bleibt. */
+.st-karte__tafel {
+  position: absolute;
+  inset-inline: 0.625rem;
+  bottom: 0.625rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.75rem 0.75rem 1.125rem;
+  border-radius: 0.875rem;
+  /* Kein Verlauf und keine Transparenz auf das Bild: darunter liegen sechs
+     verschiedene Entwuerfe mit sechs verschiedenen Helligkeiten, und der
+     Kontrast der Tafel darf nicht davon abhaengen, welcher gerade dahinter
+     liegt. Volle Flaeche in der Seitenfarbe, gemessen wie ueberall sonst. */
+  background: var(--c-paper);
+  box-shadow: var(--sh-lift);
 }
 
 .st-karte__meta {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.5rem 0.75rem;
-  margin: 0.875rem 0 0;
+  gap: 0.25rem 0.625rem;
+  min-width: 0;
 }
 
 .st-karte__name {
   font-family: var(--st-display);
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-size: 1.1875rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
 }
 
 .st-karte__art {
@@ -846,280 +933,174 @@
   color: var(--c-faint);
 }
 
+.st-karte__pfeil {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  margin-left: auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--c-solid);
+  color: var(--c-solid-ink);
+  transition: transform 0.28s var(--st-ease);
+}
+
+/* MIT FEINEM ZEIGER schiebt sich die Tafel von unten herein und das Bild
+   wandert nach oben, zeigt also mehr von der Seite. Ohne feinen Zeiger steht
+   die Tafel fest da: eine Angabe, die man nur beim Ueberfahren sieht, gibt es
+   auf einem Telefon nicht. Deshalb steht der Ausgangszustand HIER und die
+   Bewegung in der Abfrage, nicht umgekehrt. */
+@media (hover: hover) and (pointer: fine) {
+  .st-karte__tafel {
+    transform: translateY(calc(100% + 0.75rem));
+    opacity: 0;
+    transition:
+      transform 0.32s var(--st-ease),
+      opacity 0.2s var(--st-ease);
+  }
+
+  .st-karte:hover .st-karte__rahmen,
+  .st-karte:focus-within .st-karte__rahmen {
+    transform: translateY(-4px);
+    border-color: var(--c-line3);
+  }
+
+  .st-karte:hover .st-karte__bild,
+  .st-karte:focus-within .st-karte__bild {
+    transform: translateY(-4%);
+  }
+
+  .st-karte:hover .st-karte__tafel,
+  .st-karte:focus-within .st-karte__tafel {
+    transform: none;
+    opacity: 1;
+  }
+
+  .st-karte:hover .st-karte__pfeil {
+    transform: rotate(45deg);
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════════════════
-   GEGENUEBERSTELLUNG
-   ═══════════════════════════════════════════════════════════════════════ */
-.st-gegen {
+   ECHTE ARBEIT
+   ═══════════════════════════════════════════════════════════════════════
+   Hier stand bis zum 2026-09-01 die Gegenueberstellung mit dem
+   Vorher/Nachher-Regler. Sie ist ersatzlos gestrichen, samt Regler,
+   Fensterrahmen und der Fassung ohne JavaScript; die Begruendung steht in
+   components/start/arbeit.tsx.
+
+   Was jetzt hier steht, ist eine Aufnahme einer laufenden Seite und ein Weg
+   dorthin. Zwei Spalten ab 62rem: links das Bild, rechts die drei Punkte. */
+.st-arbeit {
   background: var(--c-band);
   border-block: 1px solid var(--c-line);
 }
 
-/* ZWEISPALTIG AB 62rem: links der Text, rechts der Vergleich. Der Vergleich
-   ist seit dem 2026-08-31 eine TELEFONANSICHT und damit hochkant; ueber die
-   volle Breite gestellt saesse er als schmale Saeule in viel Weissraum. */
-.st-gegen__in {
-  display: grid;
-  gap: clamp(2rem, 4vw, 4rem);
-  align-items: center;
-}
-
-@media (min-width: 62rem) {
-  .st-gegen__in {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
-  }
-}
-
-.st-gegen__kopf {
-  max-width: 42ch;
-}
-
-.st-gegen__kopf h2 {
+.st-arbeit__kopf h2 {
   margin-top: 0.75rem;
+  max-width: 18ch;
   font-size: var(--st-fs-h2);
   line-height: 1.05;
 }
 
-.st-gegen__kopf .st-lead {
-  margin-top: 1rem;
+.st-arbeit__kopf .st-lead {
+  margin-top: 1.125rem;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   VERGLEICH
-   ═══════════════════════════════════════════════════════════════════════
-   Ein natives input[type=range] ueber zwei uebereinanderliegenden Bildern.
+.st-arbeit__fall {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.75rem, 3.5vw, 3rem);
+  align-items: center;
+  margin-top: clamp(2.5rem, 4vw, 3.5rem);
+}
 
-   WARUM NATIV UND NICHT SELBST GEBAUT: ein selbstgebauter Wischer hat keinen
-   angesagten Wert, keine Tastaturbedienung ohne Nacharbeit und keinen
-   Zustand, den Hilfsmittel verstehen. Das Feld liegt deckungsgleich ueber
-   dem Bild, ist bis auf seinen Griff unsichtbar, und traegt touch-action:
-   pan-y, damit eine senkrechte Wischgeste die SEITE scrollt und nicht am
-   Regler haengen bleibt.
+@media (min-width: 62rem) {
+  .st-arbeit__fall {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  }
+}
 
-   Ohne JavaScript wird nichts davon gerendert (.nur-mit-js), stattdessen
-   stehen beide Aufnahmen als zwei Figuren untereinander. */
-/* DER BROWSERRAHMEN. Ohne ihn liest sich eine Aufnahme mit hellem Rand als
-   Bild mit Fehler, mit ihm als Website in einem Fenster. Das ist der
-   billigste Zugewinn an Glaubwuerdigkeit auf dieser Seite: die grauen
-   Flaechen links und rechts der alten Seite sind dann sichtbar der
-   Seitenhintergrund und nicht ein schlecht zugeschnittenes Foto.
-
-   Die Adresszeile traegt eine Musteradresse aus content/start.ts und keine
-   echte: die Betriebe sind fiktiv, und eine erfundene Domain, die es
-   wirklich gibt, waere ein Fund, den die Zielgruppe macht. */
-.st-rahmen {
-  margin-inline: auto;
-  max-width: 26rem;
-  border-radius: var(--st-r-card);
+.st-arbeit__bild {
+  display: block;
   overflow: hidden;
+  border: 1px solid var(--c-line2);
+  border-radius: var(--st-r-card);
   background: var(--c-wash);
   box-shadow: var(--sh-lift);
+  line-height: 0;
+  transition: transform 0.28s var(--st-ease);
 }
 
-.st-rahmen__leiste {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.7rem 0.9rem;
-  border-bottom: 1px solid var(--c-line);
-}
-
-.st-rahmen__punkte {
-  display: flex;
-  gap: 0.35rem;
-  flex: none;
-}
-
-.st-rahmen__punkt {
-  width: 0.6rem;
-  height: 0.6rem;
-  border-radius: 50%;
-  background: var(--c-line2);
-}
-
-.st-rahmen__adresse {
-  flex: 1;
-  min-width: 0;
-  padding: 0.2rem 0.7rem;
-  border-radius: var(--st-r-pill);
-  background: var(--c-sheet);
-  font-size: var(--st-fs-tag);
-  color: var(--c-faint);
-  text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.st-vgl {
-  position: relative;
-  overflow: hidden;
-  background: var(--c-sheet);
-  /* Genau das Fenstermass der Aufnahme (scripts/aufnahmen.mjs, 390 zu 640).
-     Steht das Verhaeltnis hier, ist der Platz vor dem Bild reserviert und
-     beim Laden springt nichts.
-
-     BIS ZUM 2026-08-31 STAND HIER 1200 zu 760, also Breitbild, und darunter
-     eine Sonderregel, die auf dem Telefon auf 3 zu 4 umstellte. Das war der
-     Fehler: `object-fit: cover` schnitt aus jeder Breitbildseite einen
-     senkrechten Streifen aus der Mitte, und der Vergleich zeigte einen
-     halben Satz gegen eine halbe Schaltflaeche. Jetzt ist die Aufnahme
-     selbst hochkant, und es gibt nur noch EIN Verhaeltnis fuer alle
-     Breiten. */
-  aspect-ratio: 390 / 640;
-}
-
-.st-vgl__bild {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* Oben verankert. Wird der Rahmen in einer schmalen Spalte hoeher als
-     breit, soll der Kopf der Website stehen bleiben und nicht ihre Mitte:
-     der Kopf ist das, worueber geurteilt wird. */
-  object-position: top center;
-}
-
-/* Die neue Fassung liegt darueber und wird von links freigegeben. clip-path
-   und nicht width: eine wachsende Breite skaliert das Bild darin, ein
-   Beschnitt gibt es frei. Genau das ist der Unterschied zwischen "die neue
-   Seite wird breiter" und "die neue Seite kommt zum Vorschein". */
-.st-vgl__nachher {
-  position: absolute;
-  inset: 0;
-  clip-path: inset(0 0 0 calc(var(--p, 50) * 1%));
-}
-
-.st-vgl__kante {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--p, 50) * 1%);
-  width: 2px;
-  margin-left: -1px;
-  background: var(--c-sheet);
-  pointer-events: none;
-}
-
-.st-vgl__griff {
-  position: absolute;
-  top: 50%;
-  left: calc(var(--p, 50) * 1%);
-  translate: -50% -50%;
-  height: 44px;
-  width: 44px;
-  display: grid;
-  place-items: center;
-  border-radius: var(--st-r-pill);
-  background: var(--c-sheet);
-  color: var(--c-ink);
-  box-shadow: 0 2px 10px -2px rgb(0 0 0 / 0.35);
-  pointer-events: none;
-}
-
-.st-vgl__regler {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: ew-resize;
-  /* Die eine Zeile, die verhindert, dass der Regler die Seite festhaelt. */
-  touch-action: pan-y;
-}
-
-/* Der Ring gehoert sichtbar um den ganzen RAHMEN, nicht um ein unsichtbares
-   Feld und auch nicht nur um die Bildflaeche: fokussiert ist der Vergleich
-   als Ganzes, und der Rahmen ist seine sichtbare Grenze. */
-.st-rahmen:has(.st-vgl__regler:focus-visible) {
-  outline: 2px solid var(--c-focus-in);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 2px var(--c-focus-out);
-}
-
-.st-vgl__marken {
-  position: absolute;
-  inset: auto 0 0 0;
-  display: flex;
-  justify-content: space-between;
-  padding: 0.75rem;
-  pointer-events: none;
-}
-
-.st-vgl__marke {
-  padding: 0.25rem 0.55rem;
-  border-radius: var(--st-r-tag);
-  background: color-mix(in srgb, var(--c-solid) 78%, transparent);
-  color: var(--c-solid-ink);
-  font-size: var(--st-fs-tag);
-}
-
-/* Zwei Sprungknoepfe, damit Ziehen nie der einzige Weg ist. */
-.st-vgl__sprung {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-}
-
-.st-sprung {
-  min-height: 44px;
-  padding: 0.5rem 0.9rem;
-  border: 1px solid var(--c-line2);
-  border-radius: var(--st-r-pill);
-  background: var(--c-sheet);
-  color: var(--c-soft);
-  font-size: var(--st-fs-tag);
-  cursor: pointer;
-  transition:
-    border-color 0.18s var(--st-ease),
-    color 0.18s var(--st-ease);
-}
-
-.st-sprung:hover {
-  border-color: var(--c-line3);
-  color: var(--c-ink);
-}
-
-/* Die Fassung ohne JavaScript: zwei Figuren untereinander, beschriftet. */
-.st-vgl-ohne {
-  display: grid;
-  gap: 1rem;
-}
-
-.st-vgl-ohne figure {
-  margin: 0;
-}
-
-.st-vgl-ohne img {
+.st-arbeit__bild img {
+  display: block;
   width: 100%;
   height: auto;
-  border-radius: var(--st-r-card);
-  box-shadow: var(--sh-lift);
 }
 
-.st-vgl-ohne figcaption {
-  margin-top: 0.5rem;
+@media (hover: hover) and (pointer: fine) {
+  .st-arbeit__bild:hover {
+    transform: translateY(-4px);
+  }
+}
+
+.st-arbeit__name {
+  font-family: var(--st-display);
+  font-size: var(--st-fs-h3);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.st-arbeit__art {
+  margin-top: 0.25rem;
   font-size: var(--st-fs-tag);
   color: var(--c-faint);
 }
 
-@media (min-width: 48rem) {
-  .st-vgl-ohne {
-    grid-template-columns: 1fr 1fr;
-  }
+.st-arbeit__punkte {
+  list-style: none;
+  margin: 1.5rem 0 1.75rem;
+  padding: 0;
+}
+
+.st-arbeit__punkte li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-top: 0.625rem;
+  color: var(--c-soft);
+}
+
+.st-arbeit__punkte li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 0.6875rem;
+  height: 2px;
+  background: var(--c-accent);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
    ABLAUF
    ═══════════════════════════════════════════════════════════════════════
-   Drei Schritte, ein Satz je Schritt. Die Haarlinie ueber jedem Schritt
-   zeichnet sich beim Eintreten von links nach rechts.
+   SECHS BENANNTE STUFEN, seit dem 2026-09-01. Vorher waren es drei Schritte
+   mit je einem ganzen Satz als Ueberschrift ("You see it before you decide").
+   Youssefs Mentor hat daran genau das Richtige bemaengelt: eine Stufe braucht
+   einen NAMEN, keinen Satz. Ein Betrieb, der eine Website kauft, will wissen,
+   was passiert, und "Onboarding, Research, Branding, Design, Launch,
+   Maintenance" ist eine Liste, die man abhaken kann. Drei Saetze waren eine
+   Beruhigung.
 
-   WARUM HIER BEWEGUNG STEHT UND SONST FAST NIRGENDS: die drei Schritte sind
-   eine REIHENFOLGE, und eine Linie, die von links nach rechts waechst, sagt
-   genau das. Ein Standbild koennte die Reihenfolge nur behaupten. Wo
-   Bewegung nur huebsch waere, steht auf dieser Seite keine. */
+   ZWEI SPALTEN AUF DEM TELEFON und drei ab 48rem: bei sechs Stufen und einer
+   Spalte waere der Abschnitt eine Bildschirmlaenge lang, und dann liest ihn
+   niemand als Reihenfolge, sondern als sechs Absaetze.
+
+   WARUM HIER BEWEGUNG STEHT UND SONST FAST NIRGENDS: die Stufen sind eine
+   REIHENFOLGE, und eine Linie, die von links nach rechts waechst, sagt genau
+   das. Ein Standbild koennte die Reihenfolge nur behaupten. Wo Bewegung nur
+   huebsch waere, steht auf dieser Seite keine. */
 .st-ablauf__titel {
   margin-top: 0.75rem;
   max-width: 20ch;
@@ -1129,8 +1110,8 @@
 
 .st-ablauf__liste {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: clamp(2rem, 3vw, 2.5rem);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.75rem, 3vw, 2.5rem);
   list-style: none;
   margin: clamp(2.5rem, 4vw, 3.5rem) 0 0;
   padding: 0;
@@ -1164,16 +1145,34 @@
   color: var(--c-faint);
 }
 
+/* AUF DEM TELEFON KLEINER, und das ist eine Rechnung: bei 390px Fenster und
+   zwei Spalten ist eine Spalte 161px breit. "Maintenance" misst bei 28px rund
+   165px und stand damit ueber der Kante, unsichtbar abgeschnitten von
+   `overflow-x: clip`. Bei 22px sind es 126px.
+   Erst ab 40rem ist die Spalte breit genug fuer die volle Stufe. */
 .st-ablauf__name {
   margin-top: 0.5rem;
-  font-size: var(--st-fs-h3);
+  font-size: 1.375rem;
   line-height: 1.2;
+}
+
+@media (min-width: 40rem) {
+  .st-ablauf__name {
+    font-size: var(--st-fs-h3);
+  }
 }
 
 .st-ablauf__text {
   margin-top: 0.625rem;
   color: var(--c-soft);
-  max-width: 34ch;
+  max-width: 30ch;
+  font-size: var(--st-fs-tag);
+}
+
+@media (min-width: 40rem) {
+  .st-ablauf__text {
+    font-size: var(--st-fs-body);
+  }
 }
 
 @media (scripting: enabled) {
@@ -1281,21 +1280,38 @@
   padding-block: clamp(4rem, 7vw, 7rem);
 }
 
+/* ZWEISPALTIG AB 62rem: links die Frage, rechts der Kalender. Vorher stand
+   hier ein zentrierter Block mit einem Knopf, der auf calendly.com fuehrte.
+   Der Mentor hat den Seitenwechsel als Reibung benannt, und er hat recht.
+
+   NICHT ZENTRIERT, seit der Kalender daneben steht: zentrierter Text neben
+   einem linksbuendigen Rahmen erzeugt drei verschiedene senkrechte Kanten
+   auf engem Raum. */
 .st-schluss__in {
-  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2rem, 4vw, 3.5rem);
+  align-items: start;
+}
+
+@media (min-width: 62rem) {
+  .st-schluss__in {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+  }
 }
 
 .st-schluss h2 {
-  margin-inline: auto;
   max-width: 18ch;
   font-size: var(--st-fs-h2);
   line-height: 1.04;
   color: var(--c-solid-ink);
+  margin-top: 0.75rem;
 }
 
 .st-schluss__lead {
-  margin: 1.125rem auto 0;
-  max-width: 46ch;
+  margin: 1.125rem 0 0;
+  max-width: 42ch;
   font-size: var(--st-fs-lead);
   /* Nicht --c-soft: das ist eine Textstufe fuer den Seitengrund und waere
      auf der umgekehrten Flaeche kaum zu sehen. Stattdessen die
@@ -1303,8 +1319,111 @@
   color: color-mix(in srgb, var(--c-solid-ink) 76%, transparent);
 }
 
+/* Die drei Fakten. Sie beantworten, was jemand vor einem Klick auf einen
+   Kalender wissen will: wie lange, in welcher Form, was es kostet. */
+.st-schluss__fakten {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 1.75rem 0 0;
+  padding: 0;
+}
+
+.st-schluss__fakten li {
+  padding: 0.375rem 0.875rem;
+  border: 1px solid color-mix(in srgb, var(--c-solid-ink) 30%, transparent);
+  border-radius: var(--st-r-pill);
+  font-size: var(--st-fs-tag);
+  color: color-mix(in srgb, var(--c-solid-ink) 84%, transparent);
+}
+
 .st-schluss .st-pill {
   margin-top: 2rem;
+}
+
+/* Der Eyebrow steht auf der umgekehrten Flaeche und braucht deshalb eine
+   eigene Farbe: --c-accent ist fuer den Seitengrund gemessen. */
+.st-schluss .st-eyebrow {
+  color: color-mix(in srgb, var(--c-solid-ink) 66%, transparent);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DER KALENDER
+   ═══════════════════════════════════════════════════════════════════════
+   Zwei Zustaende: der Deckel mit dem Knopf, und der geladene Rahmen von
+   Calendly. Warum ueberhaupt ein Deckel davorsteht, steht ausfuehrlich in
+   components/start/kalender.tsx (kurz: TDDDG Paragraf 25).
+
+   DIE HOEHE IST IN BEIDEN ZUSTAENDEN GLEICH. Sonst springt der ganze
+   Abschnitt in dem Moment, in dem jemand den Knopf drueckt, und ein
+   Seitensprung nach einem Klick fuehlt sich an wie ein Fehler. */
+.st-kal {
+  --st-kal-h: 660px;
+  height: var(--st-kal-h);
+  border-radius: var(--st-r-card);
+  overflow: hidden;
+  background: var(--c-paper);
+}
+
+@media (max-width: 61.9375rem) {
+  .st-kal {
+    --st-kal-h: 580px;
+  }
+}
+
+.st-kal__rahmen {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.st-kal--zu {
+  display: flex;
+}
+
+.st-kal__deckel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 2rem;
+  text-align: center;
+  color: var(--c-ink);
+}
+
+/* Ein angedeuteter Monat. Er zeigt, WAS sich hinter dem Knopf oeffnet, und
+   ist deshalb Zierde und kein Inhalt (aria-hidden in der Komponente). */
+.st-kal__gitter {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.4375rem;
+  width: min(19rem, 100%);
+  margin-bottom: 0.75rem;
+}
+
+.st-kal__gitter span {
+  aspect-ratio: 1;
+  border-radius: 0.375rem;
+  background: var(--c-wash);
+}
+
+.st-kal__gitter span[data-frei] {
+  background: color-mix(in srgb, var(--c-accent) 22%, var(--c-wash));
+}
+
+.st-kal__hinweis {
+  max-width: 34ch;
+  font-size: var(--st-fs-tag);
+  color: var(--c-faint);
+}
+
+.st-kal__direkt {
+  font-size: var(--st-fs-tag);
+  color: var(--c-soft);
 }
 
 /* Der Knopf auf der umgekehrten Flaeche muss sich ebenfalls umkehren, sonst
@@ -1391,9 +1510,20 @@
   .st-link::after,
   .st-chip,
   .st-geraet__halt,
-  .st-sprung,
-  .st-modus__label {
+  .st-modus__label,
+  .st-karte__rahmen,
+  .st-karte__bild,
+  .st-karte__tafel,
+  .st-karte__pfeil,
+  .st-arbeit__bild {
     transition: none;
+  }
+
+  /* prefers-reduced-motion zeigt den ENDZUSTAND und nicht eine gedaempfte
+     Fassung: die Tafel steht dann sofort da, statt langsam hereinzufahren. */
+  .st-karte__tafel {
+    transform: none;
+    opacity: 1;
   }
 
   .st-geraet__halt {

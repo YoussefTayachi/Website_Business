@@ -1,0 +1,188 @@
+/* ============================================================================
+   DIE ENTWURFSSEITEN (/work/[slug]).
+
+   Nur der RAHMEN steht hier: Kopfblock, Buehne, Weiterweg. Der Entwurf selbst
+   bringt seine Gestaltung aus components/entwuerfe/entwurf.css mit, und die
+   beiden duerfen sich nicht beruehren. Deshalb traegt hier jede Klasse das
+   Praefix `.wk-` und keine Regel greift in `.ew` hinein.
+
+   Die Tokens sind die der Startseite (--st-* und --c-*), denn dieser Rahmen
+   IST die Portfolio-Seite: dieselbe Kopfleiste, derselbe Fuss, derselbe
+   Nachtmodus. Nur das, was auf der Buehne steht, sieht fremd aus, und genau
+   das ist der Sinn.
+   ========================================================================== */
+
+.wk-kopf {
+  padding-bottom: var(--st-block-s);
+}
+
+.wk-titel {
+  margin-top: 0.75rem;
+  font-size: var(--st-fs-h2);
+  line-height: 1.02;
+}
+
+.wk-kurz {
+  margin-top: 1.125rem;
+  max-width: 40ch;
+}
+
+/* DER HINWEIS IST KEIN KLEINGEDRUCKTES, sondern eine Angabe. Auf der
+   Startseite steht bewusst nirgends "kein echtes Beispiel": dort heisst der
+   Abschnitt "what your page could look like" und behauptet damit nichts.
+   Hier ist es anders. Diese Seite traegt den Namen eines Betriebs als
+   Ueberschrift, und ohne diese Zeile liest sie sich wie eine Fallstudie, also
+   wie ein Auftrag, den es nicht gab. */
+.wk-hinweis {
+  margin-top: 1.5rem;
+  max-width: 52ch;
+  padding-left: 0.875rem;
+  border-left: 2px solid var(--c-line2);
+  font-size: var(--st-fs-tag);
+  color: var(--c-faint);
+}
+
+.wk-notizen {
+  margin-top: clamp(2.5rem, 4vw, 3.5rem);
+}
+
+.wk-notizen__kopf {
+  font-size: var(--st-fs-label);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-faint);
+}
+
+.wk-notizen ul {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.5rem, 2.6vw, 2.25rem);
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+}
+
+@media (min-width: 48rem) {
+  .wk-notizen ul {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.wk-notizen li {
+  padding-top: 1.125rem;
+  border-top: 2px solid var(--c-accent);
+}
+
+.wk-notizen h2 {
+  font-size: var(--st-fs-h3);
+  line-height: 1.2;
+}
+
+.wk-notizen li p {
+  margin-top: 0.5rem;
+  color: var(--c-soft);
+}
+
+/* ── DIE BUEHNE ────────────────────────────────────────────────────────────
+   Der Entwurf steht randlos und in voller Breite. Kein Fensterrahmen, keine
+   drei Punkte, kein Geraet drumherum: der Mentor hat die Attrappe in der
+   Galerie zu Recht bemaengelt, und hier waere sie noch falscher, denn hier
+   IST es der Browser, der die Seite zeigt.
+
+   Eine Haarlinie oben und unten reicht als Kante. Sie sagt, dass etwas
+   anderes beginnt, ohne es in einen Kasten zu sperren. */
+.wk-buehne {
+  border-block: 1px solid var(--c-line2);
+}
+
+.wk-rahmen {
+  /* Isoliert den Entwurf vom Schriftgrad der Portfolio-Seite. .ew setzt
+     font-size selbst, aber alles, was in em rechnet, haengt sonst an
+     --st-fs-body. */
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* ── DIE ANDEREN FUENF ─────────────────────────────────────────────────────
+   Als Liste und nicht als zweite Galerie: sechs weitere Bilder unter einem
+   vollstaendigen Entwurf waeren eine zweite Startseite. Wer hier ankommt, hat
+   die Bilder schon gesehen und braucht nur noch den Weg. */
+.wk-weiter h2 {
+  font-size: var(--st-fs-h3);
+}
+
+.wk-weiter__liste {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  border-top: 1px solid var(--c-line);
+}
+
+.wk-weiter__liste a {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  min-height: 56px;
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--c-line);
+  color: var(--c-ink);
+  text-decoration: none;
+}
+
+.wk-weiter__name {
+  font-family: var(--st-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.wk-weiter__art {
+  font-size: var(--st-fs-tag);
+  color: var(--c-faint);
+}
+
+.wk-weiter__pfeil {
+  margin-left: auto;
+  color: var(--c-accent);
+  transition: transform 0.2s var(--st-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wk-weiter__liste a:hover {
+    background: var(--c-wash);
+  }
+
+  .wk-weiter__liste a:hover .wk-weiter__pfeil {
+    transform: translateX(4px);
+  }
+}
+
+/* ── DER ABSCHLUSS ─────────────────────────────────────────────────────────
+   Dieselbe umgekehrte Flaeche wie auf der Startseite, aber ohne Kalender: der
+   steht auf der Startseite unter /#book, und zwei Kalender auf zwei Routen
+   waeren zwei Rahmen von Calendly, die beide geladen werden wollen. */
+.wk-cta__in {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  text-align: left;
+}
+
+.wk-cta__in h2 {
+  max-width: 18ch;
+  font-size: var(--st-fs-h2);
+  line-height: 1.05;
+}
+
+.wk-cta__in .st-pill {
+  margin-top: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wk-weiter__pfeil {
+    transition: none;
+  }
+}

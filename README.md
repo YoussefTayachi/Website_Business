@@ -58,22 +58,28 @@ app/
   layout.tsx            Wurzel: html, body, Schriften, Theme-Skript
   page.tsx              Startseite, setzt die sieben Abschnitte zusammen
   not-found.tsx         globales 404, englisch
-  globals.css           Tokens der Rechts- und Fallstudienseiten
+  globals.css           Tokens der Unterseiten
   (mit-chrome)/         Route Group mit Kopfleiste, main und Fuß:
-                        impressum, datenschutz, arbeit/[slug]
+                        impressum, datenschutz
+  work/[slug]/          eine Seite je Entwurf, sechs Stück, beim Bau erzeugt
+  erfassung/            NUR mit CAPTURE=1 eine Route (page.capture.tsx)
 components/
-  start/                die sieben Abschnitte: leiste, hero, statement,
-                        leistungen, arbeiten, ueber, fuss; dazu reveal.tsx,
-                        zeichnungen.tsx (alle SVG-Bildflächen),
-                        tokens.css, start.css
+  start/                die sieben Abschnitte: leiste, hero, beweis, galerie,
+                        arbeit, ablauf, person, schluss, fuss; dazu
+                        reveal.tsx, modus.tsx, kalender.tsx, geraet.tsx,
+                        zeichnungen.tsx, tokens.css, start.css
+  entwuerfe/            die sechs Entwürfe: entwurf.tsx (sechs Bauformen)
+                        und entwurf.css
   chrome/               Kopfleiste, Fuß, Nachtmodus-Schalter (Unterseiten)
-  showcase/             Vorher/Nachher-Mechanik, Befund-Marker,
-                        sechs Demo-Fassungen (nur noch /arbeit)
+  showcase/             Vorher/Nachher-Mechanik und Demo-Fassungen, wird von
+                        keiner Route mehr geladen
 content/
-  start.ts              aller Text der Startseite, englisch
+  start.ts              aller Text der Startseite und der Entwurfsseiten
+  entwuerfe.ts          die sechs Entwürfe als Daten, englisch
   seite.ts              Kopfleiste, Fuß, Impressum, Datenschutz
-  projekte.ts           die drei Fallstudien, noch deutsch
+  projekte.ts           die drei alten Fallstudien, noch deutsch, ungenutzt
 lib/                    cn.ts, reveal.ts, media.ts, demo-fassungen.ts
+scripts/                aufnahmen.mjs (Bilder), pruefbilder.mjs (Prüfung)
 scrollcraft/            der Build des verworfenen Scroll-Designs, Referenz
 ```
 
@@ -85,21 +91,35 @@ Farben und Schriftgrößen kommen als Tokens: für die Startseite aus
 `components/start/tokens.css` (Präfix `--st-`), für die übrigen Seiten aus
 `app/globals.css`. Keine Hex-Werte in Komponenten.
 
-Schriften liegen lokal als `@fontsource-variable`-Pakete. Die Seite stellt
-**keine Anfrage an eine fremde Domain**, und der Datenschutztext behauptet
-genau das.
+Schriften liegen lokal als `@fontsource-variable`-Pakete.
+
+**Genau eine fremde Domain kann angefragt werden, und nur auf Klick:** der
+Buchungskalender von Calendly im Schlussblock. Bis jemand „Open the calendar"
+drückt, stellt die Seite keine einzige Anfrage nach außen, und der
+Datenschutztext sagt genau das (`content/seite.ts`, zwei Abschnitte). Wer den
+Kalender auf sofortiges Laden umstellt (eine Zeile in
+`components/start/kalender.tsx`), muss beide Abschnitte neu schreiben.
 
 ## Offene Platzhalter vor einem Livegang
 
 - `/impressum` und `/datenschutz` tragen einen Hinweisbalken und leere
   Felder. Sie sind englisch. Ob zusätzlich eine deutsche Fassung nötig ist,
   muss Youssef vor dem Livegang klären: seine Kunden sind deutsche Betriebe.
-- Die drei Demo-Projekte sind fiktiv und als solche gekennzeichnet. Das
-  Kennzeichen bleibt stehen.
-- Kontakt läuft über `mailto:`, es gibt kein Formular und keinen Empfänger.
-- `/arbeit/[slug]` ist noch deutsch und trägt deshalb
-  `robots: { index: false }`. Von der Startseite führt kein Link dorthin.
-  Übersetzen oder entfernen ist eine offene Entscheidung.
+- Die sechs Entwürfe zeigen erfundene Betriebe. Auf der Startseite tragen
+  sie kein Kennzeichen (der Abschnitt heißt „what your page could look
+  like" und behauptet nichts), auf `/work/[slug]` schon: dort steht der Name
+  eines Betriebs als Überschrift, und ohne die eine Zeile läse sich die Seite
+  wie eine Fallstudie.
+- Youssefs Mentor riet, die Entwürfe auf **echte** Betriebe zu setzen. Das
+  ist für den Prototyp in einer Kaltakquise-Mail richtig und für eine
+  öffentliche Galerie eine offene Entscheidung: dort stünde der Name eines
+  fremden Unternehmens unter einer Gestaltung, die es nie beauftragt hat.
+  Bis ein Betrieb zustimmt, bleiben die Namen erfunden.
+- Kontakt läuft über `mailto:` und den Kalender. Es gibt kein eigenes
+  Formular und keinen Empfänger im Backend.
+- `content/projekte.ts` und `components/showcase/` werden von keiner Route
+  mehr geladen, seit der Vorher/Nachher-Vergleich gestrichen ist. Löschen
+  ist eine offene Entscheidung.
 
 ## Später als Branch ins frostbreaker.app-Repo
 

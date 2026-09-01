@@ -44,12 +44,31 @@ const { chromium } = require(
 const BASIS = process.env.BASIS ?? "http://localhost:3210";
 const ZIEL = process.argv[2] ?? "pruefbilder";
 
-const FAELLE = [
+const BREITEN = [
   { name: "1440-hell", breite: 1440, hoehe: 900, schema: "light" },
   { name: "1440-dunkel", breite: 1440, hoehe: 900, schema: "dark" },
   { name: "390-hell", breite: 390, hoehe: 844, schema: "light" },
   { name: "390-dunkel", breite: 390, hoehe: 844, schema: "dark" },
 ];
+
+/* SEIT DEM 2026-09-01 WIRD MEHR ALS DIE STARTSEITE GEPRUEFT. Die Entwuerfe
+   stehen jetzt unter /work/[slug] als echte Seiten, und jede bringt ihre
+   eigene Bauform mit. Genau dort ist ein Ueberlauf am wahrscheinlichsten:
+   .ew-ub__bild laeuft absichtlich aus dem Fenster, .ew-sl haelt eine feste
+   296px-Spalte, und beides muss auf 390px trotzdem sitzen.
+
+   Nicht alle sechs: zwei Bauformen decken die zwei riskanten Muster ab
+   (feste Spalte, absichtliches Herauslaufen). Wer eine dritte riskante
+   Bauform baut, ergaenzt hier eine Zeile. */
+const SEITEN = [
+  { pfad: "/", kuerzel: "seite" },
+  { pfad: "/work/voltas", kuerzel: "work-voltas" },
+  { pfad: "/work/stoneleaf", kuerzel: "work-stoneleaf" },
+];
+
+const FAELLE = SEITEN.flatMap((s) =>
+  BREITEN.map((b) => ({ ...b, pfad: s.pfad, name: `${s.kuerzel}-${b.name}` })),
+);
 
 await mkdir(ZIEL, { recursive: true });
 const browser = await chromium.launch({ channel: "chrome" });
@@ -66,7 +85,7 @@ try {
       hasTouch: f.breite < 500,
     });
     const page = await kontext.newPage();
-    await page.goto(BASIS, { waitUntil: "networkidle" });
+    await page.goto(BASIS + f.pfad, { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
 
     await page.evaluate(async () => {
@@ -84,7 +103,7 @@ try {
     );
     await page.waitForTimeout(900);
 
-    await page.screenshot({ path: path.join(ZIEL, `seite-${f.name}.png`), fullPage: true });
+    await page.screenshot({ path: path.join(ZIEL, `${f.name}.png`), fullPage: true });
 
     /* ZWEI PRUEFUNGEN, UND DIE ZWEITE IST DIE WICHTIGE.
      *
@@ -128,12 +147,78 @@ try {
       return treffer.slice(0, 5);
     });
 
-    if (ueberlauf > 0 || abgeschnitten.length > 0) fehler++;
+    /* DRITTE PRUEFUNG: EIN WORT, DAS BREITER IST ALS SEINE SPALTE.
+     *
+     * DER ERSTE ANLAUF WAR FALSCH, und das gehoert hierher, damit ihn niemand
+     * wiederholt: `scrollWidth > clientWidth` findet nichts. Bei
+     * `overflow: visible` meldet Chrome scrollWidth gleich clientWidth, und
+     * ausserdem BRICHT der Browser das zu lange Wort, statt es ueberstehen zu
+     * lassen. Der Schaden ist also kein Ueberlauf, sondern ein Umbruch mitten
+     * im Wort: "Maintenanc" in der einen Zeile, "e" in der naechsten. So stand
+     * es am 2026-09-01 bei 390px in der Ablaufliste, gesetzt in 28px in einer
+     * 161px breiten Spalte.
+     *
+     * Gemessen wird deshalb das laengste Wort gegen den verfuegbaren Platz,
+     * mit derselben Schrift, in der es gesetzt ist. Nur die EIGENEN Textknoten
+     * eines Elements: `textContent` klebt Kindelemente ohne Leerzeichen
+     * aneinander, und "frostbreaker" plus "marketing" ergaebe ein Wort mit 21
+     * Zeichen, das es nie gab.
+     *
+     * Gegengeprueft: bei 34px meldet der Lauf "Onboarding" und "Maintenance",
+     * bei den gesetzten 22px keines von beiden. Eine Pruefung, die nie
+     * anschlaegt, ist keine.
+     */
+    const langeWorte = await page.evaluate(() => {
+      const ctx = document.createElement("canvas").getContext("2d");
+      const treffer = [];
+      for (const el of document.querySelectorAll("body *")) {
+        if (el.closest("[aria-hidden='true']")) continue;
+        const st = getComputedStyle(el);
+        const platz = el.clientWidth - parseFloat(st.paddingLeft) - parseFloat(st.paddingRight);
+        // Unter 8px liegen die versteckten Beschriftungen (1px plus
+        // clip-path). Die haben keinen sichtbaren Platz und brauchen keinen.
+        if (!(platz > 8)) continue;
+
+        const eigen = [...el.childNodes]
+          .filter((n) => n.nodeType === Node.TEXT_NODE)
+          .map((n) => n.nodeValue)
+          .join(" ")
+          .trim();
+        if (!eigen) continue;
+
+        ctx.font = `${st.fontStyle} ${st.fontWeight} ${st.fontSize} ${st.fontFamily}`;
+        // measureText kennt keine Laufweite. Sie steht in den Ueberschriften
+        // dieser Seite auf negativen Werten, wird also addiert und nicht
+        // ignoriert, sonst faellt jede Messung zu gross aus.
+        const sperr = st.letterSpacing.endsWith("px") ? parseFloat(st.letterSpacing) : 0;
+
+        for (const wort of eigen.split(/\s+/)) {
+          const breite = ctx.measureText(wort).width + sperr * wort.length;
+          if (breite > platz + 1) {
+            treffer.push({
+              was: (el.getAttribute("class") || el.tagName).toString().split(" ")[0],
+              wort,
+              breite: Math.round(breite),
+              platz: Math.round(platz),
+            });
+            break;
+          }
+        }
+      }
+      return treffer.slice(0, 5);
+    });
+
+    const wortrand = langeWorte.length
+      ? `   WORT ZU BREIT: ${langeWorte
+          .map((t) => `${t.was} "${t.wort}" ${t.breite} in ${t.platz}px`)
+          .join(", ")}`
+      : "";
     const rand = abgeschnitten.length
-      ? `   FEHLER: ${abgeschnitten.map((t) => `${t.was} (${t.links}..${t.rechts})`).join(", ")}`
+      ? `   AUSSERHALB: ${abgeschnitten.map((t) => `${t.was} (${t.links}..${t.rechts})`).join(", ")}`
       : "";
     console.log(
-      `${f.name.padEnd(14)} Ueberlauf ${ueberlauf} px, ausserhalb des Fensters: ${abgeschnitten.length}${rand}`,
+      `${f.name.padEnd(28)} Ueberlauf ${ueberlauf} px, ausserhalb ${abgeschnitten.length}, ` +
+        `Woerter zu breit ${langeWorte.length}${rand}${wortrand}`,
     );
 
     await kontext.close();
@@ -143,7 +228,7 @@ try {
 }
 
 if (fehler > 0) {
-  console.error(`\n${fehler} von ${FAELLE.length} Breiten scrollen waagerecht.`);
+  console.error(`\n${fehler} von ${FAELLE.length} Faelle zeigen abgeschnittenen Inhalt.`);
   process.exit(1);
 }
 console.log(`\n${FAELLE.length} Pruefbilder in ${ZIEL}.`);

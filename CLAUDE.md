@@ -18,23 +18,53 @@ Leitakzent, es gibt einen Dunkelmodus.
 
 Der Aufbau folgt derselben Idee wie die Vorlagengalerie von Wix: **zeigen
 statt beschreiben**. Sieben Flaechen: Hero, Beweisstreifen, Galerie aus sechs
-Gestaltungen, Vorher/Nachher-Vergleich, drei Schritte, Schlussblock, Fuss.
+Gestaltungen, echte laufende Arbeit, sechs Ablaufstufen, Person, Schlussblock
+mit Kalender, Fuss.
 
 **Die Galerie ist der Kern.** Sechs Website-Entwuerfe (`content/entwuerfe.ts`,
-`components/entwuerfe/`) in drei Bauformen, jeder mit eigener Palette und
-eigener Schrift, damit sie wie sechs Betriebe aussehen und nicht sechsmal wie
-diese Seite. Sie werden gerendert, aufgenommen und als Bild eingebunden.
+`components/entwuerfe/`) in **sechs verschiedenen Bauformen**, jeder mit
+eigener Palette und eigener Schrift, damit sie wie sechs Betriebe aussehen
+und nicht sechsmal wie diese Seite. Auf der Startseite stehen Aufnahmen; jede
+Karte fuehrt auf `/work/<slug>`, wo derselbe Entwurf als echte, bedienbare
+Seite steht.
+
+## Das Mentor-Review vom 2026-09-01
+
+Youssefs Mentor hat die Seite geprueft. Sechs Punkte, fuenf umgesetzt, einer
+bewusst nicht. **Wer etwas davon zurueckbaut, baut einen benannten Fehler
+wieder ein.**
+
+| Einwand | Umgesetzt als |
+|---|---|
+| "remove Before and after, showing your previous is more meaningful" | Vergleich ersatzlos gestrichen, `components/start/arbeit.tsx` zeigt stattdessen frostbreaker.app |
+| "How it works: titles like Onboarding, Research, ... instead of a sentence" | sechs benannte Stufen in `content/start.ts`, `ablauf` |
+| "have the calendar integrated to reduce friction" | `components/start/kalender.tsx`, eingebettet, laedt auf Klick |
+| "logo and quicklink the same font size" | `--st-fs-nav`, beide 17px |
+| "remove the Auto and have 2 logo for dark and light" | `modus.tsx`, zwei Zeichen, folgt ohne Klick dem Geraet |
+| "6 websites have a similar layout, likely a template" | drei Bauformen fuer sechs Entwuerfe wurden sechs Bauformen |
+| "remove the fake computer button" | Fensterrahmen mit den drei Punkten ist weg |
+| "create a page for each prototype, hover card with name and link" | `/work/[slug]` plus Tafel in der Galeriekarte |
+
+**Nicht umgesetzt: "base your prototype on a REAL business that actually
+exists".** Fuer den Prototyp, der IN EINER KALTAKQUISE-MAIL an genau diesen
+Betrieb geht, ist der Rat richtig, und so arbeitet Frostbreaker auch. In
+einer oeffentlichen Galerie steht damit der Name eines fremden Unternehmens
+unter einer Gestaltung, die es nie beauftragt hat. Youssef hat denselben Fall
+bei CTS Cement schon entschieden (kein Einbau ohne Zustimmung). Sobald ein
+Betrieb zustimmt, gehoert er in die Galerie.
 
 **Keine Wix-Vorlagen im Projekt.** Der Nutzer hatte angeboten, welche zu
 importieren. Abgelehnt, und das soll so bleiben: die Vorlagen gehoeren Wix,
 und auf einer Webdesign-Seite liest jeder Besucher gezeigte Designs als
 eigene Arbeit. Uebernommen ist die BAUFORM der Galerie, nicht ihr Inhalt.
 
-**Kein Kennzeichen auf den Entwuerfen, und das ist Absicht.** Frueher trugen
-die Demo-Karten "Fictional demo. Not a real business." Der Abschnitt heisst
-jetzt "What your page could look like" und behauptet damit keinen Kunden,
-also gibt es nichts klarzustellen. Wer ihn in eine Fallstudie umbaut
-("built for", "our client"), behauptet etwas und muss das neu entscheiden.
+**Kein Kennzeichen in der GALERIE, eine Zeile auf der ENTWURFSSEITE.** Der
+Abschnitt auf der Startseite heisst "What your page could look like" und
+behauptet keinen Kunden, also gibt es dort nichts klarzustellen. Auf
+`/work/[slug]` steht der Name eines Betriebs als Ueberschrift, und ohne die
+eine Zeile (`start.werk.hinweis`) laese sich die Seite wie eine Fallstudie.
+Wer daraus wirklich eine macht ("built for", "our client"), behauptet etwas
+und muss das neu entscheiden.
 
 Davor stand hier ein designatives-Klon (Archivo Black, Mint, Koenigsblau)
 und davor ein neunaktiges Scroll-Erlebnis. Beide sind verworfen und aus dem
@@ -99,8 +129,9 @@ gestartet kommt die Seite ungestylt hoch.
 - Kein Agentur-Plural. Es ist eine Person, erste Person Singular.
 - **Keine erfundenen Zahlen**, Ladezeiten, Kundenzahlen, Preise, Referenzen,
   Testimonials oder Kundenlogos. Die Zielgruppe prueft so etwas nach.
-- Die Entwuerfe zeigen erfundene Betriebe mit erfundenen Nummern. Sie
-  behaupten keinen Auftrag, deshalb tragen sie kein Kennzeichen (siehe oben).
+- Die Entwuerfe zeigen erfundene Betriebe mit erfundenen Nummern. In der
+  Galerie behaupten sie keinen Auftrag und tragen deshalb kein Kennzeichen;
+  auf `/work/[slug]` steht dafuer eine Zeile (siehe oben).
 - Der einzige ECHTE Beleg ist Frostbreaker selbst. Lead-Entwuerfe duerfen
   ohne Zustimmung nicht als Referenz gezeigt werden
   (`Website_Business/README.md`), CTS Cement hat nicht zugestimmt.
@@ -114,19 +145,28 @@ app/
   not-found.tsx         globales 404, englisch, Text aus content/start.ts
   globals.css           Tokens der Rechts- und Fallstudienseiten
   (mit-chrome)/         Route Group: Kopfleiste + main + Fuss
-    impressum/ datenschutz/ arbeit/[slug]/
+    impressum/ datenschutz/
+  work/[slug]/          eine Seite je Entwurf, sechs Stueck, beim Bau erzeugt
+                        (generateStaticParams, dynamicParams: false)
 components/
-  start/                die sieben Abschnitte der Startseite:
-                        leiste, hero, statement, leistungen, arbeiten,
-                        ueber, fuss; dazu reveal.tsx (IntersectionObserver),
+  start/                die Abschnitte der Startseite:
+                        leiste, modus, hero, beweis, galerie, arbeit,
+                        ablauf, person, schluss, kalender, fuss; dazu
+                        reveal.tsx (IntersectionObserver),
                         zeichnungen.tsx (alle SVG-Bildflaechen),
                         tokens.css, start.css
+  entwuerfe/            entwurf.tsx (sechs Bauformen) und entwurf.css.
+                        Geladen von /work/[slug] und der Erfassungsroute,
+                        NIE von der Startseite
   chrome/               Kopfleiste, Fuss, Nachtmodus-Schalter (Unterseiten)
-  showcase/             Vorher/Nachher-Mechanik der Fallstudien (nur /arbeit)
+  showcase/             Vorher/Nachher-Mechanik, wird von keiner Route mehr
+                        geladen, seit der Vergleich gestrichen ist
 content/
-  start.ts              aller sichtbare Text der Startseite, englisch
+  start.ts              aller sichtbare Text der Startseite UND der
+                        Entwurfsseiten, englisch
+  entwuerfe.ts          die sechs Entwuerfe als Daten, englisch
   seite.ts              Kopfleiste, Fuss, Impressum, Datenschutz, Kleintexte
-  projekte.ts           die drei Fallstudien, noch deutsch
+  projekte.ts           die drei alten Fallstudien, deutsch, ungenutzt
 lib/                    cn.ts, reveal.ts, media.ts, demo-fassungen.ts
 scrollcraft/            historischer Build des verworfenen Scroll-Designs
 ```
@@ -148,6 +188,24 @@ Klasse, weil Praesentationsattribute CSS-Variablen nicht aufloesen.
 nicht aus einem Layout.** Nur so bleiben sie auf diese Route beschraenkt.
 Nach Aenderungen daran im gebauten HTML von `/impressum` nachsehen, dass
 dort kein `st-`-Stil haengt.
+
+## Der Kalender und der Datenschutz
+
+Der Schlussblock bettet den Buchungskalender von Calendly ein
+(`components/start/kalender.tsx`). Er laedt **erst auf Klick**, und das ist
+keine Vorsicht auf Verdacht: ein Betrieb mit deutschem Impressum darf einen
+Dritten, der Cookies setzt, nach TDDDG Paragraf 25 nicht ungefragt nachladen.
+Der Klick IST die Einwilligung, und er kostet einen Klick statt eines
+Seitenwechsels.
+
+**Diese eine Zeile und der Datenschutztext haengen zusammen.** Wer
+`useState(false)` auf `true` stellt, laedt Calendly sofort und muss dann die
+zwei Abschnitte in `content/seite.ts` ("Cookies and embedded content" und
+"Booking calendar") neu schreiben und eine echte Einwilligung davorsetzen.
+
+Ohne JavaScript ist der Deckel nicht da (`nur-mit-js`), stattdessen steht ein
+`<noscript>`-Knopf auf calendly.com. Ein Knopf, der auf nichts reagiert, ist
+schlimmer als kein Knopf.
 
 ## Was hier bewusst fehlt
 
@@ -214,8 +272,13 @@ gebauter Seiten**, keine Zeichnungen und keine Stockfotos. Der Weg:
 ```bash
 CAPTURE=1 npm run dev -- -p 3210   # Erfassungsseiten sind nur so Seiten
 node scripts/aufnahmen.mjs         # nimmt auf, schreibt public/arbeiten/manifest.json
-node scripts/pruefbilder.mjs       # Startseite in vier Zustaenden, meldet Ueberlauf
+node scripts/pruefbilder.mjs       # drei Seiten in vier Zustaenden, meldet Ueberlauf
 ```
+
+Der Pruefdurchlauf laeuft gegen `npm start` und nicht gegen den Dev-Server,
+und er deckt seit dem 2026-09-01 auch `/work/voltas` und `/work/stoneleaf`
+ab: dort sitzen die zwei riskanten Bauformen (feste 296px-Spalte, Bild das
+absichtlich aus dem Fenster laeuft).
 
 **Nie zwei Dev-Server auf demselben `.next`.** Genau das ist am 2026-08-31
 passiert (3200 zum Ansehen, 3210 zum Erfassen), und der geteilte Build-Cache
@@ -229,6 +292,15 @@ Die Erfassungsseiten heissen `page.capture.tsx` und stehen nur mit
 sind sie fuer Next keine Seiten und koennen nicht in einen Produktionsbau
 geraten. Nachgeprueft wird das am Routen-Manifest, nicht geglaubt.
 
+**Eine Aufnahme kommt NICHT vom Dev-Server:** `frostbreaker.png` wird direkt
+von `https://www.frostbreaker.app/` geschossen. Der Abschnitt darunter
+behauptet "built, shipped, still running", und das kann nur eine Aufnahme aus
+dem Netz belegen. Fuer fremde Adressen gilt `waitUntil: "load"` statt
+`networkidle` (eine ausgelieferte Seite wird nie ruhig), und die Wartezeiten
+auf Schriften und Bilder haben eine Obergrenze: `page.evaluate` hat in
+Playwright KEINE Zeitgrenze, und genau daran hing der Lauf am 2026-09-01
+minutenlang ohne Fehlermeldung.
+
 **Auch die Metadaten-Bilder kommen von dort.** `app/opengraph-image.png` und
 `app/apple-icon.png` werden von `/erfassung/og` aufgenommen und liegen fest
 im Repo. Der naheliegende Weg waere `next/og` gewesen; Satori liest aber TTF,
@@ -239,6 +311,20 @@ Aufnahme traegt es dieselbe Schrift und dieselben Entwuerfe wie die Seite.
 Das Browsersymbol (`app/icon.svg`) ist die Bildmarke von Frostbreaker, damit
 marketing.frostbreaker.app und frostbreaker.app im Tab dasselbe Zeichen
 tragen.
+
+**Der Pruefdurchlauf hat DREI Pruefungen, und jede steht fuer einen Fehler,
+den eine fruehere Fassung durchgelassen hat.** Wer eine davon streicht, macht
+denselben Fehler wieder moeglich:
+
+1. `scrollWidth` gegen `clientWidth` (findet fast nichts, siehe unten)
+2. Elemente ausserhalb des Fensters (fand die Modus-Gruppe am 2026-08-31)
+3. **Woerter, die breiter sind als ihre Spalte.** Am 2026-09-01 stand
+   "Maintenance" bei 390px in einer 161px-Spalte in 28px und wurde mitten im
+   Wort umgebrochen. Der erste Anlauf dafuer war falsch: bei
+   `overflow: visible` meldet Chrome `scrollWidth` gleich `clientWidth`, und
+   der Browser BRICHT das Wort, statt es ueberstehen zu lassen. Gemessen wird
+   deshalb das laengste Wort mit `canvas.measureText` in der Schrift, in der
+   es gesetzt ist. Gegengeprueft: bei 34px meldet der Lauf, bei 22px nicht.
 
 **`scrollWidth` allein findet keinen Ueberlauf auf dieser Seite.** `.st-page`
 traegt `overflow-x: clip`, damit die Riesentypografie in schmalen Fenstern

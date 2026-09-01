@@ -9,11 +9,11 @@
       "fensterhoehe": 760,
       "geraeteskala": 2,
       "elementweise": false,
-      "dokumenthoehe": 921,
-      "inhaltshoehe": 921,
-      "bytes": 717387,
+      "dokumenthoehe": 1203,
+      "inhaltshoehe": 1203,
+      "bytes": 801366,
       "browser": "151.0.7922.174",
-      "erzeugt": "2026-08-31"
+      "erzeugt": "2026-09-01"
     },
     {
       "datei": "entwurf-voltas.png",
@@ -23,11 +23,11 @@
       "fensterhoehe": 760,
       "geraeteskala": 2,
       "elementweise": false,
-      "dokumenthoehe": 987,
-      "inhaltshoehe": 987,
-      "bytes": 495630,
+      "dokumenthoehe": 901,
+      "inhaltshoehe": 901,
+      "bytes": 296169,
       "browser": "151.0.7922.174",
-      "erzeugt": "2026-08-31"
+      "erzeugt": "2026-09-01"
     },
     {
       "datei": "entwurf-ridge.png",
@@ -37,11 +37,11 @@
       "fensterhoehe": 760,
       "geraeteskala": 2,
       "elementweise": false,
-      "dokumenthoehe": 828,
-      "inhaltshoehe": 828,
-      "bytes": 790398,
+      "dokumenthoehe": 1201,
+      "inhaltshoehe": 1201,
+      "bytes": 662226,
       "browser": "151.0.7922.174",
-      "erzeugt": "2026-08-31"
+      "erzeugt": "2026-09-01"
     },
     {
       "datei": "entwurf-clearflow.png",
@@ -51,11 +51,11 @@
       "fensterhoehe": 760,
       "geraeteskala": 2,
       "elementweise": false,
-      "dokumenthoehe": 987,
-      "inhaltshoehe": 987,
-      "bytes": 477273,
+      "dokumenthoehe": 852,
+      "inhaltshoehe": 852,
+      "bytes": 612973,
       "browser": "151.0.7922.174",
-      "erzeugt": "2026-08-31"
+      "erzeugt": "2026-09-01"
     },
     {
       "datei": "entwurf-stoneleaf.png",
@@ -65,11 +65,11 @@
       "fensterhoehe": 760,
       "geraeteskala": 2,
       "elementweise": false,
-      "dokumenthoehe": 828,
-      "inhaltshoehe": 828,
-      "bytes": 794547,
+      "dokumenthoehe": 1140,
+      "inhaltshoehe": 1140,
+      "bytes": 932816,
       "browser": "151.0.7922.174",
-      "erzeugt": "2026-08-31"
+      "erzeugt": "2026-09-01"
     },
     {
       "datei": "entwurf-foxandco.png",
@@ -79,11 +79,11 @@
       "fensterhoehe": 760,
       "geraeteskala": 2,
       "elementweise": false,
-      "dokumenthoehe": 946,
-      "inhaltshoehe": 946,
-      "bytes": 718936,
+      "dokumenthoehe": 959,
+      "inhaltshoehe": 959,
+      "bytes": 268501,
       "browser": "151.0.7922.174",
-      "erzeugt": "2026-08-31"
+      "erzeugt": "2026-09-01"
     },
     {
       "datei": "hero-telefon.png",
@@ -94,38 +94,24 @@
       "geraeteskala": 2,
       "elementweise": true,
       "dokumenthoehe": 1400,
-      "inhaltshoehe": 1229,
-      "bytes": 353306,
+      "inhaltshoehe": 1307,
+      "bytes": 307390,
       "browser": "151.0.7922.174",
-      "erzeugt": "2026-08-31"
+      "erzeugt": "2026-09-01"
     },
     {
-      "datei": "vergleich-vorher.png",
-      "platz": "Vergleich, vorher",
-      "quelle": "http://localhost:3210/erfassung/elektro-alt",
-      "fensterbreite": 390,
-      "fensterhoehe": 640,
+      "datei": "frostbreaker.png",
+      "platz": "Echte Arbeit, Produktseite",
+      "quelle": "https://www.frostbreaker.app/",
+      "fensterbreite": 1200,
+      "fensterhoehe": 760,
       "geraeteskala": 2,
       "elementweise": false,
-      "dokumenthoehe": 640,
-      "inhaltshoehe": 637,
-      "bytes": 197356,
+      "dokumenthoehe": 6718,
+      "inhaltshoehe": null,
+      "bytes": 379896,
       "browser": "151.0.7922.174",
-      "erzeugt": "2026-08-31"
-    },
-    {
-      "datei": "vergleich-nachher.png",
-      "platz": "Vergleich, nachher",
-      "quelle": "http://localhost:3210/erfassung/entwurf/voltas",
-      "fensterbreite": 390,
-      "fensterhoehe": 640,
-      "geraeteskala": 2,
-      "elementweise": false,
-      "dokumenthoehe": 1236,
-      "inhaltshoehe": 1236,
-      "bytes": 164099,
-      "browser": "151.0.7922.174",
-      "erzeugt": "2026-08-31"
+      "erzeugt": "2026-09-01"
     },
     {
       "datei": "opengraph-image.png",
@@ -137,9 +123,9 @@
       "elementweise": true,
       "dokumenthoehe": 630,
       "inhaltshoehe": 50,
-      "bytes": 341403,
+      "bytes": 292860,
       "browser": "151.0.7922.174",
-      "erzeugt": "2026-08-31"
+      "erzeugt": "2026-09-01"
     },
     {
       "datei": "apple-icon.png",
@@ -153,7 +139,7 @@
       "inhaltshoehe": 180,
       "bytes": 1931,
       "browser": "151.0.7922.174",
-      "erzeugt": "2026-08-31"
+      "erzeugt": "2026-09-01"
     }
   ]
 }

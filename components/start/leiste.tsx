@@ -1,41 +1,62 @@
+import Link from "next/link";
+
 import Modus from "./modus";
 import { start } from "@/content/start";
 
 /**
- * Die Kopfleiste. Server Component bis auf die Modus-Gruppe, die als eigene
+ * Die Kopfleiste. Server Component bis auf den Modus-Schalter, der als eigene
  * Client-Insel darin sitzt.
  *
- * WAS BEI 390px DRIN IST UND WAS NICHT, ist in start.css nachgerechnet und
- * dort begruendet: Wortmarke und Modus-Gruppe bleiben, die zwei Ankerlinks
- * und der Pill-CTA kommen erst ab 768px dazu. Der CTA steht im Hero
- * unmittelbar darunter noch einmal, die Modus-Gruppe haette keinen zweiten
- * Ort, und sie darf auch keinen haben: zwei Radiogruppen mit demselben name
- * waeren eine einzige und wuerden sich gegenseitig umschalten.
+ * SIE TRAEGT ZWEI ROUTEN: die Startseite und die Entwurfsseiten unter
+ * /work/[slug]. Auf den Entwurfsseiten stehen statt der zwei Ankerlinks ein
+ * Zurueckweg, denn ein Anker auf "#designs" fuehrt dort ins Leere. Deshalb
+ * sind die Ziele in content/start.ts absolut ("/#designs") und nicht relativ.
  *
- * Die Wortmarke traegt den Akzentton, weil sie auf frostbreaker.app auch
- * ihn traegt. Sie ist damit das erste, was die beiden Seiten als eine Marke
- * lesbar macht. Der Ton ist --c-accent (sky-700 hell, sky-400 dunkel) und
- * nicht sky-500: eine Wortmarke ist formal von den Kontrastregeln
- * ausgenommen, war auf frostbreaker.app in sky-500 aber sichtbar das
- * blasseste Element der ganzen Leiste, blasser als jeder Link daneben.
+ * ══ GLEICHE SCHRIFTGROESSE FUER WORTMARKE UND LINKS (2026-09-01) ═══════════
+ * Der Mentor: "have the logo and quicklink the same font size; there's no
+ * reason for the quicklink to be bigger than the actual logo."
+ *
+ * Vorher stand die Wortmarke auf clamp(18px, 1.4vw, 22px) und die Links auf
+ * festen 18px. In einem breiten Fenster war die Marke also groesser, in einem
+ * schmalen kleiner als die Links daneben, und beides sah nach Zufall aus.
+ * Jetzt tragen beide `--st-fs-nav`, und die Marke hebt sich durch GEWICHT und
+ * FARBE ab statt durch Groesse. Das ist auch der uebliche Weg: eine Wortmarke,
+ * die ihre Nachbarn ueberragen muss, um Marke zu sein, ist keine.
+ *
+ * Die Wortmarke traegt den Akzentton, weil sie auf frostbreaker.app auch ihn
+ * traegt. Sie ist damit das erste, was die beiden Seiten als eine Marke
+ * lesbar macht.
  */
-export default function StartLeiste() {
-  const { marke, markeZusatz, markeHref, anker, cta } = start.leiste;
+export default function StartLeiste({ variante = "start" }: { variante?: "start" | "werk" }) {
+  const { marke, markeZusatz, markeHref, anker, cta, zurueck } = start.leiste;
 
   return (
-    <header className="st-bar">
+    // data-variante ist der Haken fuer die zwei Regeln, die nur auf den
+    // Entwurfsseiten gelten (start.css): dort steht neben der Wortmarke ein
+    // Zurueckweg, und beides zusammen passt auf 390px nicht.
+    <header className="st-bar" data-variante={variante}>
       <div className="st-wrap st-bar__in">
-        <a className="st-marke" href={markeHref}>
+        <Link className="st-marke" href={markeHref}>
           {marke}
           <span className="st-marke__zusatz">{markeZusatz}</span>
-        </a>
+        </Link>
 
         <nav className="st-bar__nav" aria-label="Sections">
-          {anker.map((a) => (
-            <a key={a.href} className="st-bar__link" href={a.href}>
-              {a.label}
-            </a>
-          ))}
+          {variante === "werk" ? (
+            <Link className="st-bar__link st-bar__zurueck" href="/#designs">
+              <span aria-hidden="true">←</span>
+              {/* Auf dem Telefon bleibt nur der Pfeil stehen, das Wort wird
+                  versteckt statt entfernt: ein Link ohne Text ist fuer einen
+                  Vorleser ein Link ohne Ziel. Nachgerechnet in start.css. */}
+              <span className="st-bar__wort">{zurueck}</span>
+            </Link>
+          ) : (
+            anker.map((a) => (
+              <a key={a.href} className="st-bar__link" href={a.href}>
+                {a.label}
+              </a>
+            ))
+          )}
         </nav>
 
         <div className="st-bar__rechts">

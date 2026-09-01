@@ -1,13 +1,11 @@
-// Aller sichtbare Text der Startseite.
+// Aller sichtbare Text der Startseite und der Entwurfsseiten.
 //
-// STAND 2026-08-31: Die Seite steht auf marketing.frostbreaker.app. Sie hat
-// die Farben von frostbreaker.app, aber NICHT dessen Schrift: gesetzt ist
-// Wix Madefor, nach dem Vorbild von wix.com/website/templates. Der Aufbau
-// folgt derselben Idee wie dort: eine Galerie aus Gestaltungen, damit ein
-// Betrieb sieht, was moeglich ist, statt es zu lesen.
+// STAND 2026-09-01: ueberarbeitet nach dem Review von Youssefs Mentor. Was
+// sich dadurch geaendert hat und warum, steht jeweils am Abschnitt. Die
+// groesste Aenderung: der Vorher/Nachher-Vergleich ist ERSATZLOS GESTRICHEN
+// und durch echte, laufende Arbeit ersetzt (Abschnitt `arbeit`).
 //
-// SPRACHE: Englisch, auch in den Entwuerfen (content/entwuerfe.ts) und in
-// der alten Vergleichsfassung (content/projekte.ts).
+// SPRACHE: Englisch, auch in den Entwuerfen (content/entwuerfe.ts).
 //
 // REGELN, die auch nach einer Ueberarbeitung gelten muessen:
 //   - Keine Gedankenstriche in sichtbarem Text (Doppelpunkt, Komma, Klammer).
@@ -16,8 +14,7 @@
 //   - WENIG TEXT. Wo ein Satz reicht, stehen nicht drei. Die Seite
 //     argumentiert mit Bildern, nicht mit Absaetzen.
 //
-// WAS HIER BEWUSST NICHT MEHR STEHT: das Kennzeichen "Fictional demo".
-// Der Grund ist keine Nachlaessigkeit, sondern ein geaenderter Aufbau. Die
+// WAS HIER BEWUSST NICHT STEHT: das Kennzeichen "Fictional demo". Die
 // Galerie behauptet keinen Kunden und keinen Auftrag; sie heisst "what your
 // page could look like" und zeigt Gestaltungen. Damit gibt es nichts
 // klarzustellen. Wer den Abschnitt spaeter in eine Fallstudie umbaut ("built
@@ -49,18 +46,34 @@ export const start = {
   leiste: {
     marke: "frostbreaker",
     markeZusatz: "marketing",
-    markeHref: "#top",
+    markeHref: "/#top",
     anker: [
-      { label: "Designs", href: "#designs" },
-      { label: "How it works", href: "#how" },
+      { label: "Designs", href: "/#designs" },
+      { label: "How it works", href: "/#how" },
     ],
-    cta: { label: "Book a call", href: CALL },
+    cta: { label: "Book a call", href: "/#book" },
+    /** Beschriftung des Zurueckwegs auf /work/[slug]. */
+    zurueck: "All designs",
   },
 
+  /**
+   * DER MODUS-SCHALTER. Seit dem 2026-09-01 ZWEI Zustaende statt drei.
+   *
+   * Der Mentor: "remove the 'Auto' and make it choose automatically by
+   * default, then have 2 logo for dark and light themed."
+   *
+   * Genau so ist es jetzt gebaut, und das Argument gegen den frueheren
+   * dritten Zustand traegt: "Auto" war ein sichtbarer Knopf fuer etwas, das
+   * ohne jeden Knopf schon passiert. Wer nichts anfasst, bekommt weiterhin
+   * die Einstellung seines Geraets, und zwar nicht als Vorauswahl, sondern
+   * mitlaufend: schaltet das Telefon abends um, schaltet die Seite mit.
+   * Erst ein Klick legt sie fest.
+   *
+   * Die Beschriftungen sind fuer Vorleser da, sichtbar sind zwei Zeichen.
+   */
   modus: {
     legende: "Theme",
     optionen: [
-      { wert: "system", label: "Auto" },
       { wert: "light", label: "Light" },
       { wert: "dark", label: "Dark" },
     ],
@@ -70,7 +83,7 @@ export const start = {
     augenbraue: "Web design for local businesses",
     headline: { vor: "Stop losing customers ", akzent: "before they call", nach: "." },
     lead: "I look at your website the way your customer does: on a phone, in a hurry. Then I design and build the page that brings the call.",
-    cta: { label: "Book a call", href: CALL },
+    cta: { label: "Book a call", href: "#book" },
     zweitCta: { label: "See the designs", href: "#designs" },
     ctaZusatz: "30 minutes. We look at your site together and I tell you what I would change.",
     geraet: {
@@ -90,18 +103,23 @@ export const start = {
   },
 
   /**
-   * DIE GALERIE. Der Kern der Seite und der Grund fuer ihren Umbau: ein
-   * Betrieb soll sehen, was moeglich ist, und nicht darueber lesen.
+   * DIE GALERIE. Der Kern der Seite: ein Betrieb soll sehen, was moeglich
+   * ist, und nicht darueber lesen.
    *
-   * Die Karten sind Aufnahmen echter, gebauter Seiten (components/entwuerfe/),
-   * keine Bildschirmfotos fremder Vorlagen. Deshalb steht hier "I built" und
-   * nicht "inspired by", und deshalb braucht keine Karte einen Hinweis.
+   * NEU AM 2026-09-01: jede Karte fuehrt auf eine eigene Seite (/work/<slug>),
+   * auf der der Entwurf als ECHTE, bedienbare Seite steht und nicht als Bild.
+   * Der Mentor hatte beides angemerkt: eine Seite je Entwurf, und beim
+   * Ueberfahren eine Karte mit dem Namen des Betriebs und dem Weg dorthin.
+   *
+   * ENTFALLEN IST DER FENSTERRAHMEN mit den drei Punkten ("remove the fake
+   * computer button"). Er war Dekoration, die einen Browser behauptet, und er
+   * kostete oben in jeder Karte 40 Pixel, die dem Entwurf gehoerten.
    */
   galerie: {
     id: "designs",
     augenbraue: "Designs",
     titel: "What your page could look like.",
-    lead: "Six directions, each one built from scratch. Yours ends up looking like your business, not like a template someone else is also using.",
+    lead: "Six businesses, six different layouts. Not one template in six colours: open any of them and see for yourself.",
     /** Reihenfolge und Beschriftung der Karten. Die Bilder kommen aus dem
      *  Manifest, die Zuordnung macht components/start/galerie.tsx. */
     karten: [
@@ -112,52 +130,74 @@ export const start = {
       { slug: "stoneleaf", name: "Stoneleaf", art: "Landscaping" },
       { slug: "foxandco", name: "Fox & Co", art: "Painting" },
     ],
+    /** Beschriftung des Knopfes auf der Karte. */
+    oeffnen: "Open the design",
   },
 
   /**
-   * DER VERGLEICH. Das eigentliche Verkaufsargument: dieselbe Firma, dieselben
-   * Leistungen, eine neu gebaute Seite. Zwei Aufnahmen, ein Regler.
+   * ECHTE ARBEIT. Steht seit dem 2026-09-01 dort, wo bis dahin der
+   * Vorher/Nachher-Regler stand.
+   *
+   * WARUM DER VERGLEICH WEG IST: "remove 'Before and after' because it
+   * doesn't really mean anything, showing your previous is much more
+   * meaningful than a before and after." Der Einwand ist richtig, und er
+   * trifft eine Schwaeche, die vorher niemand benannt hat: die alte Fassung
+   * im Vergleich war SELBST GEBAUT. Eine Seite, die man absichtlich schlecht
+   * baut, um sie danach zu schlagen, beweist nichts. Ein Betrieb, der schon
+   * einmal eine Agentur gesehen hat, riecht das.
+   *
+   * WAS STATTDESSEN DA STEHT, ist das Einzige, was nachpruefbar ist:
+   * Frostbreaker. Eigene Software, eigene Produktseite, beide oeffentlich
+   * erreichbar. Kein zugestimmter Kundenfall, also auch keiner behauptet.
    */
-  vergleich: {
-    augenbraue: "Before and after",
-    titel: "Same business. One rebuilt page.",
-    lead: "The old site still loads. It just doesn't get the call.",
-    adresse: "voltas-electric.example",
-    regler: {
-      label: "Compare the old and the new page",
-      vorher: "Before",
-      nachher: "After",
-      ansageVorher: "Before, the old page",
-      ansageNachher: "After, the rebuilt page",
-      ansageMitte: (p: number) => `${p} percent of the rebuilt page`,
+  arbeit: {
+    id: "work",
+    augenbraue: "Live work",
+    titel: "Built, shipped, still running.",
+    lead: "Frostbreaker is mine. I designed it, I built it, and it is the software that sent you here.",
+    fall: {
+      name: "frostbreaker.app",
+      art: "Product site and web app",
+      href: "https://www.frostbreaker.app/",
+      bildAlt:
+        "The Frostbreaker product site: a large headline, a dark preview of the app, and the navigation across the top.",
+      punkte: [
+        "Designed and built by me, front to back",
+        "The app behind it runs the outreach that reached you",
+        "Same care your page would get",
+      ],
+      knopf: "Open frostbreaker.app",
     },
-    bildAltVorher:
-      "The old website: a narrow box of grey text on a plain background, the phone number sitting inside an image, no clear way to get in touch.",
-    bildAltNachher:
-      "The rebuilt website: a bold headline, the phone number in a coloured card, and four services as tiles.",
   },
 
-  /** DER ABLAUF. Drei Schritte, ein Satz je Schritt. */
+  /**
+   * DER ABLAUF. Seit dem 2026-09-01 SECHS benannte Stufen statt drei Saetze.
+   *
+   * Der Mentor: "For 'How it works' it's much better to have a title like
+   * 'Onboarding; Research; Branding; Design; Launch; Maintenance' instead of
+   * having a sentence."
+   *
+   * Das ist mehr als Kosmetik. Ein Betrieb, der eine Website kauft, weiss
+   * nicht, was dabei passiert, und drei Saetze beantworten das nicht,
+   * sondern beruhigen nur. Sechs benannte Stufen sind eine Liste, die man
+   * abhaken kann, und sie sagen nebenbei, dass hier ein Verfahren steht und
+   * kein Bauchgefuehl.
+   *
+   * DIE ZEILE UNTER JEDER STUFE BLEIBT KURZ. Der Titel traegt, der Satz
+   * erklaert. Wo er laenger wird als eine Zeile, ist die Stufe falsch
+   * benannt.
+   */
   ablauf: {
     id: "how",
     augenbraue: "How it works",
-    titel: "Three steps, no surprises.",
+    titel: "Six stages. You see every one of them.",
     schritte: [
-      {
-        nr: "01",
-        titel: "We talk",
-        text: "Thirty minutes on a call. I go through your site with you and say what I would change and why.",
-      },
-      {
-        nr: "02",
-        titel: "You see it before you decide",
-        text: "I design and build the page, then send you the link. You judge the real thing on your own phone, not a sketch.",
-      },
-      {
-        nr: "03",
-        titel: "It goes live and it is yours",
-        text: "You get the files and the logins. Nothing is rented back to you, and you are not tied to me afterwards.",
-      },
+      { nr: "01", titel: "Onboarding", text: "One call. I learn the trade and the goal." },
+      { nr: "02", titel: "Research", text: "Your area, your competitors, what customers search for." },
+      { nr: "03", titel: "Branding", text: "Colour, type and logo that fit the trade." },
+      { nr: "04", titel: "Design", text: "You see the real page on your own phone." },
+      { nr: "05", titel: "Launch", text: "Live on your domain. Files and logins are yours." },
+      { nr: "06", titel: "Maintenance", text: "Changes when you need them. You email me." },
     ],
   },
 
@@ -185,11 +225,60 @@ export const start = {
     bildAlt: "Youssef Tayachi, portrait.",
   },
 
-  /** DER SCHLUSS. Eine Zeile, ein Knopf. */
+  /**
+   * DER SCHLUSS, jetzt MIT KALENDER AUF DER SEITE.
+   *
+   * Der Mentor: "For the CTA, have the calendar integrated with your website
+   * to reduce friction." Richtig: jeder Wechsel auf eine fremde Domain
+   * kostet Buchungen, und calendly.com sieht nicht aus wie diese Seite.
+   *
+   * WARUM TROTZDEM EIN KLICK DAVOR STEHT: der Kalender kommt von Calendly,
+   * einem Dritten, und setzt beim Laden dessen Cookies. Ein deutscher Betrieb
+   * mit Impressum und Datenschutzerklaerung darf so etwas nach TDDDG Paragraf
+   * 25 nicht ungefragt nachladen. Der Klick IST die Einwilligung, und er
+   * kostet einen Klick statt eines Seitenwechsels: der Kalender oeffnet sich
+   * an Ort und Stelle, niemand verlaesst die Seite.
+   *
+   * Wer das anders bewerten will, aendert genau eine Zeile in
+   * components/start/kalender.tsx (`geladen` von Anfang an true) und
+   * streicht den Absatz in content/seite.ts, Datenschutz.
+   */
   schluss: {
+    id: "book",
+    augenbraue: "Book a call",
     titel: "Let's look at your site together.",
     lead: "Thirty minutes, no pitch. Worst case you leave with a list of things to fix yourself.",
-    cta: { label: "Book a call", href: CALL },
+    fakten: ["30 minutes", "Video call", "Costs nothing"],
+    kalender: {
+      /** Beschriftung des Rahmens fuer Vorleser. */
+      rahmen: "Booking calendar",
+      knopf: "Open the calendar",
+      hinweis: "The calendar is loaded from Calendly and sets their cookies.",
+      direkt: { label: "Or book on calendly.com", href: CALL },
+      laedt: "Loading the calendar",
+    },
+  },
+
+  /**
+   * DIE ENTWURFSSEITEN unter /work/[slug]. Der Mentor wollte je Prototyp eine
+   * eigene Seite, auf der mehr steht als der Name.
+   *
+   * Was dort steht, ist bewusst nicht mehr Text ueber den Betrieb (den gibt
+   * es nicht), sondern die drei GESTALTUNGSENTSCHEIDUNGEN dieses Entwurfs.
+   * Das ist der Unterschied zwischen einer Galerie und einem Portfolio: die
+   * Galerie zeigt, wie es aussieht, das Portfolio sagt, warum.
+   */
+  werk: {
+    augenbraueNotizen: "Design decisions",
+    vorschau: "Full design, live on this page",
+    hinweis:
+      "A design study, not a client site. The business is invented so nothing here claims work I was not asked to do.",
+    weiter: { titel: "The other designs", knopf: "Open" },
+    cta: {
+      titel: "Want one that fits your trade?",
+      lead: "Thirty minutes on a call and you will know what yours should look like.",
+      knopf: "Book a call",
+    },
   },
 
   fuss: {
