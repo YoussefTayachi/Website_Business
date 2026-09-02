@@ -22,7 +22,7 @@ import { start } from "@/content/start";
  * die Herkunft verraten, solange die Seite noch nicht oeffentlich ist.
  */
 export default function StartBeweis() {
-  const { satz, links } = start.beweis;
+  const { satz, links, live } = start.beweis;
 
   return (
     <Reveal as="section" className="st-beweis">
@@ -35,6 +35,11 @@ export default function StartBeweis() {
           {links.map((l) => (
             <li key={l.href}>
               <a className="st-chip" href={l.href} target="_blank" rel="noreferrer">
+                {/* Der gruene Punkt pulsiert: beide Adressen laufen, und das
+                    ist der Punkt des ganzen Streifens. Das Wort dazu ist
+                    fuer Vorleser da. */}
+                <span className="st-chip__punkt" aria-hidden="true" />
+                <span className="st-sr">{live}: </span>
                 {l.label}
                 <span className="st-chip__zusatz">{l.zusatz}</span>
               </a>

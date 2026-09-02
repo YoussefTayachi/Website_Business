@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import Knopf from "./knopf";
 import { start } from "@/content/start";
 
 /* ============================================================================
@@ -92,17 +93,18 @@ export default function Kalender() {
           {/* Ein angedeuteter Kalender. Zierde, also aria-hidden: er zeigt,
               WAS sich hinter dem Knopf oeffnet, und ist kein Inhalt. */}
           <div className="st-kal__gitter" aria-hidden="true">
+            {/* Die freien Tage leuchten nacheinander auf (start.css): der
+                Monat wirkt so, als taete sich etwas, bevor jemand klickt. */}
             {Array.from({ length: 28 }, (_, i) => (
-              <span key={i} data-frei={i % 7 === 2 || i % 9 === 4 ? "" : undefined} />
+              <span
+                key={i}
+                data-frei={i % 7 === 2 || i % 9 === 4 ? "" : undefined}
+                style={{ ["--i" as string]: i }}
+              />
             ))}
           </div>
 
-          <button type="button" className="st-pill" onClick={() => setzeGeladen(true)}>
-            {t.knopf}
-            <span className="st-pill__pfeil" aria-hidden="true">
-              →
-            </span>
-          </button>
+          <Knopf onClick={() => setzeGeladen(true)}>{t.knopf}</Knopf>
 
           <p className="st-kal__hinweis">{t.hinweis}</p>
 
@@ -113,12 +115,9 @@ export default function Kalender() {
 
         <noscript>
           <div className="st-kal__deckel">
-            <a className="st-pill" href={t.direkt.href} target="_blank" rel="noreferrer">
+            <Knopf href={t.direkt.href} extern>
               {t.direkt.label}
-              <span className="st-pill__pfeil" aria-hidden="true">
-                →
-              </span>
-            </a>
+            </Knopf>
           </div>
         </noscript>
       </div>

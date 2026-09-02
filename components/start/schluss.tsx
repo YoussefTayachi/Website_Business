@@ -1,5 +1,7 @@
 import Kalender from "./kalender";
 import Reveal from "./reveal";
+import Zeigerlicht from "./zeigerlicht";
+import { Worte } from "./worte";
 import { start } from "@/content/start";
 
 /**
@@ -29,13 +31,17 @@ export default function StartSchluss() {
 
   return (
     <Reveal as="section" id={id} className="st-schluss">
+      {/* Dasselbe Licht wie im Hero, auf der umgekehrten Flaeche. Anfang
+          und Ende der Seite reagieren damit auf dieselbe Weise auf den
+          Zeiger, und der Block ist keine tote schwarze Flaeche. */}
+      <Zeigerlicht className="st-schluss__licht" />
       <div className="st-wrap st-schluss__in">
         <div className="st-schluss__wort">
           <p className="st-eyebrow st-rise" style={{ ["--i" as string]: 0 }}>
             {augenbraue}
           </p>
-          <h2 className="st-rise" style={{ ["--i" as string]: 1 }}>
-            {titel}
+          <h2>
+            <Worte segmente={[{ text: titel }]} start={1} />
           </h2>
           <p className="st-schluss__lead st-rise" style={{ ["--i" as string]: 2 }}>
             {lead}

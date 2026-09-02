@@ -49,9 +49,51 @@ wieder ein.**
 exists".** Fuer den Prototyp, der IN EINER KALTAKQUISE-MAIL an genau diesen
 Betrieb geht, ist der Rat richtig, und so arbeitet Frostbreaker auch. In
 einer oeffentlichen Galerie steht damit der Name eines fremden Unternehmens
-unter einer Gestaltung, die es nie beauftragt hat. Youssef hat denselben Fall
-bei CTS Cement schon entschieden (kein Einbau ohne Zustimmung). Sobald ein
-Betrieb zustimmt, gehoert er in die Galerie.
+unter einer Gestaltung, die es nie beauftragt hat. Die sechs Entwuerfe der
+Galerie bleiben deshalb erfunden.
+
+**Der CTS-Prototyp steht seit dem 2026-09-02 unter "Real work", ANONYM.**
+Der Betrieb hat zugestimmt, dass der Entwurf gezeigt wird, unter der
+Bedingung, dass sein Name nicht faellt. Was daraus folgt und was niemand
+zurueckbauen darf:
+
+- Auf der Seite steht "Cement manufacturer" und "Redesign prototype, USA",
+  kein Firmenname, kein Produktname, kein Ort genauer als das Land.
+- Die Aufnahme `public/arbeiten/cement.png` ist ANONYMISIERT: Logo,
+  Telefonnummer und Produktname werden bei der Aufnahme ausgeblendet, und
+  `scripts/aufnahmen.mjs` bricht ab, wenn danach noch einer der verbotenen
+  Texte sichtbar ist (`anonym.verboten`). Neu aufnehmen mit
+  `node scripts/aufnahmen.mjs --nur cement`, dafuer braucht es keinen
+  Erfassungsserver.
+- Es gibt KEINEN LINK auf den Prototyp: die veroeffentlichte Fassung traegt
+  das Logo. Und KEIN ZITAT: der Betrieb hat zugestimmt, nicht gelobt.
+
+## Die zweite Ueberarbeitung vom 2026-09-02
+
+Vorbild war godly.design, eine Sammlung gut gestalteter Seiten nach Bauteil
+(Hero, CTA, Logo, Fuss). Uebernommen sind BEWEGUNGEN, kein Inhalt:
+
+| Bauteil | Was sich bewegt |
+|---|---|
+| Logo | Bildmarke (das f aus `app/icon.svg`) vor dem Wort, kippt beim Ueberfahren (`marke.tsx`) |
+| Kopfleiste | schrumpft beim Scrollen ueber `animation-timeline: scroll()`, ohne JavaScript; Links mit einlaufendem Unterstrich |
+| Knopf | `knopf.tsx`, eine Komponente fuer alle Pillen: Beschriftung rollt beim Ueberfahren, Pfeil laeuft, Druck beim Tippen |
+| Hero | Woerter kommen aus Unschaerfe, Telefon kippt dem Zeiger entgegen, Anrufkarte springt nach 1,3s auf |
+| Galerie | Bild kommt aus leichter Vergroesserung, Karte hebt sich mit Schatten |
+| Arbeit | zwei Faelle, Bild zoomt beim Ueberfahren |
+| Ablauf | Haarlinie je Stufe, Akzent laeuft nacheinander darueber, Nummer faerbt sich |
+| Person | Portraet wird von oben aufgedeckt (`clip-path`) |
+| Schluss | dasselbe Zeigerlicht wie im Hero, Ueberschrift wortweise, freie Tage im Kalendergitter leuchten |
+| Fuss | Riesen-Wortmarke, faerbt sich beim Ueberfahren |
+| Telefon | feste Buchungsleiste unten (`mobilcta.tsx`), nur zwischen Hero und Kalender |
+
+Die Texte folgen drei Fragen: SCHMERZ (Schlagzeile), PERSON (Augenbraue
+"trades and local businesses", "six trades"), VERSPRECHEN (Lead, Arbeit,
+Person). Die Wortzahl ist dabei gesunken (506 auf 499 ueber alle
+Zeichenketten in `content/start.ts`), obwohl ein zweiter Fall dazukam.
+
+`prefers-reduced-motion: reduce` zeigt weiterhin den Endzustand, fuer jede
+neue Bewegung steht eine Zeile im Reduzierblock von `start.css`.
 
 **Keine Wix-Vorlagen im Projekt.** Der Nutzer hatte angeboten, welche zu
 importieren. Abgelehnt, und das soll so bleiben: die Vorlagen gehoeren Wix,
@@ -132,9 +174,9 @@ gestartet kommt die Seite ungestylt hoch.
 - Die Entwuerfe zeigen erfundene Betriebe mit erfundenen Nummern. In der
   Galerie behaupten sie keinen Auftrag und tragen deshalb kein Kennzeichen;
   auf `/work/[slug]` steht dafuer eine Zeile (siehe oben).
-- Der einzige ECHTE Beleg ist Frostbreaker selbst. Lead-Entwuerfe duerfen
-  ohne Zustimmung nicht als Referenz gezeigt werden
-  (`Website_Business/README.md`), CTS Cement hat nicht zugestimmt.
+- Echte Belege sind Frostbreaker selbst und, anonym, der CTS-Prototyp
+  (siehe oben). Andere Lead-Entwuerfe duerfen ohne Zustimmung nicht als
+  Referenz gezeigt werden (`Website_Business/README.md`).
 
 ## Wo was steht
 
@@ -150,11 +192,11 @@ app/
                         (generateStaticParams, dynamicParams: false)
 components/
   start/                die Abschnitte der Startseite:
-                        leiste, modus, hero, beweis, galerie, arbeit,
-                        ablauf, person, schluss, kalender, fuss; dazu
-                        reveal.tsx (IntersectionObserver),
-                        zeichnungen.tsx (alle SVG-Bildflaechen),
-                        tokens.css, start.css
+                        leiste, marke, modus, hero, geraet, beweis, galerie,
+                        arbeit, ablauf, person, schluss, kalender, fuss,
+                        mobilcta; dazu knopf.tsx (die eine Pille),
+                        reveal.tsx (IntersectionObserver), worte.tsx,
+                        zeigerlicht.tsx, start.css
   entwuerfe/            entwurf.tsx (sechs Bauformen) und entwurf.css.
                         Geladen von /work/[slug] und der Erfassungsroute,
                         NIE von der Startseite

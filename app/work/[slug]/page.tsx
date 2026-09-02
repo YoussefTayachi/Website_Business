@@ -45,6 +45,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import EntwurfSeite from "@/components/entwuerfe/entwurf";
+import Knopf from "@/components/start/knopf";
 import StartFuss from "@/components/start/fuss";
 import StartLeiste from "@/components/start/leiste";
 import { entwuerfe, entwurfNach } from "@/content/entwuerfe";
@@ -141,12 +142,9 @@ export default async function WerkSeite({ params }: { params: Promise<{ slug: st
           <div className="st-wrap wk-cta__in">
             <h2>{w.cta.titel}</h2>
             <p className="st-schluss__lead">{w.cta.lead}</p>
-            <Link className="st-pill st-pill--um" href="/#book">
+            <Knopf href="/#book" um>
               {w.cta.knopf}
-              <span className="st-pill__pfeil" aria-hidden="true">
-                →
-              </span>
-            </Link>
+            </Knopf>
           </div>
         </section>
       </main>

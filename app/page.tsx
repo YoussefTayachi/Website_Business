@@ -38,6 +38,7 @@ import StartFuss from "@/components/start/fuss";
 import StartGalerie from "@/components/start/galerie";
 import StartHero from "@/components/start/hero";
 import StartLeiste from "@/components/start/leiste";
+import MobilCta from "@/components/start/mobilcta";
 import StartPerson from "@/components/start/person";
 import StartSchluss from "@/components/start/schluss";
 import { start } from "@/content/start";
@@ -85,6 +86,8 @@ export default function Home() {
       </main>
 
       <StartFuss />
+      {/* Nur unter 48rem sichtbar, nur zwischen Hero und Kalender. */}
+      <MobilCta />
     </div>
   );
 }

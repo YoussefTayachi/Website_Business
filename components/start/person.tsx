@@ -26,7 +26,11 @@ export default function StartPerson() {
   return (
     <Reveal as="section" className="st-sect st-person">
       <div className="st-wrap st-person__in">
-        <div className="st-person__bild st-rise" style={{ ["--i" as string]: 0 }}>
+        {/* Kein st-rise: das Portraet kommt nicht von unten, es wird von
+            oben nach unten AUFGEDECKT (start.css, clip-path). Ein Foto, das
+            wie ein Absatz einschwebt, ist ein Absatz; eines, das sich
+            aufdeckt, ist ein Foto. */}
+        <div className="st-person__bild">
           <Image src={portraet} alt={p.bildAlt} sizes="(min-width: 62rem) 22rem, 60vw" />
         </div>
 

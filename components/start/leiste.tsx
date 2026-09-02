@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import Knopf from "./knopf";
+import Marke from "./marke";
 import Modus from "./modus";
 import { start } from "@/content/start";
 
@@ -26,9 +28,15 @@ import { start } from "@/content/start";
  * Die Wortmarke traegt den Akzentton, weil sie auf frostbreaker.app auch ihn
  * traegt. Sie ist damit das erste, was die beiden Seiten als eine Marke
  * lesbar macht.
+ *
+ * SEIT DEM 2026-09-02 SCHRUMPFT DIE LEISTE BEIM SCROLLEN, ohne JavaScript:
+ * eine scroll-getriebene Animation in start.css (animation-timeline:
+ * scroll()) nimmt ihr in den ersten 120 Pixeln ein Stueck Hoehe und gibt
+ * ihr eine Kante. Browser ohne diese Technik sehen die feste Leiste, und
+ * das ist ein vollstaendiger Zustand, kein kaputter.
  */
 export default function StartLeiste({ variante = "start" }: { variante?: "start" | "werk" }) {
-  const { marke, markeZusatz, markeHref, anker, cta, zurueck } = start.leiste;
+  const { anker, cta, zurueck } = start.leiste;
 
   return (
     // data-variante ist der Haken fuer die zwei Regeln, die nur auf den
@@ -36,10 +44,7 @@ export default function StartLeiste({ variante = "start" }: { variante?: "start"
     // Zurueckweg, und beides zusammen passt auf 390px nicht.
     <header className="st-bar" data-variante={variante}>
       <div className="st-wrap st-bar__in">
-        <Link className="st-marke" href={markeHref}>
-          {marke}
-          <span className="st-marke__zusatz">{markeZusatz}</span>
-        </Link>
+        <Marke />
 
         <nav className="st-bar__nav" aria-label="Sections">
           {variante === "werk" ? (
@@ -61,12 +66,9 @@ export default function StartLeiste({ variante = "start" }: { variante?: "start"
 
         <div className="st-bar__rechts">
           <Modus />
-          <a className="st-pill st-bar__cta" href={cta.href}>
+          <Knopf className="st-bar__cta" href={cta.href}>
             {cta.label}
-            <span className="st-pill__pfeil" aria-hidden="true">
-              →
-            </span>
-          </a>
+          </Knopf>
         </div>
       </div>
     </header>

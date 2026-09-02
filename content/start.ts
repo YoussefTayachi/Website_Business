@@ -1,5 +1,18 @@
 // Aller sichtbare Text der Startseite und der Entwurfsseiten.
 //
+// STAND 2026-09-02: zweite Ueberarbeitung. Die Seite argumentiert jetzt
+// entlang dreier Fragen, die ein Betrieb aus einer Kaltakquise-Mail in
+// dieser Reihenfolge stellt:
+//
+//   SCHMERZ    was kostet mich meine jetzige Seite     (Hero-Schlagzeile)
+//   PERSON     ist das fuer mich gemeint                (Augenbraue, Galerie)
+//   VERSPRECHEN was bekomme ich, von wem                (Lead, Arbeit, Person)
+//
+// Dabei ist die Wortzahl GESUNKEN, nicht gestiegen: 506 auf 499 Woerter
+// ueber alle Zeichenketten dieser Datei, obwohl ein zweiter Fall im Abschnitt
+// "Arbeit" und eine Telefonleiste dazugekommen sind. Gekuerzt wurden die
+// Leads: wo ein Satz reicht, stehen nicht zwei.
+//
 // STAND 2026-09-01: ueberarbeitet nach dem Review von Youssefs Mentor. Was
 // sich dadurch geaendert hat und warum, steht jeweils am Abschnitt. Die
 // groesste Aenderung: der Vorher/Nachher-Vergleich ist ERSATZLOS GESTRICHEN
@@ -79,13 +92,28 @@ export const start = {
     ],
   },
 
+  /**
+   * DER HERO, in drei Zeilen die drei Fragen: die Augenbraue nennt die
+   * PERSON (Handwerk und lokale Betriebe), die Schlagzeile den SCHMERZ
+   * (Kunden, die abspringen, bevor sie anrufen), der Lead das VERSPRECHEN.
+   *
+   * Der Lead ist von zwei Saetzen auf zwei kuerzere geschrumpft: der erste
+   * beschreibt, wie der Kunde die Seite sieht, der zweite, was ich daraus
+   * mache. Alles andere stand doppelt.
+   *
+   * `anruf` ist die Karte, die neben dem Telefon aufspringt: ein
+   * eingehender Anruf. Sie ZEIGT das Versprechen der Schlagzeile, statt es
+   * ein drittes Mal zu sagen, und ist Zierde (aria-hidden), weil das
+   * Telefon daneben das Bild schon beschreibt.
+   */
   hero: {
-    augenbraue: "Web design for local businesses",
+    augenbraue: "Websites for trades and local businesses",
     headline: { vor: "Stop losing customers ", akzent: "before they call", nach: "." },
-    lead: "I look at your website the way your customer does: on a phone, in a hurry. Then I design and build the page that brings the call.",
+    lead: "Your customer checks you on a phone, in a hurry. I build the page that makes them call.",
     cta: { label: "Book a call", href: "#book" },
     zweitCta: { label: "See the designs", href: "#designs" },
-    ctaZusatz: "30 minutes. We look at your site together and I tell you what I would change.",
+    ctaZusatz: "30 minutes. We look at your site, I tell you what I would change.",
+    anruf: { titel: "Incoming call", text: "New customer" },
     geraet: {
       bildAlt:
         "A rebuilt electrician website on a phone: the phone number sits in a coloured card near the top, above the services.",
@@ -95,11 +123,13 @@ export const start = {
   },
 
   beweis: {
-    satz: "The site you are on, the app that emailed you and every design below: I built all of them.",
+    satz: "This site, the app that emailed you, every design below: all built by me.",
     links: [
       { label: "frostbreaker.app", href: "https://www.frostbreaker.app/", zusatz: "Product site" },
       { label: "app.frostbreaker.app", href: "https://app.frostbreaker.app/", zusatz: "The software" },
     ],
+    /** Steht vor jedem Chip als gruener Punkt: beide Adressen laufen. */
+    live: "Live",
   },
 
   /**
@@ -114,12 +144,15 @@ export const start = {
    * ENTFALLEN IST DER FENSTERRAHMEN mit den drei Punkten ("remove the fake
    * computer button"). Er war Dekoration, die einen Browser behauptet, und er
    * kostete oben in jeder Karte 40 Pixel, die dem Entwurf gehoerten.
+   *
+   * Der Lead ist auf einen Satz geschrumpft. "Six trades" nennt nebenbei die
+   * PERSON: wer Dachdecker ist, findet sich in der Liste.
    */
   galerie: {
     id: "designs",
     augenbraue: "Designs",
     titel: "What your page could look like.",
-    lead: "Six businesses, six different layouts. Not one template in six colours: open any of them and see for yourself.",
+    lead: "Six trades, six different layouts. Open any of them.",
     /** Reihenfolge und Beschriftung der Karten. Die Bilder kommen aus dem
      *  Manifest, die Zuordnung macht components/start/galerie.tsx. */
     karten: [
@@ -135,39 +168,57 @@ export const start = {
   },
 
   /**
-   * ECHTE ARBEIT. Steht seit dem 2026-09-01 dort, wo bis dahin der
-   * Vorher/Nachher-Regler stand.
+   * ECHTE ARBEIT. Seit dem 2026-09-02 ZWEI Faelle statt einem.
    *
-   * WARUM DER VERGLEICH WEG IST: "remove 'Before and after' because it
-   * doesn't really mean anything, showing your previous is much more
-   * meaningful than a before and after." Der Einwand ist richtig, und er
-   * trifft eine Schwaeche, die vorher niemand benannt hat: die alte Fassung
-   * im Vergleich war SELBST GEBAUT. Eine Seite, die man absichtlich schlecht
-   * baut, um sie danach zu schlagen, beweist nichts. Ein Betrieb, der schon
-   * einmal eine Agentur gesehen hat, riecht das.
+   * WARUM DER VERGLEICH WEG IST (2026-09-01): "remove 'Before and after'
+   * because it doesn't really mean anything, showing your previous is much
+   * more meaningful than a before and after." Der Einwand ist richtig: die
+   * alte Fassung im Vergleich war SELBST GEBAUT, und eine Seite, die man
+   * absichtlich schlecht baut, um sie danach zu schlagen, beweist nichts.
    *
-   * WAS STATTDESSEN DA STEHT, ist das Einzige, was nachpruefbar ist:
-   * Frostbreaker. Eigene Software, eigene Produktseite, beide oeffentlich
-   * erreichbar. Kein zugestimmter Kundenfall, also auch keiner behauptet.
+   * WAS JETZT DA STEHT:
+   *
+   * 1. Frostbreaker. Eigene Software, eigene Produktseite, beide oeffentlich
+   *    erreichbar und verlinkt.
+   *
+   * 2. DER PROTOTYP FUER EINEN ZEMENTHERSTELLER. Der Betrieb hat am
+   *    2026-09-02 zugestimmt, dass der Entwurf gezeigt wird, unter einer
+   *    Bedingung: OHNE SEINEN NAMEN. Deshalb steht hier die Branche und
+   *    nicht die Firma, die Aufnahme ist anonymisiert (Logo, Telefonnummer
+   *    und Produktname sind bei der Aufnahme ausgeblendet, siehe
+   *    scripts/aufnahmen.mjs), und es gibt KEINEN LINK auf den Entwurf: die
+   *    veroeffentlichte Fassung traegt das Logo. Wer den Namen dazuschreibt
+   *    oder verlinkt, bricht die Zusage.
+   *
+   *    Es ist auch KEIN ZITAT dabei. Der Betrieb hat der Darstellung
+   *    zugestimmt, er hat keinen Satz dazu gesagt. Ein erfundenes Zitat
+   *    waere genau die Sorte Referenz, die diese Seite nicht traegt.
    */
   arbeit: {
     id: "work",
-    augenbraue: "Live work",
+    augenbraue: "Real work",
     titel: "Built, shipped, still running.",
-    lead: "Frostbreaker is mine. I designed it, I built it, and it is the software that sent you here.",
-    fall: {
-      name: "frostbreaker.app",
-      art: "Product site and web app",
-      href: "https://www.frostbreaker.app/",
-      bildAlt:
-        "The Frostbreaker product site: a large headline, a dark preview of the app, and the navigation across the top.",
-      punkte: [
-        "Designed and built by me, front to back",
-        "The app behind it runs the outreach that reached you",
-        "Same care your page would get",
-      ],
-      knopf: "Open frostbreaker.app",
-    },
+    lead: "My own software, and a prototype for a real manufacturer, shown with their permission.",
+    faelle: [
+      {
+        slug: "frostbreaker",
+        name: "frostbreaker.app",
+        art: "Product site and web app",
+        text: "Designed and built by me, front to back. The software behind it sent you here.",
+        href: "https://www.frostbreaker.app/",
+        bildAlt:
+          "The Frostbreaker product site: a large headline, a dark preview of the app, and the navigation across the top.",
+        knopf: "Open frostbreaker.app",
+      },
+      {
+        slug: "cement",
+        name: "Cement manufacturer",
+        art: "Redesign prototype, USA",
+        text: "Built on their real product data. Name withheld at their request.",
+        bildAlt:
+          "Prototype homepage for a cement manufacturer: a night photo of a road crew pouring concrete, a large headline, three figures in a row.",
+      },
+    ],
   },
 
   /**
@@ -176,12 +227,6 @@ export const start = {
    * Der Mentor: "For 'How it works' it's much better to have a title like
    * 'Onboarding; Research; Branding; Design; Launch; Maintenance' instead of
    * having a sentence."
-   *
-   * Das ist mehr als Kosmetik. Ein Betrieb, der eine Website kauft, weiss
-   * nicht, was dabei passiert, und drei Saetze beantworten das nicht,
-   * sondern beruhigen nur. Sechs benannte Stufen sind eine Liste, die man
-   * abhaken kann, und sie sagen nebenbei, dass hier ein Verfahren steht und
-   * kein Bauchgefuehl.
    *
    * DIE ZEILE UNTER JEDER STUFE BLEIBT KURZ. Der Titel traegt, der Satz
    * erklaert. Wo er laenger wird als eine Zeile, ist die Stufe falsch
@@ -204,11 +249,12 @@ export const start = {
   /**
    * WER DAHINTERSTECKT. Ein echtes Foto und zwei Saetze.
    *
-   * WARUM DAS AUF DIESE SEITE GEHOERT: die Zielgruppe kauft von einer Person,
-   * nicht von einer Marke. Ein Betrieb, der eine Kaltakquise-Mail bekommt,
-   * will als Erstes wissen, wer da schreibt. Ein Gesicht beantwortet das in
-   * einer Sekunde, und es beantwortet nebenbei die Frage, ob hier eine
+   * Die Zielgruppe kauft von einer Person, nicht von einer Marke. Ein
+   * Gesicht beantwortet in einer Sekunde, wer da schreibt, und ob hier eine
    * Agentur mit Kundenbetreuern sitzt oder ein Mensch.
+   *
+   * Der zweite Absatz ist von 24 auf 13 Woerter geschrumpft und sagt
+   * dasselbe: kein Zwischenmensch, und das gilt auch in einem Jahr.
    *
    * KEIN STOCKFOTO. Es ist sein eigenes Portraet, dasselbe wie auf
    * frostbreaker.app.
@@ -217,8 +263,8 @@ export const start = {
     augenbraue: "Who builds it",
     titel: "You deal with the person who does the work.",
     absaetze: [
-      "I'm Youssef. I design the page, I build it, and I am the one who answers when you write back.",
-      "No account manager, no handover, no team you never meet. If something is wrong with your site a year from now, you email me.",
+      "I'm Youssef. I design the page, I build it, and I answer when you write back.",
+      "No account manager, no handover. A year from now, you still email me.",
     ],
     name: "Youssef Tayachi",
     rolle: "Frostbreaker Marketing",
@@ -226,7 +272,7 @@ export const start = {
   },
 
   /**
-   * DER SCHLUSS, jetzt MIT KALENDER AUF DER SEITE.
+   * DER SCHLUSS, MIT KALENDER AUF DER SEITE.
    *
    * Der Mentor: "For the CTA, have the calendar integrated with your website
    * to reduce friction." Richtig: jeder Wechsel auf eine fremde Domain
@@ -236,8 +282,7 @@ export const start = {
    * einem Dritten, und setzt beim Laden dessen Cookies. Ein deutscher Betrieb
    * mit Impressum und Datenschutzerklaerung darf so etwas nach TDDDG Paragraf
    * 25 nicht ungefragt nachladen. Der Klick IST die Einwilligung, und er
-   * kostet einen Klick statt eines Seitenwechsels: der Kalender oeffnet sich
-   * an Ort und Stelle, niemand verlaesst die Seite.
+   * kostet einen Klick statt eines Seitenwechsels.
    *
    * Wer das anders bewerten will, aendert genau eine Zeile in
    * components/start/kalender.tsx (`geladen` von Anfang an true) und
@@ -247,7 +292,7 @@ export const start = {
     id: "book",
     augenbraue: "Book a call",
     titel: "Let's look at your site together.",
-    lead: "Thirty minutes, no pitch. Worst case you leave with a list of things to fix yourself.",
+    lead: "Thirty minutes, no pitch. Worst case you leave with a list of fixes.",
     fakten: ["30 minutes", "Video call", "Costs nothing"],
     kalender: {
       /** Beschriftung des Rahmens fuer Vorleser. */
@@ -258,6 +303,15 @@ export const start = {
       laedt: "Loading the calendar",
     },
   },
+
+  /**
+   * DIE TELEFONLEISTE. Auf dem Telefon steht der Knopf aus der Kopfleiste
+   * nicht (nachgerechnet in start.css), und der Hero-Knopf ist nach zwei
+   * Bildschirmen aus dem Bild. Diese Leiste haengt unten fest, sobald der
+   * Hero vorbei ist, und verschwindet, sobald der Kalender im Bild steht:
+   * dort steht der Weg schon.
+   */
+  mobilCta: { label: "Book a call", href: "#book" },
 
   /**
    * DIE ENTWURFSSEITEN unter /work/[slug]. Der Mentor wollte je Prototyp eine
@@ -289,6 +343,7 @@ export const start = {
       { label: "Privacy", href: "/datenschutz" },
     ],
     copyright: "© 2026 Youssef Tayachi",
+    nachOben: "Back to top",
   },
 } as const;
 

@@ -25,6 +25,11 @@ import { useEffect, useRef } from "react";
  *
  * Ohne JavaScript steht der Verlauf still und mittig. Er ist Zierde, und
  * Zierde darf fehlen.
+ *
+ * SEIT DEM 2026-09-02 SCHREIBT DIE KOMPONENTE --mx UND --my AUF IHREN
+ * ELTERNABSCHNITT und nicht mehr auf sich selbst: im Hero liest auch der
+ * Telefonrahmen die beiden Werte und kippt leicht dem Zeiger entgegen. Ein
+ * Horcher, zwei Leser.
  */
 export default function Zeigerlicht({ className }: { className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -39,10 +44,11 @@ export default function Zeigerlicht({ className }: { className?: string }) {
     let x = 0;
     let y = 0;
 
+    const ziel = el.parentElement ?? el;
     const zeichne = () => {
       angefordert = 0;
-      el.style.setProperty("--mx", x.toFixed(3));
-      el.style.setProperty("--my", y.toFixed(3));
+      ziel.style.setProperty("--mx", x.toFixed(3));
+      ziel.style.setProperty("--my", y.toFixed(3));
     };
 
     const beiBewegung = (e: PointerEvent) => {

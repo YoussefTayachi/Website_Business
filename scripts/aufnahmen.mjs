@@ -21,7 +21,7 @@
    ========================================================================== */
 
 import { createRequire } from "node:module";
-import { mkdir, writeFile, stat } from "node:fs/promises";
+import { mkdir, readFile, writeFile, stat } from "node:fs/promises";
 import path from "node:path";
 
 const require = createRequire(import.meta.url);
@@ -31,6 +31,16 @@ const { chromium } = require(
 
 const BASIS = process.env.BASIS ?? "http://localhost:3210";
 const ZIEL = "public/arbeiten";
+
+/* EINE EINZELNE AUFNAHME, seit dem 2026-09-02:
+       node scripts/aufnahmen.mjs --nur cement
+   nimmt nur die genannte Datei auf und traegt sie in das bestehende Manifest
+   ein, statt alle zehn neu zu schiessen. Gebraucht fuer die externen
+   Aufnahmen, die keinen Erfassungsserver brauchen. */
+const NUR = (() => {
+  const i = process.argv.indexOf("--nur");
+  return i > -1 ? process.argv[i + 1] : null;
+})();
 
 /* Jede Aufnahme hat GENAU EINEN Platz auf der Seite, und der steht hier
    daneben. Zwei Aufnahmen derselben Seite in verschiedenen Breiten sind
@@ -88,6 +98,32 @@ const AUFNAHMEN = [
     platz: "Echte Arbeit, Produktseite",
   },
 
+  // DER PROTOTYP FUER EINEN ZEMENTHERSTELLER, seit dem 2026-09-02. Der
+  // Betrieb hat zugestimmt, dass der Entwurf gezeigt wird, aber OHNE SEINEN
+  // NAMEN. Deshalb wird bei der Aufnahme alles ausgeblendet, was ihn nennt:
+  // das Logo in der Kopfzeile (bleibt als dunkle Flaeche stehen, damit die
+  // Leiste nicht leer aussieht), die Telefonnummer, und die Augenbraue mit
+  // dem Produktnamen. Die Selektoren zielen auf ARIA und href und nicht auf
+  // die gehashten Klassennamen, damit ein neuer Bau des Prototyps sie nicht
+  // still aushebelt. Ob es gewirkt hat, prueft der Lauf unten nach: steht
+  // der Name noch sichtbar im Fenster, bricht er ab.
+  {
+    extern: "https://cts-prototype-dusky.vercel.app/",
+    datei: "cement",
+    breite: 1200,
+    hoehe: 760,
+    platz: "Echte Arbeit, Prototyp Zementhersteller (anonymisiert)",
+    anonym: {
+      css: `
+        header a[aria-label] img { opacity: 0 !important; }
+        header a[aria-label] { background: #1c1b19; border-radius: 8px; }
+        a[href^="tel:"] { display: none !important; }
+      `,
+      /** Dieser Text darf nach dem Ausblenden nirgends sichtbar sein. */
+      verboten: ["CTS", "Rapid Set", "800-929"],
+    },
+  },
+
   { fall: "og", datei: "opengraph-image", ordner: "app", breite: 1200, hoehe: 630, platz: "og:image und twitter:image" },
   { fall: "og?icon", datei: "apple-icon", ordner: "app", breite: 180, hoehe: 180, platz: "Symbol fuer iOS-Startbildschirm" },
 ];
@@ -126,9 +162,11 @@ async function ruhe(page, extern) {
 
 const browser = await chromium.launch({ channel: "chrome" });
 const manifest = [];
+const AUSWAHL = NUR ? AUFNAHMEN.filter((a) => a.datei === NUR) : AUFNAHMEN;
+if (NUR && AUSWAHL.length === 0) throw new Error(`Keine Aufnahme heisst "${NUR}".`);
 
 try {
-  for (const a of AUFNAHMEN) {
+  for (const a of AUSWAHL) {
     const kontext = await browser.newContext({
       viewport: { width: a.breite, height: a.hoehe },
       deviceScaleFactor: 2,
@@ -162,6 +200,48 @@ try {
       await page.waitForLoadState("networkidle", { timeout: 12000 }).catch(() => {});
     }
     await ruhe(page, Boolean(a.extern));
+
+    if (a.anonym) {
+      await page.addStyleTag({ content: a.anonym.css });
+      // Alles, was den Namen im Text traegt (Augenbraue, Diagrammtitel,
+      // Produktzeilen), hat keinen stabilen Selektor. Es wird ueber seinen
+      // Textknoten gefunden, und das Elternelement wird ausgeblendet.
+      await page.evaluate((verboten) => {
+        const geher = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        const treffer = [];
+        let n;
+        while ((n = geher.nextNode())) {
+          if (verboten.some((v) => n.textContent.includes(v))) treffer.push(n.parentElement);
+        }
+        for (const el of treffer) el.style.visibility = "hidden";
+      }, a.anonym.verboten);
+      await page.evaluate(
+        () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))),
+      );
+      // Nachgeprueft, nicht geglaubt: kein verbotener Text mehr sichtbar im
+      // Fenster. Sichtbar heisst: eigener Textknoten, im Bildausschnitt,
+      // nicht visibility:hidden und nicht opacity 0.
+      const reste = await page.evaluate((verboten) => {
+        const h = window.innerHeight;
+        const gefunden = [];
+        const geher = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        let n;
+        while ((n = geher.nextNode())) {
+          const t = n.textContent;
+          if (!verboten.some((v) => t.includes(v))) continue;
+          const el = n.parentElement;
+          const r = el.getBoundingClientRect();
+          if (r.bottom < 0 || r.top > h) continue;
+          const cs = getComputedStyle(el);
+          if (cs.visibility === "hidden" || cs.opacity === "0" || cs.display === "none") continue;
+          gefunden.push(t.trim().slice(0, 40));
+        }
+        return gefunden;
+      }, a.anonym.verboten);
+      if (reste.length) {
+        throw new Error(`Anonymisierung unvollstaendig, sichtbar: ${reste.join(" | ")}`);
+      }
+    }
 
     const datei = `${a.datei}.png`;
     const ordner = a.ordner ?? ZIEL;
@@ -206,7 +286,10 @@ try {
     manifest.push({
       datei,
       platz: a.platz,
-      quelle: url,
+      // Das Manifest liegt in public/ und ist damit oeffentlich. Bei einer
+      // anonymisierten Aufnahme darf die Adresse nicht hinein: sie traegt
+      // den Namen, den die Aufnahme gerade verbirgt.
+      quelle: a.anonym ? "extern, anonymisiert, Adresse nicht im Manifest" : url,
       fensterbreite: a.breite,
       fensterhoehe: a.hoehe,
       geraeteskala: 2,
