@@ -2,6 +2,7 @@ import telefonBild from "@/public/arbeiten/hero-telefon.png";
 
 import Geraet from "./geraet";
 import Knopf from "./knopf";
+import Magnet from "./magnet";
 import Reveal from "./reveal";
 import Zeigerlicht from "./zeigerlicht";
 import { Worte } from "./worte";
@@ -68,7 +69,9 @@ export default function StartHero() {
           </p>
 
           <div className="st-hero__knoepfe st-rise" style={{ ["--i" as string]: 6 }}>
-            <Knopf href={cta.href}>{cta.label}</Knopf>
+            <Magnet>
+              <Knopf href={cta.href}>{cta.label}</Knopf>
+            </Magnet>
             <a className="st-link" href={zweitCta.href}>
               {zweitCta.label}
             </a>

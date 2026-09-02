@@ -8,7 +8,7 @@
 //   PERSON     ist das fuer mich gemeint                (Augenbraue, Galerie)
 //   VERSPRECHEN was bekomme ich, von wem                (Lead, Arbeit, Person)
 //
-// Dabei ist die Wortzahl GESUNKEN, nicht gestiegen: 506 auf 499 Woerter
+// Dabei ist die Wortzahl GESUNKEN, nicht gestiegen: 506 auf 492 Woerter
 // ueber alle Zeichenketten dieser Datei, obwohl ein zweiter Fall im Abschnitt
 // "Arbeit" und eine Telefonleiste dazugekommen sind. Gekuerzt wurden die
 // Leads: wo ein Satz reicht, stehen nicht zwei.
@@ -130,6 +130,9 @@ export const start = {
     ],
     /** Steht vor jedem Chip als gruener Punkt: beide Adressen laufen. */
     live: "Live",
+    /** Das Laufband darunter nennt die Gewerke der Galerie. Es traegt keine
+     *  eigenen Woerter: die Namen kommen aus galerie.karten. */
+    laufband: "Trades I build for",
   },
 
   /**
@@ -165,6 +168,9 @@ export const start = {
     ],
     /** Beschriftung des Knopfes auf der Karte. */
     oeffnen: "Open the design",
+    /** Die Marke, die auf dem Schreibtisch dem Zeiger ueber den Karten
+     *  folgt (components/start/galerie-zeiger.tsx). Zierde. */
+    zeiger: "Open",
   },
 
   /**
@@ -198,7 +204,9 @@ export const start = {
     id: "work",
     augenbraue: "Real work",
     titel: "Built, shipped, still running.",
-    lead: "My own software, and a prototype for a real manufacturer, shown with their permission.",
+    /** Der Lead ist am 2026-09-02 auf Wunsch des Nutzers gestrichen: die
+     *  zwei Faelle sagen es selbst. Was "with permission" heisst, steht in
+     *  der Zeile des Zementherstellers. */
     faelle: [
       {
         slug: "frostbreaker",
@@ -214,7 +222,7 @@ export const start = {
         slug: "cement",
         name: "Cement manufacturer",
         art: "Redesign prototype, USA",
-        text: "Built on their real product data. Name withheld at their request.",
+        text: "Built on their real product data, shown with permission. Name withheld at their request.",
         bildAlt:
           "Prototype homepage for a cement manufacturer: a night photo of a road crew pouring concrete, a large headline, three figures in a row.",
       },

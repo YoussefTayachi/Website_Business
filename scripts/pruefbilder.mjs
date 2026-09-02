@@ -130,11 +130,27 @@ try {
     const abgeschnitten = await page.evaluate(() => {
       const vw = document.documentElement.clientWidth;
       const treffer = [];
+      /* Was in einem BESCHNITTENEN Kasten liegt, der selbst im Fenster
+         steht, darf hinausragen: das Laufband der Gewerke (2026-09-02)
+         schiebt seine Spur absichtlich aus dem Bild, und der Kasten darum
+         schneidet sie ab. Gemeldet wird nur, was der Besucher wirklich
+         abgeschnitten SIEHT, also der Kasten selbst, falls er ueber den
+         Rand ragt. */
+      const beschnitten = (el) => {
+        for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
+          const o = getComputedStyle(p).overflowX;
+          if (o === "hidden" || o === "clip") {
+            const pr = p.getBoundingClientRect();
+            return pr.right <= vw + 1 && pr.left >= -1;
+          }
+        }
+        return false;
+      };
       for (const el of document.querySelectorAll("body *")) {
         if (el.closest("[aria-hidden='true']")) continue;
         const r = el.getBoundingClientRect();
         if (r.width === 0 || r.height === 0) continue;
-        if (r.right > vw + 1 || r.left < -1) {
+        if ((r.right > vw + 1 || r.left < -1) && !beschnitten(el)) {
           treffer.push({
             was: (el.getAttribute("class") || el.tagName).toString().split(" ")[0],
             rechts: Math.round(r.right),

@@ -2,16 +2,16 @@
   "erzeugtVon": "scripts/aufnahmen.mjs",
   "bilder": [
     {
-      "datei": "cement.png",
-      "platz": "Echte Arbeit, Prototyp Zementhersteller (anonymisiert)",
+      "datei": "cement-telefon.png",
+      "platz": "Echte Arbeit, Prototyp Zementhersteller im Telefonrahmen (anonymisiert)",
       "quelle": "extern, anonymisiert, Adresse nicht im Manifest",
-      "fensterbreite": 1200,
-      "fensterhoehe": 760,
+      "fensterbreite": 390,
+      "fensterhoehe": 844,
       "geraeteskala": 2,
       "elementweise": false,
-      "dokumenthoehe": 7897,
+      "dokumenthoehe": 9360,
       "inhaltshoehe": null,
-      "bytes": 3130307,
+      "bytes": 797961,
       "browser": "152.0.7977.65",
       "erzeugt": "2026-09-02"
     }

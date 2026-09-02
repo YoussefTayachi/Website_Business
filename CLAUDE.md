@@ -59,12 +59,17 @@ zurueckbauen darf:
 
 - Auf der Seite steht "Cement manufacturer" und "Redesign prototype, USA",
   kein Firmenname, kein Produktname, kein Ort genauer als das Land.
-- Die Aufnahme `public/arbeiten/cement.png` ist ANONYMISIERT: Logo,
-  Telefonnummer und Produktname werden bei der Aufnahme ausgeblendet, und
-  `scripts/aufnahmen.mjs` bricht ab, wenn danach noch einer der verbotenen
-  Texte sichtbar ist (`anonym.verboten`). Neu aufnehmen mit
-  `node scripts/aufnahmen.mjs --nur cement`, dafuer braucht es keinen
-  Erfassungsserver.
+- Die Aufnahmen `public/arbeiten/cement.png` und `cement-telefon.png` sind
+  ANONYMISIERT: Logo, Telefonnummer, Produktname, Firmensitz und die
+  CO2-Kennzahl (ein Fingerabdruck, mit dem eine Suche den Hersteller
+  findet) werden bei der Aufnahme ausgeblendet, und `scripts/aufnahmen.mjs`
+  bricht ab, wenn danach noch einer der verbotenen Texte sichtbar ist
+  (`anonym.verboten`). Die breite Aufnahme endet bei 1500px, VOR dem
+  Produktraster: dort steht der Markenname auf den Saecken, und den kann
+  kein Skript ausblenden. Neu aufnehmen mit
+  `node scripts/aufnahmen.mjs --nur cement` (und `--nur cement-telefon`),
+  dafuer braucht es keinen Erfassungsserver. Die Adresse des Prototyps
+  steht nicht im oeffentlichen Manifest.
 - Es gibt KEINEN LINK auf den Prototyp: die veroeffentlichte Fassung traegt
   das Logo. Und KEIN ZITAT: der Betrieb hat zugestimmt, nicht gelobt.
 
@@ -80,7 +85,11 @@ Vorbild war godly.design, eine Sammlung gut gestalteter Seiten nach Bauteil
 | Knopf | `knopf.tsx`, eine Komponente fuer alle Pillen: Beschriftung rollt beim Ueberfahren, Pfeil laeuft, Druck beim Tippen |
 | Hero | Woerter kommen aus Unschaerfe, Telefon kippt dem Zeiger entgegen, Anrufkarte springt nach 1,3s auf |
 | Galerie | Bild kommt aus leichter Vergroesserung, Karte hebt sich mit Schatten |
-| Arbeit | zwei Faelle, Bild zoomt beim Ueberfahren |
+| Beweis | Laufband der sechs Gewerke (`laufband.tsx`), haelt beim Ueberfahren |
+| Galerie | Pille "Open" folgt dem Zeiger ueber den Karten (`galerie-zeiger.tsx`) |
+| Arbeit | zwei Faelle, je Schreibtisch plus Telefon; beide Aufnahmen sind laenger als ihr Rahmen und wandern beim Ueberfahren (Weg aus den Bildmassen gerechnet) |
+| Hero-Knopf | Magnet (`magnet.tsx`): rueckt dem Zeiger bis 8px entgegen |
+| Kopfleiste | Fortschrittslinie in Sky an der Unterkante, scroll-getrieben |
 | Ablauf | Haarlinie je Stufe, Akzent laeuft nacheinander darueber, Nummer faerbt sich |
 | Person | Portraet wird von oben aufgedeckt (`clip-path`) |
 | Schluss | dasselbe Zeigerlicht wie im Hero, Ueberschrift wortweise, freie Tage im Kalendergitter leuchten |
@@ -89,7 +98,7 @@ Vorbild war godly.design, eine Sammlung gut gestalteter Seiten nach Bauteil
 
 Die Texte folgen drei Fragen: SCHMERZ (Schlagzeile), PERSON (Augenbraue
 "trades and local businesses", "six trades"), VERSPRECHEN (Lead, Arbeit,
-Person). Die Wortzahl ist dabei gesunken (506 auf 499 ueber alle
+Person). Die Wortzahl ist dabei gesunken (506 auf 492 ueber alle
 Zeichenketten in `content/start.ts`), obwohl ein zweiter Fall dazukam.
 
 `prefers-reduced-motion: reduce` zeigt weiterhin den Endzustand, fuer jede

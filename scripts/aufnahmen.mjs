@@ -56,6 +56,23 @@ const NUR = (() => {
 
    BEIDE SEITEN DES PAARES MUESSEN DIESELBE HOEHE HABEN, sonst springt der
    Vergleich beim Ziehen. Die Pruefung unten erzwingt das. */
+/* Die Anonymisierung des Zementherstellers, fuer beide Aufnahmen dieselbe. */
+const ANONYM_CEMENT = {
+      css: `
+        header a[aria-label] img { opacity: 0 !important; }
+        header a[aria-label] { background: #1c1b19; border-radius: 8px; }
+        a[href^="tel:"] { display: none !important; }
+      `,
+      /** Dieser Text darf nach dem Ausblenden nirgends sichtbar sein. */
+      /* "Garden Grove" ist der Firmensitz und steht in der Belegleiste
+         unter dem Hero; mit dem Ort ist der Hersteller in einer Suche
+         gefunden. Ausgeblendet wird die ganze Kachel (li), nicht nur die
+         Zahl, sonst bleibt eine Beschriftung ohne Wert stehen. */
+      /* Die CO2-Zahl ist ein Fingerabdruck: wer sie in eine Suche tippt,
+         hat den Hersteller. Also auch weg. */
+      verboten: ["CTS", "Rapid Set", "800-929", "Garden Grove", "1,809,294,008"],
+};
+
 const AUFNAHMEN = [
   // Die Galerie. Sechs Gestaltungen.
   //
@@ -90,12 +107,28 @@ const AUFNAHMEN = [
   // shipped, still running". Eine Aufnahme aus einem lokalen Bau koennte das
   // nicht belegen, eine aus dem Netz schon. Nebenbei faellt so beim naechsten
   // Aufnahmelauf auf, wenn sich die Seite geaendert hat.
+  //
+  // SEIT DEM 2026-09-02 ZWEI AUFNAHMEN JE FALL: eine breite, die LAENGER ist
+  // als ihr Ausschnitt (`voll` begrenzt die Vollseitenaufnahme auf diese
+  // Hoehe) und beim Ueberfahren im Rahmen wandert, und eine Telefonaufnahme
+  // fuer den Geraeterahmen davor. So zeigt der Abschnitt mehr von der Seite
+  // als den ersten Bildschirm, ohne dass jemand die Seite verlaesst.
   {
     extern: "https://www.frostbreaker.app/",
     datei: "frostbreaker",
     breite: 1200,
     hoehe: 760,
-    platz: "Echte Arbeit, Produktseite",
+    voll: 2200,
+    platz: "Echte Arbeit, Produktseite (wandert im Rahmen)",
+  },
+  {
+    extern: "https://www.frostbreaker.app/",
+    datei: "frostbreaker-telefon",
+    breite: 390,
+    hoehe: 844,
+    voll: 1500,
+    telefon: true,
+    platz: "Echte Arbeit, Produktseite im Telefonrahmen",
   },
 
   // DER PROTOTYP FUER EINEN ZEMENTHERSTELLER, seit dem 2026-09-02. Der
@@ -107,26 +140,36 @@ const AUFNAHMEN = [
   // die gehashten Klassennamen, damit ein neuer Bau des Prototyps sie nicht
   // still aushebelt. Ob es gewirkt hat, prueft der Lauf unten nach: steht
   // der Name noch sichtbar im Fenster, bricht er ab.
+  //
+  // `voll` bleibt hier bei 1500 Pixeln und nicht 2200: weiter unten stehen
+  // Produktfotos mit dem Markennamen AUF DEN SAECKEN, und den kann kein
+  // Skript ausblenden. Der Ausschnitt endet vor dem Produktraster.
   {
     extern: "https://cts-prototype-dusky.vercel.app/",
     datei: "cement",
     breite: 1200,
     hoehe: 760,
-    platz: "Echte Arbeit, Prototyp Zementhersteller (anonymisiert)",
-    anonym: {
-      css: `
-        header a[aria-label] img { opacity: 0 !important; }
-        header a[aria-label] { background: #1c1b19; border-radius: 8px; }
-        a[href^="tel:"] { display: none !important; }
-      `,
-      /** Dieser Text darf nach dem Ausblenden nirgends sichtbar sein. */
-      verboten: ["CTS", "Rapid Set", "800-929"],
-    },
+    voll: 1500,
+    platz: "Echte Arbeit, Prototyp Zementhersteller (anonymisiert, wandert im Rahmen)",
+    anonym: ANONYM_CEMENT,
   },
+  {
+    extern: "https://cts-prototype-dusky.vercel.app/",
+    datei: "cement-telefon",
+    breite: 390,
+    hoehe: 844,
+    voll: 1500,
+    telefon: true,
+    platz: "Echte Arbeit, Prototyp Zementhersteller im Telefonrahmen (anonymisiert)",
+    anonym: ANONYM_CEMENT,
+  },
+];
 
+// Die Metadaten-Bilder, wie gehabt.
+AUFNAHMEN.push(
   { fall: "og", datei: "opengraph-image", ordner: "app", breite: 1200, hoehe: 630, platz: "og:image und twitter:image" },
   { fall: "og?icon", datei: "apple-icon", ordner: "app", breite: 180, hoehe: 180, platz: "Symbol fuer iOS-Startbildschirm" },
-];
+);
 
 /** Wartet, bis die Seite wirklich fertig ist, statt eine Zahl abzuwarten. */
 async function ruhe(page, extern) {
@@ -170,6 +213,10 @@ try {
     const kontext = await browser.newContext({
       viewport: { width: a.breite, height: a.hoehe },
       deviceScaleFactor: 2,
+      // Telefonaufnahmen fremder Seiten mit Geraeteemulation, sonst liefert
+      // die Seite ihre Schreibtischfassung in 390px Breite.
+      isMobile: Boolean(a.telefon),
+      hasTouch: Boolean(a.telefon),
       // Die Aufnahmen zeigen Websites von Handwerksbetrieben. Die sind hell,
       // und sie bleiben hell, auch wenn die Portfolio-Seite drumherum dunkel
       // steht. Ein invertierter Screenshot waere eine Luege ueber das, was
@@ -213,7 +260,11 @@ try {
         while ((n = geher.nextNode())) {
           if (verboten.some((v) => n.textContent.includes(v))) treffer.push(n.parentElement);
         }
-        for (const el of treffer) el.style.visibility = "hidden";
+        // display:none und nicht visibility:hidden: Einblendungen setzen
+        // visibility auf dem Kind ausdruecklich auf "visible", und dann
+        // schlaegt das Ausblenden des Elternteils nicht durch. Genau so ist
+        // "Garden Grove, CA" beim ersten Lauf stehen geblieben.
+        for (const el of treffer) (el.closest("li") ?? el).style.display = "none";
       }, a.anonym.verboten);
       await page.evaluate(
         () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))),
@@ -221,8 +272,8 @@ try {
       // Nachgeprueft, nicht geglaubt: kein verbotener Text mehr sichtbar im
       // Fenster. Sichtbar heisst: eigener Textknoten, im Bildausschnitt,
       // nicht visibility:hidden und nicht opacity 0.
-      const reste = await page.evaluate((verboten) => {
-        const h = window.innerHeight;
+      const reste = await page.evaluate(({ verboten, hoehe }) => {
+        const h = hoehe;
         const gefunden = [];
         const geher = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
         let n;
@@ -231,13 +282,15 @@ try {
           if (!verboten.some((v) => t.includes(v))) continue;
           const el = n.parentElement;
           const r = el.getBoundingClientRect();
+          // Kein Rechteck heisst: display:none irgendwo darueber.
+          if (r.width === 0 && r.height === 0) continue;
           if (r.bottom < 0 || r.top > h) continue;
           const cs = getComputedStyle(el);
           if (cs.visibility === "hidden" || cs.opacity === "0" || cs.display === "none") continue;
           gefunden.push(t.trim().slice(0, 40));
         }
         return gefunden;
-      }, a.anonym.verboten);
+      }, { verboten: a.anonym.verboten, hoehe: a.voll ?? a.hoehe });
       if (reste.length) {
         throw new Error(`Anonymisierung unvollstaendig, sichtbar: ${reste.join(" | ")}`);
       }
@@ -272,7 +325,38 @@ try {
     // statt 1200 mal 630. Der Wrapper ist inzwischen ueberall so hoch wie
     // sein Inhalt, also ist er die richtige Wahl fuer beide Faelle.
     const ziel = elementweise ? page.locator("[data-erfassung]").first() : page;
-    await ziel.screenshot({ path: pfad });
+    if (a.voll) {
+      // Erst einmal bis zur Grenze scrollen, damit nachgeladene Bilder und
+      // Einblendungen da sind, dann zurueck und die volle Seite bis zur
+      // Grenze aufnehmen.
+      await page.evaluate(async (grenze) => {
+        for (let y = 0; y < grenze; y += 300) {
+          window.scrollTo(0, y);
+          await new Promise((r) => setTimeout(r, 80));
+        }
+        window.scrollTo(0, 0);
+        await new Promise((r) => setTimeout(r, 400));
+      }, a.voll);
+      await ruhe(page, Boolean(a.extern));
+      // Feste Elemente am unteren Rand (Telefon-Buchungsleisten) landen in
+      // einer Vollseitenaufnahme mitten im Bild. Ausblenden.
+      await page.evaluate(() => {
+        for (const el of document.body.querySelectorAll("*")) {
+          const cs = getComputedStyle(el);
+          if (cs.position !== "fixed") continue;
+          const r = el.getBoundingClientRect();
+          if (r.top > window.innerHeight / 2) el.style.visibility = "hidden";
+        }
+      });
+      const dokument = await page.evaluate(() => document.documentElement.scrollHeight);
+      await page.screenshot({
+        path: pfad,
+        fullPage: true,
+        clip: { x: 0, y: 0, width: a.breite, height: Math.min(a.voll, dokument) },
+      });
+    } else {
+      await ziel.screenshot({ path: pfad });
+    }
 
     const masse = await page.evaluate(() => {
       const el = document.querySelector("[data-erfassung] > *");

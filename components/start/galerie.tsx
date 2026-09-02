@@ -8,6 +8,7 @@ import bildClearflow from "@/public/arbeiten/entwurf-clearflow.png";
 import bildStoneleaf from "@/public/arbeiten/entwurf-stoneleaf.png";
 import bildFoxandco from "@/public/arbeiten/entwurf-foxandco.png";
 
+import GalerieZeiger from "./galerie-zeiger";
 import Reveal from "./reveal";
 import { start } from "@/content/start";
 
@@ -55,7 +56,7 @@ const BILD: Record<string, StaticImageData> = {
 };
 
 export default function StartGalerie() {
-  const { id, augenbraue, titel, lead, karten } = start.galerie;
+  const { id, augenbraue, titel, lead, karten, zeiger } = start.galerie;
 
   return (
     <Reveal as="section" id={id} className="st-sect st-galerie">
@@ -72,6 +73,7 @@ export default function StartGalerie() {
           </p>
         </div>
 
+        <GalerieZeiger label={zeiger}>
         <ul className="st-galerie__raster">
           {karten.map((k, i) => (
             <li
@@ -112,6 +114,7 @@ export default function StartGalerie() {
             </li>
           ))}
         </ul>
+        </GalerieZeiger>
       </div>
     </Reveal>
   );

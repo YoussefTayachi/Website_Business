@@ -287,6 +287,36 @@
   }
 }
 
+/* DIE FORTSCHRITTSLINIE. Ein Strich in Sky an der Unterkante der Leiste,
+   der mit dem Scrollen von links nach rechts waechst. Zwei Pixel, nicht
+   mehr: er ist eine Auskunft, kein Balken. Ohne Scroll-Zeitleiste gibt es
+   ihn nicht, und das ist ein vollstaendiger Zustand. */
+.st-bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--c-accent-fill);
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .st-bar::after {
+    animation: stFortschritt linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+@keyframes stFortschritt {
+  to {
+    transform: scaleX(1);
+  }
+}
+
 @keyframes stBarHoehe {
   from {
     min-height: var(--st-bar);
@@ -522,6 +552,20 @@
   .st-pill:hover .st-pill__text + .st-pill__text {
     transform: none;
   }
+}
+
+/* Der Magnet um den Hero-Knopf. Nur eine Huelle; die Verschiebung schreibt
+   components/start/magnet.tsx als translate auf den Knopf darin. */
+.st-magnet {
+  display: inline-flex;
+}
+
+.st-magnet > .st-pill {
+  transition:
+    background 0.2s var(--st-ease),
+    transform 0.2s var(--st-ease),
+    box-shadow 0.2s var(--st-ease),
+    translate 0.35s var(--st-ease);
 }
 
 /* Der Druck. Auch auf dem Telefon: ein Knopf, der beim Tippen nicht
@@ -1133,6 +1177,60 @@
   }
 }
 
+/* ══ DAS LAUFBAND ═══════════════════════════════════════════════════════
+   Zwei gleiche Spuren nebeneinander, die Animation schiebt beide um die
+   Breite einer Spur nach links, und in dem Moment sieht es aus wie am
+   Anfang. Die Kanten laufen ueber eine Maske ins Nichts. Beim Ueberfahren
+   bleibt es stehen: was jemand lesen will, laeuft ihm nicht davon. */
+.st-band {
+  display: flex;
+  overflow: hidden;
+  margin-top: clamp(2rem, 4vw, 3rem);
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  user-select: none;
+}
+
+.st-band__spur {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  animation: stBand 32s linear infinite;
+}
+
+.st-band:hover .st-band__spur {
+  animation-play-state: paused;
+}
+
+.st-band__spur li {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  padding-right: 1.75rem;
+  font-family: var(--st-display);
+  font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  color: var(--c-faint);
+}
+
+.st-band__punkt {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--c-accent-fill);
+}
+
+@keyframes stBand {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════════════════
    GALERIE
    ═══════════════════════════════════════════════════════════════════════
@@ -1360,6 +1458,63 @@
   }
 }
 
+/* ══ DIE MARKE AM ZEIGER ════════════════════════════════════════════════
+   Eine Pille, die dem Zeiger ueber den Karten folgt. Sie sitzt in einem
+   relativ positionierten Feld um das Raster; die Verschiebung schreibt
+   components/start/galerie-zeiger.tsx als transform. Die Pille ist fuer den
+   Zeiger durchlaessig, sonst faengt sie den Klick ab, der der Karte gilt. */
+.st-galerie__feld {
+  position: relative;
+}
+
+.st-zeiger {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  display: none;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: var(--st-r-pill);
+  background: var(--c-solid);
+  color: var(--c-solid-ink);
+  font-size: var(--st-fs-tag);
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.st-zeiger::before {
+  /* Die Pille sitzt mit ihrer Mitte am Zeiger, nicht mit ihrer Ecke: der
+     Versatz kommt ueber ein Pseudoelement, damit das transform der
+     Komponente allein die Position traegt. */
+  content: "";
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .st-zeiger {
+    display: inline-flex;
+    margin: -1.25rem 0 0 -2.5rem;
+    opacity: 0;
+    scale: 0.6;
+    transition:
+      opacity 0.2s var(--st-ease),
+      scale 0.3s var(--st-spring);
+  }
+
+  .st-zeiger[data-da] {
+    opacity: 1;
+    scale: 1;
+  }
+
+  /* Mit der Pille am Zeiger braucht die Tafel ihren Pfeil nicht mehr. */
+  .st-karte__pfeil {
+    display: none;
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════════════════
    ECHTE ARBEIT
    ═══════════════════════════════════════════════════════════════════════
@@ -1403,7 +1558,25 @@
   }
 }
 
-.st-arbeit__bild {
+/* DIE BUEHNE: breite Aufnahme im Rahmen, Telefon davor, unten rechts.
+   Beide Aufnahmen sind laenger als ihr Ausschnitt und wandern beim
+   Ueberfahren nach unten (Weg aus arbeit.tsx als --st-lauf-*). Die Buehne
+   traegt unten Luft, damit das Telefon ueber die Kante des Rahmens ragen
+   kann, ohne in den Text darunter zu laufen. */
+.st-arbeit__weg {
+  position: relative;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.st-arbeit__buehne {
+  position: relative;
+  display: block;
+  padding-bottom: 2.5rem;
+}
+
+.st-arbeit__breit {
   display: block;
   overflow: hidden;
   border: 1px solid var(--c-line2);
@@ -1411,6 +1584,10 @@
   background: var(--c-wash);
   box-shadow: var(--sh-lift);
   line-height: 0;
+  /* Beide breiten Aufnahmen sind 1200 breit (scripts/aufnahmen.mjs) und
+     werden auf dieses Fenstermass beschnitten, damit beide Karten gleich
+     hoch sind und nichts springt. */
+  aspect-ratio: 1200 / 760;
   transition:
     transform 0.32s var(--st-ease),
     box-shadow 0.32s var(--st-ease);
@@ -1420,27 +1597,62 @@
   display: block;
   width: 100%;
   height: auto;
-  /* Beide Aufnahmen sind 1200 zu 760 (scripts/aufnahmen.mjs). Das Mass
-     steht hier, damit beide Karten gleich hoch sind und nichts springt. */
-  aspect-ratio: 1200 / 760;
-  object-fit: cover;
-  object-position: top center;
-  transition: transform 0.7s var(--st-ease);
+  transition: transform 9s linear;
+}
+
+.st-arbeit__telefon {
+  position: absolute;
+  right: 1rem;
+  bottom: 0;
+  z-index: 2;
+  display: block;
+  width: clamp(6.5rem, 22%, 9rem);
+  padding: 0.3rem;
+  border-radius: 1.4rem;
+  background: var(--c-solid);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 24px 40px -18px rgba(0, 0, 0, 0.5);
+  transition: transform 0.4s var(--st-spring);
+}
+
+.st-arbeit__screen {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.1rem;
+  aspect-ratio: 9 / 19;
+  background: var(--c-sheet);
+}
+
+.st-arbeit__tel-img {
+  position: absolute;
+  inset: 0 0 auto 0;
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 9s linear;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .st-arbeit__fall:hover .st-arbeit__bild {
+  .st-arbeit__fall:hover .st-arbeit__breit {
     transform: translateY(-6px);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 28px 48px -24px rgba(0, 0, 0, 0.35);
   }
 
   .st-arbeit__fall:hover .st-arbeit__img {
-    transform: scale(1.03);
+    transform: translateY(var(--st-lauf-breit, 0%));
+  }
+
+  .st-arbeit__fall:hover .st-arbeit__tel-img {
+    transform: translateY(var(--st-lauf-telefon, 0%));
+  }
+
+  .st-arbeit__fall:hover .st-arbeit__telefon {
+    transform: translateY(-8px) rotate(-2deg);
   }
 }
 
 .st-arbeit__text {
-  margin-top: 1.25rem;
+  margin-top: 0.5rem;
 }
 
 .st-arbeit__art {
@@ -2082,8 +2294,25 @@
   }
 
   .st-bar,
-  .st-bar__in {
+  .st-bar__in,
+  .st-bar::after,
+  .st-band__spur {
     animation: none;
+  }
+
+  .st-bar::after {
+    display: none;
+  }
+
+  .st-zeiger {
+    display: none;
+  }
+
+  .st-arbeit__img,
+  .st-arbeit__tel-img,
+  .st-arbeit__telefon,
+  .st-arbeit__breit {
+    transition: none;
   }
 
   .st-hero .st-geraet,
@@ -2099,8 +2328,6 @@
   .st-modus__label svg,
   .st-ablauf__nr,
   .st-ablauf__schritt,
-  .st-arbeit__bild,
-  .st-arbeit__img,
   .st-person__bild,
   .st-person__bild img,
   .st-fuss__gross,

@@ -1,3 +1,4 @@
+import Laufband from "./laufband";
 import Reveal from "./reveal";
 import { start } from "@/content/start";
 
@@ -46,6 +47,10 @@ export default function StartBeweis() {
             </li>
           ))}
         </ul>
+      </div>
+
+      <div className="st-rise" style={{ ["--i" as string]: 2 }}>
+        <Laufband />
       </div>
     </Reveal>
   );
