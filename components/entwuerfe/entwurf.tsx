@@ -156,6 +156,14 @@ const MOTIV = {
   typo: MotivBahnen,
 } as const;
 
+/** Das Motiv allein, fuer das Cover (components/entwuerfe/cover.tsx): dort
+ *  steht dieselbe Zeichnung als Marke in der Mitte, damit Cover und Seite
+ *  erkennbar zusammengehoeren. */
+export function EntwurfMotiv({ bauform }: { bauform: Entwurf["bauform"] }) {
+  const Motiv = MOTIV[bauform];
+  return <Motiv />;
+}
+
 function Bild({ e, className }: { e: Entwurf; className?: string }) {
   const Motiv = MOTIV[e.bauform];
   return (

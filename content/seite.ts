@@ -225,11 +225,11 @@ export const seite = {
          vor dem Laden. */
       {
         ueberschrift: "Cookies and embedded content",
-        text: "Unless you open the booking calendar, this website sets no cookies and loads nothing from third-party servers. Fonts are bundled locally, not fetched from an external domain. If you switch the page between light and dark, that choice is stored in your browser so the page looks the same on your next visit. It is not sent anywhere.",
+        text: "This website sets no cookies of its own and loads nothing from third-party servers, with one exception: the booking calendar at the end of the homepage, described below. Fonts are bundled locally, not fetched from an external domain. If you switch the page between light and dark, that choice is stored in your browser so the page looks the same on your next visit. It is not sent anywhere.",
       },
       {
         ueberschrift: "Booking calendar (Calendly)",
-        text: "The booking calendar is provided by Calendly LLC, 271 17th St NW, Atlanta, GA 30363, USA. It is not loaded until you click to open it. Once you do, your browser connects to Calendly, which receives your IP address and can set cookies, and any details you enter to book a call are processed by Calendly on my behalf. You can book by email instead if you prefer.",
+        text: "The booking calendar is provided by Calendly LLC, 271 17th St NW, Atlanta, GA 30363, USA. It loads automatically when you scroll to the booking section at the end of the homepage. At that point your browser connects to Calendly, which receives your IP address and can set cookies, and any details you enter to book a call are processed by Calendly on my behalf. If you would rather not load it, leave the page before the booking section or book by email instead.",
       },
       {
         ueberschrift: "Contact by email",

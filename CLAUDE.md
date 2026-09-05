@@ -17,9 +17,9 @@ Serifen-Signatur der Produktseite. Coral traegt genau eine Aufgabe, Sky ist
 Leitakzent, es gibt einen Dunkelmodus.
 
 Der Aufbau folgt derselben Idee wie die Vorlagengalerie von Wix: **zeigen
-statt beschreiben**. Sieben Flaechen: Hero, Beweisstreifen, Galerie aus sechs
-Gestaltungen, echte laufende Arbeit, sechs Ablaufstufen, Person, Schlussblock
-mit Kalender, Fuss.
+statt beschreiben**. Sieben Flaechen: Hero, Laufband der Gewerke, Galerie aus
+sechs Gestaltungen, echte laufende Arbeit, sechs Ablaufstufen, Person,
+Schlussblock mit Kalender, Fuss.
 
 **Die Galerie ist der Kern.** Sechs Website-Entwuerfe (`content/entwuerfe.ts`,
 `components/entwuerfe/`) in **sechs verschiedenen Bauformen**, jeder mit
@@ -38,7 +38,7 @@ wieder ein.**
 |---|---|
 | "remove Before and after, showing your previous is more meaningful" | Vergleich ersatzlos gestrichen, `components/start/arbeit.tsx` zeigt stattdessen frostbreaker.app |
 | "How it works: titles like Onboarding, Research, ... instead of a sentence" | sechs benannte Stufen in `content/start.ts`, `ablauf` |
-| "have the calendar integrated to reduce friction" | `components/start/kalender.tsx`, eingebettet, laedt auf Klick |
+| "have the calendar integrated to reduce friction" | `components/start/kalender.tsx`, eingebettet; seit dem 2026-09-05 ohne Klick davor (siehe unten) |
 | "logo and quicklink the same font size" | `--st-fs-nav`, beide 17px |
 | "remove the Auto and have 2 logo for dark and light" | `modus.tsx`, zwei Zeichen, folgt ohne Klick dem Geraet |
 | "6 websites have a similar layout, likely a template" | drei Bauformen fuer sechs Entwuerfe wurden sechs Bauformen |
@@ -86,7 +86,7 @@ Vorbild war godly.design, eine Sammlung gut gestalteter Seiten nach Bauteil
 | Hero | Woerter kommen aus Unschaerfe, Telefon kippt dem Zeiger entgegen, Anrufkarte springt nach 1,3s auf |
 | Galerie | Bild kommt aus leichter Vergroesserung, Karte hebt sich mit Schatten |
 | Beweis | Laufband der sechs Gewerke (`laufband.tsx`), haelt beim Ueberfahren |
-| Galerie | Pille "Open" folgt dem Zeiger ueber den Karten (`galerie-zeiger.tsx`) |
+| Galerie | Karte nach godly.design (seit 2026-09-05): Bild wird unscharf, Tafel mit Name und Gewerk faehrt herein, dunkles Quadrat mit Kettenglied. Die Pille am Zeiger von 2026-09-02 ist dafuer weg |
 | Arbeit | zwei Faelle, je Schreibtisch plus Telefon; beide Aufnahmen sind laenger als ihr Rahmen und wandern beim Ueberfahren (Weg aus den Bildmassen gerechnet) |
 | Hero-Knopf | Magnet (`magnet.tsx`): rueckt dem Zeiger bis 8px entgegen |
 | Kopfleiste | Fortschrittslinie in Sky an der Unterkante, scroll-getrieben |
@@ -98,8 +98,39 @@ Vorbild war godly.design, eine Sammlung gut gestalteter Seiten nach Bauteil
 
 Die Texte folgen drei Fragen: SCHMERZ (Schlagzeile), PERSON (Augenbraue
 "trades and local businesses", "six trades"), VERSPRECHEN (Lead, Arbeit,
-Person). Die Wortzahl ist dabei gesunken (506 auf 492 ueber alle
-Zeichenketten in `content/start.ts`), obwohl ein zweiter Fall dazukam.
+Person). Die Wortzahl war dabei gesunken (506 auf 492 ueber alle
+Zeichenketten in `content/start.ts`), obwohl ein zweiter Fall dazukam. Am
+2026-09-05 ist sie wieder gestiegen, mit Absicht (siehe naechster Abschnitt).
+
+## Das zweite Mentor-Review vom 2026-09-05
+
+Vier Punkte fuer diese Seite, alle umgesetzt. Die Punkte zur Hauptseite
+frostbreaker.app (Titel des Ablaufs, "Who it's for", Durchstreichung) liegen
+im Repo `Websites/Frostbreaker_Website`.
+
+| Einwand | Umgesetzt als |
+|---|---|
+| "For 'How it works' make the descriptions longer" | zwei bis drei Saetze je Stufe in `content/start.ts`, `ablauf`; `.st-ablauf__text` auf 36ch verbreitert |
+| "Remove 'This site, the app that emailed you ...' below the hero, it's just a different page" | Satz und beide Chips gestrichen, `beweis.tsx` traegt nur noch das Laufband |
+| "Integrate the calendar without any button to reduce friction" | Deckel weg, `kalender.tsx` laedt per IntersectionObserver 600px vor dem Block |
+| zwei Aufnahmen von godly.design als Vorlage fuer die Karte | Tafel unten mit Name und Gewerk, Kettenglied-Knopf, Bild unscharf beim Ueberfahren (`start.css`, `.st-karte`) |
+| "the images of the website needs to change", mit denselben zwei Aufnahmen als Vorlage | die Galerie zeigt je Entwurf ein COVER statt der Seitenaufnahme (siehe naechster Absatz) |
+
+**Die Cover.** `components/entwuerfe/cover.tsx` setzt Motiv, Marke,
+Schlagzeile und die drei Farben eines Entwurfs auf 1200 x 760, `cover.css`
+baut den koernigen Ring aus Kegelverlauf plus Rauschmaske. Aufgenommen wird
+ueber `app/erfassung/cover/[slug]/page.capture.tsx` mit
+`node scripts/aufnahmen.mjs --nur cover-*`, in Skala 1: Rauschen
+komprimiert nicht (5 MB je Cover bei Skala 2), und 1200 px reichen fuer eine
+Karte von hoechstens 544 px auch auf 2x. Wer einen Entwurf in
+`content/entwuerfe.ts` aendert, nimmt sein Cover neu auf. Die Aufnahmen
+`entwurf-*.png` BLEIBEN: das OG-Bild schneidet drei davon an. `--nur` nimmt
+seither ein Praefix mit Stern, und das Manifest wird bei einer Teilaufnahme
+zusammengefuehrt statt ueberschrieben.
+
+**Die Wortzahl ist dabei gestiegen.** Das ist kein Rueckfall, sondern der
+ausdrueckliche Wunsch des Mentors fuer genau diesen einen Abschnitt. Fuer
+alles andere gilt weiter: wenig Text.
 
 `prefers-reduced-motion: reduce` zeigt weiterhin den Endzustand, fuer jede
 neue Bewegung steht eine Zeile im Reduzierblock von `start.css`.
@@ -243,20 +274,24 @@ dort kein `st-`-Stil haengt.
 ## Der Kalender und der Datenschutz
 
 Der Schlussblock bettet den Buchungskalender von Calendly ein
-(`components/start/kalender.tsx`). Er laedt **erst auf Klick**, und das ist
-keine Vorsicht auf Verdacht: ein Betrieb mit deutschem Impressum darf einen
-Dritten, der Cookies setzt, nach TDDDG Paragraf 25 nicht ungefragt nachladen.
-Der Klick IST die Einwilligung, und er kostet einen Klick statt eines
-Seitenwechsels.
+(`components/start/kalender.tsx`). **Seit dem 2026-09-05 laedt er ohne
+Klick**, sobald der Schlussblock 600px vor dem Fenster steht
+(IntersectionObserver). Bis dahin lag ein Deckel mit "Open the calendar"
+darueber, und der Klick war die Einwilligung nach TDDDG Paragraf 25, weil
+Calendly Cookies setzt. Der Mentor wollte den Knopf weg ("without any button
+to reduce friction"), Youssef hat das so entschieden. Die Abwaegung: der
+Kalender laedt nicht mit der Seite, sondern erst kurz vor dem Sichtbarwerden,
+unter dem Kalender steht eine Zeile, woher er kommt, und die zwei Abschnitte
+in `content/seite.ts` ("Cookies and embedded content" und "Booking
+calendar") sagen, dass er ohne Klick laedt.
 
-**Diese eine Zeile und der Datenschutztext haengen zusammen.** Wer
-`useState(false)` auf `true` stellt, laedt Calendly sofort und muss dann die
-zwei Abschnitte in `content/seite.ts` ("Cookies and embedded content" und
-"Booking calendar") neu schreiben und eine echte Einwilligung davorsetzen.
+**Diese drei Stellen haengen zusammen.** Wer den Klick wieder davorsetzt oder
+den Kalender schon mit der Seite laedt, schreibt die Hinweiszeile und beide
+Datenschutzabsaetze mit um.
 
-Ohne JavaScript ist der Deckel nicht da (`nur-mit-js`), stattdessen steht ein
-`<noscript>`-Knopf auf calendly.com. Ein Knopf, der auf nichts reagiert, ist
-schlimmer als kein Knopf.
+Ohne JavaScript kommt nie ein Rahmen; dann steht ein `<noscript>`-Knopf auf
+calendly.com an seiner Stelle, und der Ladeplatzhalter ist weg
+(`nur-mit-js`).
 
 ## Was hier bewusst fehlt
 

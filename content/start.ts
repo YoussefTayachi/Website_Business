@@ -1,5 +1,18 @@
 // Aller sichtbare Text der Startseite und der Entwurfsseiten.
 //
+// STAND 2026-09-05: zweites Review des Mentors. Vier Punkte fuer diese
+// Seite, alle umgesetzt:
+//   - der Satz unter dem Hero ("This site, the app that emailed you ...")
+//     ist samt Chips GESTRICHEN, dort laeuft nur noch das Laufband
+//   - die sechs Stufen unter "How it works" haben LAENGERE Beschreibungen,
+//     zwei bis drei Saetze statt einem: "make the descriptions longer"
+//   - der Kalender laedt OHNE KNOPF, sobald der Schlussblock naht
+//   - die Galeriekarte hat den Hover von godly.design (Unschaerfe, Tafel,
+//     Kettenglied), siehe components/start/galerie.tsx
+// Die Wortzahl ist damit gestiegen, und zwar mit Absicht: der Mentor hat
+// die laengeren Stufen ausdruecklich verlangt. Ueberall sonst gilt weiter
+// WENIG TEXT.
+//
 // STAND 2026-09-02: zweite Ueberarbeitung. Die Seite argumentiert jetzt
 // entlang dreier Fragen, die ein Betrieb aus einer Kaltakquise-Mail in
 // dieser Reihenfolge stellt:
@@ -122,16 +135,17 @@ export const start = {
     },
   },
 
+  /**
+   * DER STREIFEN UNTER DEM HERO. Seit dem 2026-09-05 nur noch das Laufband.
+   *
+   * Hier stand ein Satz ("This site, the app that emailed you, every design
+   * below: all built by me.") mit zwei Chips auf die Produktseite und die
+   * Software. Der Mentor: "Remove it, it doesn't make sense to have it there
+   * when it's just a different page." Der Beleg steht unter "Real work".
+   */
   beweis: {
-    satz: "This site, the app that emailed you, every design below: all built by me.",
-    links: [
-      { label: "frostbreaker.app", href: "https://www.frostbreaker.app/", zusatz: "Product site" },
-      { label: "app.frostbreaker.app", href: "https://app.frostbreaker.app/", zusatz: "The software" },
-    ],
-    /** Steht vor jedem Chip als gruener Punkt: beide Adressen laufen. */
-    live: "Live",
-    /** Das Laufband darunter nennt die Gewerke der Galerie. Es traegt keine
-     *  eigenen Woerter: die Namen kommen aus galerie.karten. */
+    /** Beschriftung des Laufbands fuer Vorleser. Es traegt keine eigenen
+     *  Woerter: die Namen kommen aus galerie.karten. */
     laufband: "Trades I build for",
   },
 
@@ -166,11 +180,6 @@ export const start = {
       { slug: "stoneleaf", name: "Stoneleaf", art: "Landscaping" },
       { slug: "foxandco", name: "Fox & Co", art: "Painting" },
     ],
-    /** Beschriftung des Knopfes auf der Karte. */
-    oeffnen: "Open the design",
-    /** Die Marke, die auf dem Schreibtisch dem Zeiger ueber den Karten
-     *  folgt (components/start/galerie-zeiger.tsx). Zierde. */
-    zeiger: "Open",
   },
 
   /**
@@ -236,21 +245,48 @@ export const start = {
    * 'Onboarding; Research; Branding; Design; Launch; Maintenance' instead of
    * having a sentence."
    *
-   * DIE ZEILE UNTER JEDER STUFE BLEIBT KURZ. Der Titel traegt, der Satz
-   * erklaert. Wo er laenger wird als eine Zeile, ist die Stufe falsch
-   * benannt.
+   * DIE BESCHREIBUNGEN SIND SEIT DEM 2026-09-05 LAENGER, zwei bis drei
+   * Saetze je Stufe. Der Mentor in der zweiten Runde: "For 'How it works'
+   * make the descriptions longer." Vorher stand ein Satz, und der sagte nur,
+   * WAS passiert; jetzt steht dabei, was der Betrieb davon hat und was er
+   * selbst tun muss (fast nichts). Leichte Sprache, keine Fachwoerter,
+   * keine Zahlen, die sich nicht halten lassen.
    */
   ablauf: {
     id: "how",
     augenbraue: "How it works",
     titel: "Six stages. You see every one of them.",
     schritte: [
-      { nr: "01", titel: "Onboarding", text: "One call. I learn the trade and the goal." },
-      { nr: "02", titel: "Research", text: "Your area, your competitors, what customers search for." },
-      { nr: "03", titel: "Branding", text: "Colour, type and logo that fit the trade." },
-      { nr: "04", titel: "Design", text: "You see the real page on your own phone." },
-      { nr: "05", titel: "Launch", text: "Live on your domain. Files and logins are yours." },
-      { nr: "06", titel: "Maintenance", text: "Changes when you need them. You email me." },
+      {
+        nr: "01",
+        titel: "Onboarding",
+        text: "One call to start. You tell me about your trade, your area and the jobs you want more of. I ask what your current site costs you, and we agree on what the new one has to do.",
+      },
+      {
+        nr: "02",
+        titel: "Research",
+        text: "I look at how people in your area search for your trade and what your competitors show them. I read your reviews to see what customers praise. That decides what goes at the top of your page.",
+      },
+      {
+        nr: "03",
+        titel: "Branding",
+        text: "Colours, type and a logo that fit your trade and look right on a van, a quote and a phone screen. If you already have a logo, I build around it instead of replacing it.",
+      },
+      {
+        nr: "04",
+        titel: "Design",
+        text: "You see the real page on your own phone, not a drawing. We go through it together, you tell me what feels wrong, and I change it. Nothing goes live until you are happy with it.",
+      },
+      {
+        nr: "05",
+        titel: "Launch",
+        text: "I put the page live on your domain and check that calls, forms and maps work. The files and every login are yours. If we ever stop working together, you keep all of it.",
+      },
+      {
+        nr: "06",
+        titel: "Maintenance",
+        text: "New photos, a new service, changed opening hours: you email me and it gets done. No ticket system and no support queue. I keep the page fast and up to date.",
+      },
     ],
   },
 
@@ -286,15 +322,13 @@ export const start = {
    * to reduce friction." Richtig: jeder Wechsel auf eine fremde Domain
    * kostet Buchungen, und calendly.com sieht nicht aus wie diese Seite.
    *
-   * WARUM TROTZDEM EIN KLICK DAVOR STEHT: der Kalender kommt von Calendly,
-   * einem Dritten, und setzt beim Laden dessen Cookies. Ein deutscher Betrieb
-   * mit Impressum und Datenschutzerklaerung darf so etwas nach TDDDG Paragraf
-   * 25 nicht ungefragt nachladen. Der Klick IST die Einwilligung, und er
-   * kostet einen Klick statt eines Seitenwechsels.
-   *
-   * Wer das anders bewerten will, aendert genau eine Zeile in
-   * components/start/kalender.tsx (`geladen` von Anfang an true) und
-   * streicht den Absatz in content/seite.ts, Datenschutz.
+   * SEIT DEM 2026-09-05 OHNE KNOPF DAVOR. Der Mentor in der zweiten Runde:
+   * "Integrate the calendar to your page without any button to reduce
+   * friction." Der Kalender laedt jetzt von selbst, sobald der Block naht.
+   * Bis dahin stand ein Klick davor, weil Calendly Cookies setzt (TDDDG
+   * Paragraf 25); der Hinweis darunter und die Datenschutzerklaerung in
+   * content/seite.ts sagen jetzt, dass der Kalender ohne Klick laedt. Die
+   * Abwaegung dazu steht in components/start/kalender.tsx.
    */
   schluss: {
     id: "book",
@@ -305,8 +339,7 @@ export const start = {
     kalender: {
       /** Beschriftung des Rahmens fuer Vorleser. */
       rahmen: "Booking calendar",
-      knopf: "Open the calendar",
-      hinweis: "The calendar is loaded from Calendly and sets their cookies.",
+      hinweis: "The calendar comes from Calendly and sets their cookies.",
       direkt: { label: "Or book on calendly.com", href: CALL },
       laedt: "Loading the calendar",
     },

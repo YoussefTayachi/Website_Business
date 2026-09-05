@@ -1,55 +1,27 @@
 import Laufband from "./laufband";
 import Reveal from "./reveal";
-import { start } from "@/content/start";
 
 /**
- * Der Beweisstreifen. Der einzige Ort auf dieser Seite, an dem etwas steht,
- * das jemand nachpruefen kann.
+ * Der Streifen unter dem Hero. Seit dem 2026-09-05 steht hier NUR NOCH das
+ * Laufband der sechs Gewerke.
  *
- * WARUM ER GLEICH UNTER DEM HERO STEHT und nicht weiter unten: wer aus einer
- * Kaltakquise-Mail kommt, hat genau eine Frage, und die lautet "wer schreibt
- * mir da eigentlich". Sie muss beantwortet sein, bevor irgendetwas verkauft
- * wird.
+ * WAS HIER STAND UND WARUM ES WEG IST: ein Satz ("This site, the app that
+ * emailed you, every design below: all built by me.") mit zwei Chips auf
+ * frostbreaker.app und app.frostbreaker.app. Der Mentor am 2026-09-05:
+ * "Remove the 'This site, the app that emailed you ...' below the hero
+ * section because it doesn't make sense to have it there when it's just a
+ * different page." Richtig: wer aus der Mail kommt, hat die App nie gesehen,
+ * der Satz verwies auf etwas, das fuer ihn nicht existiert. Der Beleg
+ * dafuer, dass hier gebaut wird, steht weiter unten unter "Real work", mit
+ * Aufnahme und Link, und dort ist er nachpruefbar.
  *
- * ES GIBT KEINEN ZUGESTIMMTEN KUNDENFALL. Der einzige echte Beleg ist
- * Frostbreaker selbst, und genau der steht hier: die Produktseite und die
- * Software. Beides sind echte Adressen, beide oeffnen sich. Was hier NICHT
- * steht, steht bewusst nicht da: keine erfundenen Kundenlogos, keine
- * Testimonials, keine Zahl ueber zufriedene Betriebe. Die Zielgruppe prueft
- * so etwas nach, und ein einziger Fund kostet den Auftrag.
- *
- * rel="noreferrer" ist hier Absicht und nicht Gewohnheit: die Adressen
- * gehoeren demselben Betreiber, aber der Verweis soll trotzdem nichts ueber
- * die Herkunft verraten, solange die Seite noch nicht oeffentlich ist.
+ * Die Chips sind mitgegangen: ohne den Satz standen zwei Adressen ohne
+ * Zusammenhang da, und frostbreaker.app ist unter "Real work" verlinkt.
  */
 export default function StartBeweis() {
-  const { satz, links, live } = start.beweis;
-
   return (
     <Reveal as="section" className="st-beweis">
-      <div className="st-wrap st-beweis__in">
-        <p className="st-beweis__satz st-rise" style={{ ["--i" as string]: 0 }}>
-          {satz}
-        </p>
-
-        <ul className="st-beweis__links st-rise" style={{ ["--i" as string]: 1 }}>
-          {links.map((l) => (
-            <li key={l.href}>
-              <a className="st-chip" href={l.href} target="_blank" rel="noreferrer">
-                {/* Der gruene Punkt pulsiert: beide Adressen laufen, und das
-                    ist der Punkt des ganzen Streifens. Das Wort dazu ist
-                    fuer Vorleser da. */}
-                <span className="st-chip__punkt" aria-hidden="true" />
-                <span className="st-sr">{live}: </span>
-                {l.label}
-                <span className="st-chip__zusatz">{l.zusatz}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="st-rise" style={{ ["--i" as string]: 2 }}>
+      <div className="st-rise" style={{ ["--i" as string]: 0 }}>
         <Laufband />
       </div>
     </Reveal>

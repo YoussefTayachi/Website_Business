@@ -1,47 +1,43 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Knopf from "./knopf";
 import { start } from "@/content/start";
 
 /* ============================================================================
-   DER KALENDER AUF DER SEITE.
+   DER KALENDER AUF DER SEITE, seit dem 2026-09-05 OHNE KNOPF DAVOR.
 
    ══ WARUM ES IHN GIBT ══════════════════════════════════════════════════════
-   Youssefs Mentor: "For the CTA, have the calendar integrated with your
-   website to reduce friction." Das stimmt: jeder Wechsel auf eine fremde
-   Domain kostet Buchungen, und calendly.com sieht nicht aus wie diese Seite.
-   Wer dort landet, muss sich neu zurechtfinden, und ein Teil geht nicht
-   zurueck.
+   Youssefs Mentor: "have the calendar integrated with your website to reduce
+   friction." Jeder Wechsel auf eine fremde Domain kostet Buchungen.
 
-   ══ WARUM EIN KLICK DAVOR STEHT ════════════════════════════════════════════
-   Der Kalender kommt von Calendly, einem Dritten, und setzt beim Laden dessen
-   Cookies. Ein Betrieb mit deutschem Impressum darf so etwas nach TDDDG
-   Paragraf 25 nicht ungefragt nachladen. Der Klick IST die Einwilligung.
+   ══ WARUM KEIN KLICK MEHR DAVOR STEHT ══════════════════════════════════════
+   Bis zum 2026-09-05 lag ein Deckel mit "Open the calendar" darueber, und
+   der Klick war die Einwilligung nach TDDDG Paragraf 25, weil Calendly beim
+   Laden Cookies setzt. Der Mentor in der zweiten Runde: "Integrate the
+   calendar to your page without any button to reduce friction." Youssef hat
+   das so entschieden.
 
-   Er kostet einen Klick statt eines Seitenwechsels: der Kalender oeffnet sich
-   an Ort und Stelle, niemand verlaesst die Seite, und der Weg zu
-   calendly.com steht daneben fuer alle, die das lieber tun. Damit ist die
-   Reibung kleiner als vorher und nicht groesser.
+   WAS DARAUS FOLGT, und was nicht stillschweigend zurueckgebaut werden darf:
+   der Kalender laedt jetzt, sobald der Schlussblock in die Naehe des Fensters
+   kommt (IntersectionObserver, 600px Vorlauf), ohne Zutun. Der Hinweis unter
+   dem Kalender und die zwei Abschnitte in content/seite.ts (Datenschutz,
+   "Cookies and embedded content" und "Booking calendar") sagen genau das.
+   Wer den Klick wieder davorsetzt, muss beide zurueckschreiben.
 
-   WER DAS ANDERS BEWERTET, aendert genau eine Zeile: `useState(false)` unten
-   auf `useState(true)`. Dann laedt der Kalender sofort, und der Absatz in
-   content/seite.ts (Datenschutz) muss entsprechend angepasst werden.
+   NICHT SCHON MIT DER SEITE: der Rahmen laedt erst kurz vor dem Sichtbar-
+   werden. Wer die Seite nach dem Hero verlaesst, hat Calendly nie geladen,
+   und der Hero wird nicht von einem fremden Skript ausgebremst.
 
    ══ WARUM DIE FARBEN MITWANDERN ════════════════════════════════════════════
    Calendly faerbt seinen Rahmen ueber Abfrageparameter in der Adresse. Die
    stehen fest, sobald der Rahmen geladen ist. Ein heller Kalender auf einer
    dunklen Seite ist ein weisses Loch, deshalb horcht die Komponente auf die
-   Klasse an <html> und baut die Adresse neu, wenn der Modus wechselt. Das
-   kostet ein Nachladen des Rahmens, und das ist der richtige Tausch: den
-   Modus wechselt man selten, den Kalender sieht man die ganze Zeit.
-
-   loading="lazy" ist kein Detail. Ohne das laedt der Rahmen mit der Seite,
-   also weit oberhalb der Stelle, an der ihn jemand braucht.
+   Klasse an <html> und baut die Adresse neu, wenn der Modus wechselt.
    ========================================================================== */
 
-/** Die Grundadresse. Dieselbe wie der Knopf daneben, nur eingebettet. */
+/** Die Grundadresse. Dieselbe wie der Link darunter, nur eingebettet. */
 const BASIS = "https://calendly.com/youssef-tayachi-frostbreaker/30min";
 
 /* Die Farben stehen hier als nackte Werte und nicht als Token, und das ist
@@ -66,7 +62,8 @@ function adresse(dunkel: boolean) {
 }
 
 export default function Kalender() {
-  const [geladen, setzeGeladen] = useState(false);
+  const huelle = useRef<HTMLDivElement>(null);
+  const [nah, setzeNah] = useState(false);
   const [dunkel, setzeDunkel] = useState(false);
   const t = start.schluss.kalender;
 
@@ -81,62 +78,80 @@ export default function Kalender() {
     return () => beobachter.disconnect();
   }, []);
 
-  if (!geladen) {
-    return (
-      <div className="st-kal st-kal--zu">
-        {/* nur-mit-js: ohne JavaScript kann dieser Knopf nichts oeffnen, und
-            ein Knopf, der auf nichts reagiert, ist schlimmer als kein Knopf.
-            Der Schalter dafuer ist das <noscript>-Stylesheet in
-            app/layout.tsx, also eine Regel, die der Browser nur anwendet,
-            wenn JavaScript wirklich aus ist. */}
-        <div className="st-kal__deckel nur-mit-js">
-          {/* Ein angedeuteter Kalender. Zierde, also aria-hidden: er zeigt,
-              WAS sich hinter dem Knopf oeffnet, und ist kein Inhalt. */}
-          <div className="st-kal__gitter" aria-hidden="true">
-            {/* Die freien Tage leuchten nacheinander auf (start.css): der
-                Monat wirkt so, als taete sich etwas, bevor jemand klickt. */}
-            {Array.from({ length: 28 }, (_, i) => (
-              <span
-                key={i}
-                data-frei={i % 7 === 2 || i % 9 === 4 ? "" : undefined}
-                style={{ ["--i" as string]: i }}
-              />
-            ))}
+  // Laden, sobald der Block 600px vor dem Fenster steht. Einmal geladen
+  // bleibt geladen: ein Kalender, der beim Zurueckscrollen verschwindet,
+  // waere ein Fehler und kein Sparen.
+  useEffect(() => {
+    const el = huelle.current;
+    if (!el || nah) return;
+    if (!("IntersectionObserver" in window)) {
+      setzeNah(true);
+      return;
+    }
+    const o = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setzeNah(true);
+          o.disconnect();
+        }
+      },
+      { rootMargin: "600px 0px" },
+    );
+    o.observe(el);
+    return () => o.disconnect();
+  }, [nah]);
+
+  return (
+    <div ref={huelle}>
+      <div className="st-kal">
+        {nah ? (
+          <iframe
+            // key erzwingt einen neuen Rahmen, wenn der Modus wechselt. Ohne
+            // ihn aendert React nur das src-Attribut, und Chrome traegt das in
+            // die Verlaufsliste ein: der Zurueck-Knopf des Browsers landete
+            // dann im Kalender statt auf der vorigen Seite.
+            key={dunkel ? "dark" : "light"}
+            className="st-kal__rahmen"
+            src={adresse(dunkel)}
+            title={t.rahmen}
+          />
+        ) : (
+          /* Bis der Rahmen da ist, steht ein angedeuteter Monat an seiner
+             Stelle, in derselben Hoehe: der Abschnitt springt nicht, wenn
+             Calendly kommt. nur-mit-js, weil ohne JavaScript nie etwas kommt
+             und dann der <noscript>-Knopf darunter der Weg ist. */
+          <div className="st-kal__laedt nur-mit-js" role="status">
+            <div className="st-kal__gitter" aria-hidden="true">
+              {Array.from({ length: 28 }, (_, i) => (
+                <span
+                  key={i}
+                  data-frei={i % 7 === 2 || i % 9 === 4 ? "" : undefined}
+                  style={{ ["--i" as string]: i }}
+                />
+              ))}
+            </div>
+            <p className="st-kal__hinweis">{t.laedt}</p>
           </div>
-
-          <Knopf onClick={() => setzeGeladen(true)}>{t.knopf}</Knopf>
-
-          <p className="st-kal__hinweis">{t.hinweis}</p>
-
-          <a className="st-kal__direkt" href={t.direkt.href} target="_blank" rel="noreferrer">
-            {t.direkt.label}
-          </a>
-        </div>
+        )}
 
         <noscript>
-          <div className="st-kal__deckel">
+          <div className="st-kal__laedt">
             <Knopf href={t.direkt.href} extern>
               {t.direkt.label}
             </Knopf>
           </div>
         </noscript>
       </div>
-    );
-  }
 
-  return (
-    <div className="st-kal">
-      <iframe
-        // key erzwingt einen neuen Rahmen, wenn der Modus wechselt. Ohne ihn
-        // aendert React nur das src-Attribut, und Chrome traegt das in die
-        // Verlaufsliste ein: der Zurueck-Knopf des Browsers landete dann im
-        // Kalender statt auf der vorigen Seite.
-        key={dunkel ? "dark" : "light"}
-        className="st-kal__rahmen"
-        src={adresse(dunkel)}
-        title={t.rahmen}
-        loading="lazy"
-      />
+      {/* Der Hinweis gehoert UNTER den Kalender und nicht in die
+          Datenschutzerklaerung allein: wer hier bucht, soll an der Stelle
+          lesen koennen, dass ein Dritter laedt. */}
+      <p className="st-kal__fuss">
+        {t.hinweis}{" "}
+        <a className="st-kal__direkt" href={t.direkt.href} target="_blank" rel="noreferrer">
+          {t.direkt.label}
+        </a>
+      </p>
     </div>
   );
 }

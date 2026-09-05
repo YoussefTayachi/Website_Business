@@ -93,12 +93,13 @@ Farben und Schriftgrößen kommen als Tokens: für die Startseite aus
 
 Schriften liegen lokal als `@fontsource-variable`-Pakete.
 
-**Genau eine fremde Domain kann angefragt werden, und nur auf Klick:** der
-Buchungskalender von Calendly im Schlussblock. Bis jemand „Open the calendar"
-drückt, stellt die Seite keine einzige Anfrage nach außen, und der
-Datenschutztext sagt genau das (`content/seite.ts`, zwei Abschnitte). Wer den
-Kalender auf sofortiges Laden umstellt (eine Zeile in
-`components/start/kalender.tsx`), muss beide Abschnitte neu schreiben.
+**Genau eine fremde Domain wird angefragt:** der Buchungskalender von
+Calendly im Schlussblock. Er lädt seit dem 2026-09-05 ohne Klick, sobald der
+Block 600px vor dem Fenster steht; bis dahin stellt die Seite keine einzige
+Anfrage nach außen. Der Datenschutztext sagt genau das (`content/seite.ts`,
+zwei Abschnitte), und unter dem Kalender steht eine Zeile dazu. Wer das
+ändert (Klick davor, oder Laden mit der Seite), schreibt alle drei Stellen um
+(siehe CLAUDE.md).
 
 ## Offene Platzhalter vor einem Livegang
 

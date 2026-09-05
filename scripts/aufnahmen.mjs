@@ -91,6 +91,24 @@ const AUFNAHMEN = [
   { fall: "entwurf/stoneleaf", datei: "entwurf-stoneleaf", breite: 1200, hoehe: 760, platz: "Galerie, Garten" },
   { fall: "entwurf/foxandco", datei: "entwurf-foxandco", breite: 1200, hoehe: 760, platz: "Galerie, Maler" },
 
+  // DIE COVER, seit dem 2026-09-05. Die Galerie zeigt je Entwurf ein Cover
+  // (components/entwuerfe/cover.tsx) und nicht mehr die Aufnahme der Seite:
+  // der Mentor wollte andere Bilder im Raster, und sein Vorbild war eine
+  // Marke auf koernigem Verlauf. Die Seitenaufnahmen oben bleiben, das
+  // OG-Bild schneidet drei davon an. Gleiches Mass, damit das Raster steht.
+  //
+  // SKALA 1 UND NICHT 2: die Koernung ist Rauschen, und Rauschen laesst sich
+  // nicht komprimieren. Bei Skala 2 wog ein Cover 5 MB, bei Skala 1 ein
+  // Viertel davon. Die Karte ist nie breiter als 34rem (544px), auf einem
+  // 2x-Bildschirm also 1088 Geraetepixel, und 1200 reichen dafuer ohne
+  // Hochrechnen. Gemessen am 2026-09-05.
+  { fall: "cover/northline", datei: "cover-northline", breite: 1200, hoehe: 760, skala: 1, platz: "Galerie, Cover Bau" },
+  { fall: "cover/voltas", datei: "cover-voltas", breite: 1200, hoehe: 760, skala: 1, platz: "Galerie, Cover Elektro" },
+  { fall: "cover/ridge", datei: "cover-ridge", breite: 1200, hoehe: 760, skala: 1, platz: "Galerie, Cover Dach" },
+  { fall: "cover/clearflow", datei: "cover-clearflow", breite: 1200, hoehe: 760, skala: 1, platz: "Galerie, Cover Sanitaer" },
+  { fall: "cover/stoneleaf", datei: "cover-stoneleaf", breite: 1200, hoehe: 760, skala: 1, platz: "Galerie, Cover Garten" },
+  { fall: "cover/foxandco", datei: "cover-foxandco", breite: 1200, hoehe: 760, skala: 1, platz: "Galerie, Cover Maler" },
+
   // Der Hero. Dieselbe Gestaltung wie in der Galerie, aber schmal
   // aufgenommen: im Telefonrahmen steht eine Telefonansicht und keine
   // verkleinerte Breitbildseite.
@@ -205,14 +223,18 @@ async function ruhe(page, extern) {
 
 const browser = await chromium.launch({ channel: "chrome" });
 const manifest = [];
-const AUSWAHL = NUR ? AUFNAHMEN.filter((a) => a.datei === NUR) : AUFNAHMEN;
+// `--nur cover-*` nimmt alle Dateien mit diesem Anfang, `--nur cement` genau
+// die eine.
+const passt = (a) =>
+  NUR.endsWith("*") ? a.datei.startsWith(NUR.slice(0, -1)) : a.datei === NUR;
+const AUSWAHL = NUR ? AUFNAHMEN.filter(passt) : AUFNAHMEN;
 if (NUR && AUSWAHL.length === 0) throw new Error(`Keine Aufnahme heisst "${NUR}".`);
 
 try {
   for (const a of AUSWAHL) {
     const kontext = await browser.newContext({
       viewport: { width: a.breite, height: a.hoehe },
-      deviceScaleFactor: 2,
+      deviceScaleFactor: a.skala ?? 2,
       // Telefonaufnahmen fremder Seiten mit Geraeteemulation, sonst liefert
       // die Seite ihre Schreibtischfassung in 390px Breite.
       isMobile: Boolean(a.telefon),
@@ -376,7 +398,7 @@ try {
       quelle: a.anonym ? "extern, anonymisiert, Adresse nicht im Manifest" : url,
       fensterbreite: a.breite,
       fensterhoehe: a.hoehe,
-      geraeteskala: 2,
+      geraeteskala: a.skala ?? 2,
       elementweise,
       dokumenthoehe: masse.dh,
       inhaltshoehe: masse.eh,
@@ -389,9 +411,24 @@ try {
     await kontext.close();
   }
 
+  // Bei einer Teilaufnahme (--nur) bleiben die uebrigen Eintraege stehen und
+  // nur die neu aufgenommenen werden ersetzt. Bis zum 2026-09-05 schrieb der
+  // Lauf hier das Manifest mit NUR den neuen Eintraegen, und nach einer
+  // einzelnen Aufnahme stand von den anderen nichts mehr drin.
+  const manifestPfad = path.join(ZIEL, "manifest.json");
+  let bisher = [];
+  if (NUR) {
+    try {
+      bisher = JSON.parse(await readFile(manifestPfad, "utf8")).bilder ?? [];
+    } catch {
+      bisher = [];
+    }
+  }
+  const neu = new Set(manifest.map((m) => m.datei));
+  const bilder = [...bisher.filter((m) => !neu.has(m.datei)), ...manifest];
   await writeFile(
-    path.join(ZIEL, "manifest.json"),
-    JSON.stringify({ erzeugtVon: "scripts/aufnahmen.mjs", bilder: manifest }, null, 2) + "\n",
+    manifestPfad,
+    JSON.stringify({ erzeugtVon: "scripts/aufnahmen.mjs", bilder }, null, 2) + "\n",
     "utf8",
   );
   const gesamt = manifest.reduce((s, m) => s + m.bytes, 0);

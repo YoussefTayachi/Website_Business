@@ -1,0 +1,154 @@
+/* ============================================================================
+   DAS COVER. Stile fuer components/entwuerfe/cover.tsx. Nur die
+   Erfassungsroute laedt sie; im Buendel der Startseite steht davon nichts,
+   dort liegt das fertige PNG.
+
+   FESTE MASSE. Ein Cover ist ein Bild und kennt kein Fenster: 1200 mal 760,
+   dasselbe Mass wie die alten Aufnahmen, damit das Raster der Galerie
+   unveraendert steht (aspect-ratio in start.css).
+
+   Alle Farben und Schriften kommen als --ew-* je Entwurf. Kein Hex hier.
+   ========================================================================== */
+
+.cv {
+  position: relative;
+  width: 1200px;
+  height: 760px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--ew-grund);
+  color: var(--ew-tinte);
+  font-family: var(--ew-text);
+  -webkit-font-smoothing: antialiased;
+  isolation: isolate;
+}
+
+.cv *,
+.cv *::before,
+.cv *::after {
+  box-sizing: border-box;
+}
+
+.cv p {
+  margin: 0;
+}
+
+/* ── DER RING ──────────────────────────────────────────────────────────────
+   Ein Kegelverlauf aus den drei Farben des Entwurfs, als Ring maskiert und
+   mit Rauschen geschnitten: `mask-composite: intersect` multipliziert die
+   Alpha beider Masken, also faellt der Ring nach aussen in einzelne Koerner
+   auseinander, wie in der Vorlage des Mentors. Darunter liegt derselbe Ring
+   noch einmal stark verwischt, damit die Farbe auch zwischen den Koernern
+   steht.
+
+   Das Rauschen ist ein SVG-Filter als Daten-URI, kein Bild: feTurbulence
+   liefert Zufall, die Farbmatrix zieht den Alphakanal so auseinander, dass
+   aus Grau harte Punkte werden. */
+.cv__ring {
+  position: absolute;
+  inset: -14% -6%;
+  background: conic-gradient(
+    from 210deg at 50% 50%,
+    var(--ew-bild1),
+    var(--ew-akzent) 18%,
+    var(--ew-bild2) 38%,
+    var(--ew-bild1) 55%,
+    var(--ew-akzent) 74%,
+    var(--ew-bild2) 90%,
+    var(--ew-bild1)
+  );
+  filter: blur(22px);
+  mask-image:
+    radial-gradient(ellipse 50% 50% at 50% 50%, transparent 56%, #000 70%, #000 78%, transparent 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.62' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 7 -3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mask-size: auto, 320px 320px;
+  mask-repeat: no-repeat, repeat;
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+  z-index: 0;
+}
+
+.cv__ring--weich {
+  filter: blur(70px);
+  opacity: 0.55;
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, transparent 52%, #000 70%, #000 78%, transparent 100%);
+  mask-composite: add;
+  -webkit-mask-composite: source-over;
+}
+
+/* Feine Koernung ueber allem, damit auch die Mitte nicht glatt wie ein
+   Bildschirm aussieht. Weich gemischt, damit sie die Schrift nicht stoert. */
+.cv__korn {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.18;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* ── DIE MITTE ─────────────────────────────────────────────────────────── */
+.cv__mitte {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  max-width: 720px;
+}
+
+.cv__mark {
+  width: var(--cv-mark-w);
+  height: var(--cv-mark-h);
+  color: var(--ew-akzent);
+}
+
+.cv__mark svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Die Motive zeichnen im Held ihrer Seite leise (opacity 0.4, Strich 1.5)
+   und gross. Hier stehen sie klein und als Marke, also mit vollem Strich.
+   CSS schlaegt Praesentationsattribute, deshalb greift das. Beim Maler
+   bleibt der Strich, wie er ist (Bahnen von 26 bis 70). */
+.cv__mark svg g {
+  opacity: 1;
+}
+
+.cv:not(.cv--typo) .cv__mark svg [stroke] {
+  stroke-width: var(--cv-strich);
+}
+
+/* Die Pinselbahnen tragen ihre Deckkraft auf dem Pfad, nicht auf der
+   Gruppe. Als Marke stehen sie satt. */
+.cv--typo .cv__mark svg path {
+  opacity: 0.9;
+}
+
+/* DIE GROESSEN SIND FUER DIE KARTE GERECHNET, nicht fuer das Bild: auf dem
+   Telefon (390px) ist die Karte 358px breit, also 30 Prozent des Bildes.
+   76px Marke werden dort 23px, 40px Zeile werden 12px, und unter 12px darf
+   nichts fallen. Bei 1440px (Karte 558px) sind es 35px und 19px. */
+.cv__marke {
+  margin-top: 32px;
+  font-family: var(--ew-display);
+  font-optical-sizing: auto;
+  font-size: 76px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.cv__zeile {
+  margin-top: 16px;
+  max-width: 20ch;
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  color: var(--ew-akzent);
+}

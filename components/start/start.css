@@ -1106,75 +1106,14 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   BEWEISSTREIFEN
-   ═══════════════════════════════════════════════════════════════════════ */
+   STREIFEN UNTER DEM HERO
+   ═══════════════════════════════════════════════════════════════════════
+   Seit dem 2026-09-05 nur noch das Laufband. Der Satz und die zwei Chips,
+   die hier standen, sind auf Wunsch des Mentors gestrichen (beweis.tsx). */
 .st-beweis {
   border-block: 1px solid var(--c-line);
   background: var(--c-band);
-  padding-block: var(--st-block-s);
-}
-
-.st-beweis__in {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1rem 1.5rem;
-  justify-content: space-between;
-}
-
-.st-beweis__satz {
-  font-size: var(--st-fs-lead);
-  color: var(--c-ink);
-  max-width: 42ch;
-}
-
-.st-beweis__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.625rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.st-chip {
-  position: relative;
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  min-height: 44px;
-  padding: 0.55rem 0.9rem;
-  border: 1px solid var(--c-line2);
-  border-radius: var(--st-r-pill);
-  background: var(--c-sheet);
-  font-size: var(--st-fs-tag);
-  color: var(--c-ink);
-  text-decoration: none;
-  transition:
-    border-color 0.18s var(--st-ease),
-    transform 0.18s var(--st-ease);
-}
-
-.st-chip__zusatz {
-  color: var(--c-faint);
-}
-
-.st-chip__punkt {
-  position: relative;
-  flex: none;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-  background: var(--c-accent-fill);
-  align-self: center;
-  animation: stPuls 2.4s var(--st-ease) infinite;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .st-chip:hover {
-    border-color: var(--c-line3);
-    transform: translateY(-2px);
-  }
+  padding-block: clamp(1.25rem, 2.2vw, 1.75rem);
 }
 
 /* ══ DAS LAUFBAND ═══════════════════════════════════════════════════════
@@ -1185,7 +1124,6 @@
 .st-band {
   display: flex;
   overflow: hidden;
-  margin-top: clamp(2rem, 4vw, 3rem);
   mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
   user-select: none;
 }
@@ -1295,18 +1233,14 @@
   text-decoration: none;
 }
 
+/* KEIN RAHMEN, KEIN SCHATTEN, KEIN ANHEBEN, seit dem 2026-09-05. Die
+   Vorlage des Mentors (godly.design) ist das Bild mit runden Ecken und
+   sonst nichts; "the hover/border design needs to be changed" meint genau
+   das. Die Bewegung liegt im Bild (unscharf, leicht groesser) und in der
+   Tafel, nicht in der Karte. */
 .st-karte__rahmen {
   position: relative;
   display: block;
-  overflow: hidden;
-  border: 1px solid var(--c-line2);
-  border-radius: var(--st-r-card);
-  background: var(--c-wash);
-  box-shadow: var(--sh-lift);
-  transition:
-    transform 0.28s var(--st-ease),
-    border-color 0.28s var(--st-ease),
-    box-shadow 0.28s var(--st-ease);
 }
 
 /* Der Fokusring gehoert um den RAHMEN und nicht um das Linkelement: der Link
@@ -1326,6 +1260,8 @@
   display: block;
   width: 100%;
   height: auto;
+  border-radius: var(--st-r-card);
+  background: var(--c-wash);
   /* Genau das Fenstermass der Aufnahme (scripts/aufnahmen.mjs, 1200 zu 760).
      Steht es hier, ist der Platz vor dem Bild reserviert und das Raster
      springt beim Laden nicht. */
@@ -1351,100 +1287,129 @@
   }
 }
 
-/* Die Tafel. Liegt IN der Karte, damit die Karte ein Bild bleibt. */
+/* ══ DIE TAFEL, seit dem 2026-09-05 nach der Vorlage des Mentors ═══════════
+   Zwei Aufnahmen von godly.design: unten in der Karte eine helle Tafel mit
+   abgerundeten Ecken, Name gross, Art darunter in Grau, rechts ein dunkles
+   Quadrat mit Kettenglied. Das Bild dahinter wird beim Ueberfahren
+   UNSCHARF, damit die Tafel traegt und nicht gegen den Entwurf kaempft.
+
+   OHNE FEINEN ZEIGER (Telefon) STEHT DIE TAFEL UNTER DEM BILD, nicht
+   darauf: bei 350px Kartenbreite deckte die feste Tafel mehr als die
+   Haelfte des Covers ab, die Schlagzeile stand halb dahinter (gesehen am
+   2026-09-05 bei 390px). Als Bildunterschrift im Fluss bleibt das Cover
+   ganz sichtbar. Der Ausgangszustand steht deshalb HIER, das Ueberlagern
+   in der Abfrage weiter unten. */
 .st-karte__tafel {
-  position: absolute;
-  inset-inline: 0.625rem;
-  bottom: 0.625rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 0.75rem 0.75rem 1.125rem;
-  border-radius: 0.875rem;
-  /* Kein Verlauf und keine Transparenz auf das Bild: darunter liegen sechs
-     verschiedene Entwuerfe mit sechs verschiedenen Helligkeiten, und der
-     Kontrast der Tafel darf nicht davon abhaengen, welcher gerade dahinter
-     liegt. Volle Flaeche in der Seitenfarbe, gemessen wie ueberall sonst. */
-  background: var(--c-paper);
-  box-shadow: var(--sh-lift);
+  gap: 1rem;
+  padding: 0.875rem 0.25rem 0;
 }
 
 .st-karte__meta {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.25rem 0.625rem;
+  flex-direction: column;
+  gap: 0.2rem;
   min-width: 0;
 }
 
 .st-karte__name {
   font-family: var(--st-display);
-  font-size: 1.1875rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
 .st-karte__art {
-  font-size: var(--st-fs-tag);
+  font-size: var(--st-fs-body);
   color: var(--c-faint);
 }
 
-/* Auf dem Telefon steht die Tafel fest in der Karte (kein Ueberfahren), und
-   bei 350px Kartenbreite nahm sie mit 19px-Name und 40px-Pfeil ein Drittel
-   des Bildes ein. Enger gesetzt, damit vom Entwurf mehr zu sehen ist. */
-@media (max-width: 47.9375rem) {
-  .st-karte__tafel {
-    padding: 0.5rem 0.5rem 0.5rem 0.875rem;
-  }
-
-  .st-karte__name {
-    font-size: 1.0625rem;
-  }
-
-  .st-karte__pfeil {
-    width: 34px;
-    height: 34px;
-  }
-}
-
-.st-karte__pfeil {
+.st-karte__knopf {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: none;
   margin-left: auto;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 0.875rem;
   background: var(--c-solid);
   color: var(--c-solid-ink);
-  transition: transform 0.28s var(--st-ease);
+  transition:
+    transform 0.28s var(--st-spring),
+    background 0.28s var(--st-ease);
 }
 
-/* MIT FEINEM ZEIGER schiebt sich die Tafel von unten herein und das Bild
-   wandert nach oben, zeigt also mehr von der Seite. Ohne feinen Zeiger steht
-   die Tafel fest da: eine Angabe, die man nur beim Ueberfahren sieht, gibt es
-   auf einem Telefon nicht. Deshalb steht der Ausgangszustand HIER und die
-   Bewegung in der Abfrage, nicht umgekehrt. */
-@media (hover: hover) and (pointer: fine) {
+/* Auf dem Telefon kleiner, der Knopf bleibt aber 44px, die Mindestgroesse
+   fuer einen Finger. */
+@media (max-width: 47.9375rem) {
   .st-karte__tafel {
-    transform: translateY(calc(100% + 0.75rem));
-    opacity: 0;
-    transition:
-      transform 0.32s var(--st-ease),
-      opacity 0.2s var(--st-ease);
+    gap: 0.75rem;
+    padding-top: 0.625rem;
   }
 
-  .st-karte:hover .st-karte__rahmen,
-  .st-karte:focus-within .st-karte__rahmen {
-    transform: translateY(-6px);
-    border-color: var(--c-line3);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 28px 48px -24px rgba(0, 0, 0, 0.35);
+  .st-karte__name {
+    font-size: 1.125rem;
+  }
+
+  .st-karte__art {
+    font-size: var(--st-fs-tag);
+  }
+
+  .st-karte__knopf {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+  }
+
+  .st-karte__knopf svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* MIT FEINEM ZEIGER faehrt die Tafel von unten herein und das Bild dahinter
+   wird unscharf und ein wenig groesser. Ohne feinen Zeiger steht die Tafel
+   fest da: eine Angabe, die man nur beim Ueberfahren sieht, gibt es auf
+   einem Telefon nicht. Deshalb steht der Ausgangszustand HIER und die
+   Bewegung in der Abfrage, nicht umgekehrt. */
+@media (hover: hover) and (pointer: fine) {
+  /* Nur hier liegt die Tafel AUF dem Bild, und nur hier braucht der Rahmen
+     runde Ecken mit Beschnitt: das unscharfe Bild darf nicht ueber die
+     Karte hinausleuchten. */
+  .st-karte__rahmen {
+    overflow: hidden;
+    border-radius: var(--st-r-card);
+    background: var(--c-wash);
+  }
+
+  .st-karte__tafel {
+    position: absolute;
+    inset-inline: 0.75rem;
+    bottom: 0.75rem;
+    padding: 1rem 1rem 1rem 1.375rem;
+    border-radius: 1.125rem;
+    background: var(--c-paper);
+    box-shadow: var(--sh-lift);
+    transform: translateY(calc(100% + 1rem));
+    opacity: 0;
+    transition:
+      transform 0.36s var(--st-ease),
+      opacity 0.22s var(--st-ease);
+  }
+
+  .st-karte__bild {
+    transition:
+      transform 0.5s var(--st-ease),
+      filter 0.36s var(--st-ease);
   }
 
   [data-st-in] .st-karte:hover .st-karte__bild,
   [data-st-in] .st-karte:focus-within .st-karte__bild {
-    transform: translateY(-4%);
+    transform: scale(1.04);
+    filter: blur(10px);
   }
 
   .st-karte:hover .st-karte__tafel,
@@ -1453,65 +1418,8 @@
     opacity: 1;
   }
 
-  .st-karte:hover .st-karte__pfeil {
-    transform: rotate(45deg);
-  }
-}
-
-/* ══ DIE MARKE AM ZEIGER ════════════════════════════════════════════════
-   Eine Pille, die dem Zeiger ueber den Karten folgt. Sie sitzt in einem
-   relativ positionierten Feld um das Raster; die Verschiebung schreibt
-   components/start/galerie-zeiger.tsx als transform. Die Pille ist fuer den
-   Zeiger durchlaessig, sonst faengt sie den Klick ab, der der Karte gilt. */
-.st-galerie__feld {
-  position: relative;
-}
-
-.st-zeiger {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 3;
-  display: none;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.55rem 0.95rem;
-  border-radius: var(--st-r-pill);
-  background: var(--c-solid);
-  color: var(--c-solid-ink);
-  font-size: var(--st-fs-tag);
-  font-weight: 500;
-  white-space: nowrap;
-  pointer-events: none;
-  will-change: transform;
-}
-
-.st-zeiger::before {
-  /* Die Pille sitzt mit ihrer Mitte am Zeiger, nicht mit ihrer Ecke: der
-     Versatz kommt ueber ein Pseudoelement, damit das transform der
-     Komponente allein die Position traegt. */
-  content: "";
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .st-zeiger {
-    display: inline-flex;
-    margin: -1.25rem 0 0 -2.5rem;
-    opacity: 0;
-    scale: 0.6;
-    transition:
-      opacity 0.2s var(--st-ease),
-      scale 0.3s var(--st-spring);
-  }
-
-  .st-zeiger[data-da] {
-    opacity: 1;
-    scale: 1;
-  }
-
-  /* Mit der Pille am Zeiger braucht die Tafel ihren Pfeil nicht mehr. */
-  .st-karte__pfeil {
-    display: none;
+  .st-karte:hover .st-karte__knopf {
+    transform: rotate(-12deg) scale(1.06);
   }
 }
 
@@ -1786,11 +1694,15 @@
   }
 }
 
+/* Seit dem 2026-09-05 zwei bis drei Saetze je Stufe ("make the
+   descriptions longer"), deshalb breiter als vorher und mit mehr Luft
+   zwischen den Zeilen. */
 .st-ablauf__text {
-  margin-top: 0.625rem;
+  margin-top: 0.75rem;
   color: var(--c-soft);
-  max-width: 30ch;
+  max-width: 36ch;
   font-size: var(--st-fs-tag);
+  line-height: 1.55;
 }
 
 @media (min-width: 40rem) {
@@ -2037,11 +1949,11 @@
    ═══════════════════════════════════════════════════════════════════════
    Zwei Zustaende: der Deckel mit dem Knopf, und der geladene Rahmen von
    Calendly. Warum ueberhaupt ein Deckel davorsteht, steht ausfuehrlich in
-   components/start/kalender.tsx (kurz: TDDDG Paragraf 25).
+   components/start/kalender.tsx.
 
-   DIE HOEHE IST IN BEIDEN ZUSTAENDEN GLEICH. Sonst springt der ganze
-   Abschnitt in dem Moment, in dem jemand den Knopf drueckt, und ein
-   Seitensprung nach einem Klick fuehlt sich an wie ein Fehler. */
+   DIE HOEHE IST IN BEIDEN ZUSTAENDEN GLEICH: der angedeutete Monat und der
+   fertige Rahmen sind gleich hoch, und der Abschnitt springt nicht, wenn
+   Calendly geladen ist. */
 .st-kal {
   --st-kal-h: 660px;
   height: var(--st-kal-h);
@@ -2063,24 +1975,21 @@
   border: 0;
 }
 
-.st-kal--zu {
-  display: flex;
-}
-
-.st-kal__deckel {
+.st-kal__laedt {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
   width: 100%;
+  height: 100%;
   padding: 2rem;
   text-align: center;
   color: var(--c-ink);
 }
 
-/* Ein angedeuteter Monat. Er zeigt, WAS sich hinter dem Knopf oeffnet, und
-   ist deshalb Zierde und kein Inhalt (aria-hidden in der Komponente). */
+/* Ein angedeuteter Monat, solange Calendly noch laedt. Zierde und kein
+   Inhalt (aria-hidden in der Komponente). */
 .st-kal__gitter {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -2118,9 +2027,19 @@
   color: var(--c-faint);
 }
 
-.st-kal__direkt {
+/* Die Zeile unter dem Kalender: woher er kommt, und der Weg an ihm vorbei.
+   Auf der umgekehrten Flaeche, also in den gedaempften Toenen der Tinte. */
+.st-kal__fuss {
+  margin-top: 0.875rem;
   font-size: var(--st-fs-tag);
-  color: var(--c-soft);
+  color: var(--c-solid-ink);
+  opacity: 0.72;
+}
+
+.st-kal__direkt {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 
 /* Der Knopf auf der umgekehrten Flaeche muss sich ebenfalls umkehren, sonst
@@ -2256,15 +2175,22 @@
   .st-pill,
   .st-pill__pfeil,
   .st-link::after,
-  .st-chip,
   .st-geraet__halt,
   .st-modus__label,
   .st-karte__rahmen,
   .st-karte__bild,
   .st-karte__tafel,
-  .st-karte__pfeil,
+  .st-karte__knopf,
   .st-arbeit__bild {
     transition: none;
+  }
+
+  .st-karte__bild {
+    filter: none !important;
+  }
+
+  .st-karte:hover .st-karte__knopf {
+    transform: none;
   }
 
   /* prefers-reduced-motion zeigt den ENDZUSTAND und nicht eine gedaempfte
@@ -2281,7 +2207,6 @@
 
   /* Alles vom 2026-09-02, ebenfalls im ENDZUSTAND. */
   .st-eyebrow__punkt,
-  .st-chip__punkt,
   .st-anruf__ring::before,
   .st-kal__gitter span[data-frei] {
     animation: none;
@@ -2301,10 +2226,6 @@
   }
 
   .st-bar::after {
-    display: none;
-  }
-
-  .st-zeiger {
     display: none;
   }
 
